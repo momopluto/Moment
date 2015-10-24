@@ -16,12 +16,12 @@ class UserController extends Controller {
         // 判断是否存在session
         if (session('?LOGIN_FLAG') && session('LOGIN_FLAG')) {
             // 已登录
-            $this->redirect('Home/Index/index', '', 3, '您已登录！跳转至主页...');
+            $this->redirect('Index/index', '', 3, '您已登录！跳转至主页...');
             return;
         }
         
         if (IS_POST){
-            $login_ask = 'Home/User/login';
+            $login_ask = 'User/login';
             
             $verify = new \Think\Verify();
             if ($verify->check(I('post.verify'))){
@@ -48,7 +48,7 @@ class UserController extends Controller {
                 // 更新last_login_ip和last_login_time
                 $model->updateLoginData($rst['user_id']);
                 
-                $this->redirect('Home/Index/index', '', 1, '登录成功！正在跳转...');
+                $this->redirect('Index/index', '', 1, '登录成功！正在跳转...');
                 return;
             }  else {
                 session('LOGIN_FLAG', null);
@@ -69,8 +69,8 @@ class UserController extends Controller {
      */
     public function signup() {
         if (IS_POST){
-            $login_ask = 'Home/User/login';
-            $signup_ask = 'Home/User/signup';
+            $login_ask = 'User/login';
+            $signup_ask = 'User/signup';
             
             $verify = new \Think\Verify();
             if ($verify->check(I('post.verify'))) {

@@ -12,11 +12,6 @@ define('APP_PATH','./Application/');
 define('SITE_URL', "http://127.0.0.1");//服务器域名
 // define('SITE_URL', "http://momopluto.xicp.net");//服务器域名
 
-define('PATH_JS','./Public/js/');// JS文件存放路径
-define('PATH_CSS','./Public/css/');// CSS文件存放路径
-define('PATH_IMG','./Public/img/');// img文件存放路径
-define('PATH_UPLOADS','./Public/uploads/');// 上传文件存放路径
-
 define('TITLE','Moment');// 网站名称
 
 // 引入ThinkPHP入口文件

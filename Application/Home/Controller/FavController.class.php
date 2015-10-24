@@ -1,20 +1,21 @@
 <?php
 namespace Home\Controller;
-
 use Think\Controller;
 
 /**
  * Home收藏控制器
  */
-class FavController extends BaseController
-{
+class FavController extends BaseController {
 
     /**
      * 收藏用户
      * @return [type] [description]
      */
-    public function user()
-    {
+    public function user(){
+        // AJAX POST
+        // 接受参数{"uid":"被收藏用户的id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
         $userId = I('post.user_id', '', 'strip_tags');
         $ownerId = $this->getUserId();
         $dao = D('favuser');
@@ -46,8 +47,11 @@ class FavController extends BaseController
      * 取消收藏用户
      * @return [type] [description]
      */
-    public function ccluser()
-    {
+    public function ccluser(){
+        // AJAX POST
+        // 接受参数{"uid":"被收藏用户的id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
         $userId = I('post.user_id', '', 'strip_tags');
         $ownerId = $this->getUserId();
 
@@ -79,8 +83,11 @@ class FavController extends BaseController
      * 收藏分享
      * @return [type] [description]
      */
-    public function content()
-    {
+    public function content(){
+        // AJAX POST
+        // 接受参数{"sid":"被收藏评论的id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
         $ownerId = $this->getUserId();
         $shareId = I('post.s_id', '', 'strip_tags');
 
@@ -113,8 +120,11 @@ class FavController extends BaseController
      * 取消收藏分享
      * @return [type] [description]
      */
-    public function cclcontent()
-    {
+    public function cclcontent(){
+        // AJAX POST
+        // 接受参数{"sid":"被收藏评论的id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
         $ownerId = $this->getUserId();
 
         $shareId = I('post.s_id', '', 'strip_tags');
