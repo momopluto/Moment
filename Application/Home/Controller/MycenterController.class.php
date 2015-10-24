@@ -79,7 +79,7 @@ class MycenterController extends BaseController
         $data["data"] = $dao->getShare($where, [], $page, $limit, false);
         $data['allcount'] = $allcount;
         $this->assign('data', $data);
-        $this->display();
+        $this->display();   //
     }
 
 
