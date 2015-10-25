@@ -1,155 +1,103 @@
 <?php
 namespace Home\Controller;
+
 use Think\Controller;
 
 /**
  * Home收藏控制器
  */
-class FavController extends BaseController {
+class FavController extends BaseController
+{
 
     /**
      * 收藏用户
      * @return [type] [description]
      */
-    public function user(){
+    public function user()
+    {
         // AJAX POST
         // 接受参数{"uid":"被收藏用户的id"}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
         $userId = I('post.user_id', '', 'strip_tags');
-        $ownerId = $this->getUserId();
-        $dao = D('favuser');
-        $count = $dao->checkExist($ownerId, $userId);
+        $ownerId = self::$user_id;
+        $model = D('favuser');
 
-        if(intval($count) === 0){
-            $result = $dao->insertFavuser($ownerId, $userId);
-            if($result === false){
-                $ret = [
-                    'success' => false,
-                    'message' => '收藏失败',
-                ];
-            }else{
-                $ret = [
-                    'success' => true,
-                    'message' => '收藏成功',
-                ];
-            }
-        }else{
-            $ret = [
-                'success' => false,
-                'message' => '收藏失败',
-            ];
+        $result = $model->insertFavuser($ownerId, $userId);
+
+        if($result === false){
+            $this->dataReturn('100', $model->getError());
         }
-        $this->ajaxReturn($ret);
+        $this->dataReturn();
     }
 
     /**
      * 取消收藏用户
      * @return [type] [description]
      */
-    public function ccluser(){
+    public function ccluser()
+    {
         // AJAX POST
         // 接受参数{"uid":"被收藏用户的id"}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
         $userId = I('post.user_id', '', 'strip_tags');
-        $ownerId = $this->getUserId();
+        $ownerId = self::$user_id;
 
-        $dao = D('favuser');
-        $count = $dao->checkExist($ownerId, $userId);
-        if(intval($count) === 0){
-            $ret = [
-                'success' => false,
-                'message' => '取消收藏失败',
-            ];
-        }else{
-            $result = $dao->DelFavuser($ownerId, $userId);
-            if($result === false){
-                $ret = [
-                    'success' => false,
-                    'message' => '取消收藏失败',
-                ];
-            }else{
-                $ret = [
-                    'success' => true,
-                    'message' => '取消收藏成功',
-                ];
-            }
+        $model = D('favuser');
+        $result = $model->DelFavuser($ownerId, $userId);
+
+        if($result === false){
+            $this->dataReturn('100', $model->getError());
         }
-        $this->ajaxReturn($ret);
+
+        $this->dataReturn();
     }
 
     /**
      * 收藏分享
      * @return [type] [description]
      */
-    public function content(){
+    public function content()
+    {
         // AJAX POST
         // 接受参数{"sid":"被收藏评论的id"}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
-        $ownerId = $this->getUserId();
+        $ownerId = self::$user_id;
         $shareId = I('post.s_id', '', 'strip_tags');
 
-        $dao = D('favshare');
-        $count = $dao->checkExist($ownerId, $shareId);
-        if(intval($count) === 0){
-            $result = $dao->insertFavshare($ownerId, $shareId);
-            if($result === false){
-                $ret = [
-                    'success' => false,
-                    'message' => '收藏失败',
-                ];
-            }else{
-                $ret = [
-                    'success' => true,
-                    'message' => '收藏成功',
-                ];
-            }
-        }else{
-            $ret = [
-                'success' => false,
-                'message' => '收藏失败',
-            ];
+        $model = D('favshare');
+        $result = $model->insertFavshare($ownerId, $shareId);
+
+        if($result === false){
+            $this->dataReturn('100', $model->getError());
         }
 
-        $this->ajaxReturn($ret);
+        $this->dataReturn();
     }
 
     /**
      * 取消收藏分享
      * @return [type] [description]
      */
-    public function cclcontent(){
+    public function cclcontent()
+    {
         // AJAX POST
         // 接受参数{"sid":"被收藏评论的id"}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
-        $ownerId = $this->getUserId();
 
+        $ownerId = self::$user_id;
         $shareId = I('post.s_id', '', 'strip_tags');
-        $dao = D('favshare');
-        $count = $dao->checkExist($ownerId, $shareId);
-        if(intval($count) === 0){
-            $ret = [
-                "success" => false,
-                "message" => '取消收藏失败',
-            ];
-        }else{
-            $result = $dao->delFavshare($ownerId, $shareId);
-            if($result === false){
-                $ret = [
-                    'success' => false,
-                    'message' => '取消收藏失败',
-                ];
-            }else{
-                $ret = [
-                    'success' => true,
-                    'message' => '取消收藏成功',
-                ];
-            }
+
+        $model = D('favshare');
+        $result = $model->delFavshare($ownerId, $shareId);
+
+        if($result === false){
+            $this->dataReturn('100', $model->getError());
         }
 
-        $this->ajaxReturn($ret);
+        $this->dataReturn();
     }
 }

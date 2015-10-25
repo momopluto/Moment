@@ -48,18 +48,58 @@ class ContentModel extends BaseModel
 
     public function insertShare($userId, $text, $imgs, $isPublic)
     {
-        return $this->add([
+
+        $result = $this->add([
             'user_id'  => $userId,
             'text'     => $text,
             'imgs'     => $imgs,
             'isPublic' => $isPublic,
             'cTime'    => time(),
         ]);
+
+        if($result === false){
+            $this->error = '保存失败';
+
+            return false;
+        }
+
+        return true;
     }
 
-    public function delShare($shareId)
+    public function delShare($shareId, $userId)
     {
-        return $this->where(['s_id' => $shareId])->delete();
+        $this->startTrans();
+        $where = [
+            's_id'    => $shareId,
+            'user_id' => $userId,
+        ];
+
+        $count = intval($this->countShare($where));
+        if($count === 0){
+            $this->rollback();
+            $this->error = '权限验证失败';
+
+            return false;
+        }else{
+            $result = $this->where(['s_id' => $shareId])->delete();
+            // 删除评论
+            $result1 = D('comment')->delShareComment($shareId);
+            // 删除点赞
+            $result2 = D('thumb')->delShareThumb($shareId);
+            // 删除收藏
+            $result3 = D('favshare')->delShareFavshare($shareId);
+
+            if($result && $result1 && $result2 && $result3){
+                $this->commit();
+
+                return true;
+            }else{
+                $this->rollback();
+                $this->error = "删除失败";
+
+                return false;
+            }
+        }
     }
 
     public function editShare($where, $updateData)

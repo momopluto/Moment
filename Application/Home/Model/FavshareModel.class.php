@@ -10,7 +10,14 @@ class FavshareModel extends BaseModel
 {
     public function delShareFavshare($shareId)
     {
-        return $this->where(['s_id' => $shareId])->delete();
+        $result = $this->where(['s_id' => $shareId])->delete();
+        if($result === false){
+            $this->error = '取消收藏分享失败';
+
+            return false;
+        }
+
+        return true;
     }
 
     public function checkExist($ownerId, $shareId)
@@ -23,19 +30,44 @@ class FavshareModel extends BaseModel
 
     public function insertFavshare($ownerId, $shareId)
     {
-        return $this->add([
-            'owner_id' => $ownerId,
-            's_id'     => $shareId,
-            'cTime'    => time(),
-        ]);
+
+        $count = intval($this->checkExist($ownerId, $shareId));
+
+        if($count === 0){
+            $result = $this->add([
+                'owner_id' => $ownerId,
+                's_id'     => $shareId,
+                'cTime'    => time(),
+            ]);
+
+            if($result === false){
+                $this->error = '收藏分享失败';
+
+                return false;
+            }
+
+            return true;
+        }else{
+            $this->error = '已收藏';
+
+            return false;
+        }
     }
 
     public function delFavshare($ownerId, $shareId)
     {
-        return $this->where([
+        $result = $this->where([
             'owner_id' => $ownerId,
             's_id'     => $shareId,
         ])->delete();
+
+        if($result === false){
+            $this->error = '取消收藏分享失败';
+
+            return false;
+        }
+
+        return true;
     }
 
 }

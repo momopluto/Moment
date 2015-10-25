@@ -11,13 +11,38 @@ class CommentModel extends BaseModel
 
     public function insertComment($shareId, $pid, $userId, $content)
     {
-        return $this->add([
+
+        $result = $this->add([
             's_id'    => $shareId,
             'pid'     => $pid,
             'user_id' => $userId,
             'content' => $content,
             'cTime'   => time(),
         ]);
+
+        if($result === false){
+            $this->error = '评论插入失败';
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function delComment($commentId, $userId)
+    {
+        $result = $this->where([
+            'c_id'    => $commentId,
+            'user_id' => $userId,
+        ])->delete();
+
+        if($result === false){
+            $this->error = '删除评论失败';
+
+            return false;
+        }
+
+        return true;
     }
 
     public function delShareComment($shareId)

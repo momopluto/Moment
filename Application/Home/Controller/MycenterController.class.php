@@ -55,6 +55,9 @@ class MycenterController extends BaseController
                 ];
             }
         }
+        if (IS_POST){
+
+        }
         $this->ajaxReturn($ret);
     }
 

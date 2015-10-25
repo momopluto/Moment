@@ -19,31 +19,50 @@ class ThumbModel extends BaseModel
 
     public function insertThumb($shareId, $userId)
     {
-        return $this->add([
-            's_id'    => $shareId,
-            'user_id' => $userId,
-        ]);
-    }
 
-    public function checkThumb($shareId, $userId)
-    {
-        return $this->where([
+        $result = $this->add([
             's_id'    => $shareId,
             'user_id' => $userId,
-        ])->count();
+            'cTime'   => time(),
+        ]);
+
+        if($result === false){
+            $this->error = '点赞失败';
+
+            return false;
+        }
+
+        return true;
     }
 
     public function delShareThumb($shareId)
     {
-        return $this->where(['s_id' => $shareId])->delete();
+
+        $result = $this->where(['s_id' => $shareId])->delete();
+        if($result === false){
+            $this->error('删除点赞记录失败');
+
+            return false;
+        }
+
+        return true;
     }
 
     public function cclThumb($shareId, $userId)
     {
-        return $this->where([
+
+        $result = $this->where([
             's_id'    => $shareId,
             'user_id' => $userId,
         ])->delete();
+
+        if($result === false){
+            $this->error = '取消点赞失败';
+
+            return false;
+        }
+
+        return true;
     }
 
     public function countThumb($where)
