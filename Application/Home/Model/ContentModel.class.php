@@ -36,14 +36,84 @@ class ContentModel extends BaseModel
 
     */
 
-
-    public function getShare($where, $field = [], $page = 1, $limit = 25, $isLock = false)
+    public function getUserData($userId)
     {
-        if(!$where){
-            return false;
-        }
+        $where = ['user_id' => $userId];
+        $favuserCount = D('favuser')->countFavuser($where);
+        $shareCount = $this->countShare($where);
+        $favshareCount = D('favshare')->countFavshare($where);
 
-        return $this->where($where)->field($field)->page($page, $limit)->lock($isLock)->select();
+        return [
+            'fav_user_count'  => $favuserCount,
+            'fav_share_count' => $favshareCount,
+            'share_count'     => $shareCount,
+        ];
+    }
+
+    public function getShareIndex($userId)
+    {
+        $userdata = $this->getUserData($userId);
+        $p = I('param.p', 1);
+        $count = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn_user.user_id')->where([
+            'mn_share.isPublic' => 1,
+            'mn_user.status'    => 1,
+        ])->count();
+        $oPage = new \Think\Page($count, 25);
+        $show = $oPage->show();
+
+
+        $list = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn_user.user_id')->where([
+            'mn_share.isPublic' => 1,
+            'mn_user.status'    => 1,
+        ])->field([
+            'mn_user.username',
+            'mn_share.s_id',
+            'mn_share.user_id',
+            'mn_share.text',
+            'mn_share.imgs',
+            'mn_share.cTime',
+            'mn_share.isPublic',
+        ])->order('mn_share.cTime desc')->page($p, 25)->select();
+
+        return [
+            'userdata' => $userdata,
+            'show'     => $show,
+            'list'     => $list,
+        ];
+    }
+
+    public function getOnesShare($userId)
+    {
+        $userdata = $this->getUserData($userId);
+        $p = I('param.p', 1);
+        $count = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn.user.user_id')->where([
+            'mn_share.user_id'  => $userId,
+            'mn_share.isPublic' => 1,
+            'mn_user.status'    => 1,
+        ])->count();
+        $oPage = new \Think\Page($count, 25);
+        $show = $oPage->show();
+
+
+        $list = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn.user.user_id')->where([
+            'mn_share.user_id'  => $userId,
+            'mn_share.isPublic' => 1,
+            'mn_user.status'    => 1,
+        ])->field([
+            'mn_user.username',
+            'mn_share.s_id',
+            'mn_share.user_id',
+            'mn_share.text',
+            'mn_share.imgs',
+            'mn_share.cTime',
+            'mn_share.isPublic',
+        ])->order('mn_share.cTime desc')->page($p, 25)->select();
+
+        return [
+            'userdata' => $userdata,
+            'show'     => $show,
+            'list'     => $list,
+        ];
     }
 
     public function insertShare($userId, $text, $imgs, $isPublic)

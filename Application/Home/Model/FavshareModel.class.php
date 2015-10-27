@@ -70,4 +70,8 @@ class FavshareModel extends BaseModel
         return true;
     }
 
+    public function countFavshare($where)
+    {
+        return intval($this->where($where)->count());
+    }
 }

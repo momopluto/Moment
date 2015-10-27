@@ -64,4 +64,9 @@ class FavuserModel extends BaseModel
 
         return true;
     }
+
+    public function countFavuser($where)
+    {
+        return intval($this->where($where)->count());
+    }
 }

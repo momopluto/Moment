@@ -9,6 +9,12 @@ use Think\Controller;
 class ContentController extends BaseController
 {
 
+    public function getShareIndex()
+    {
+        $model = D('content');
+        $data = $model->getShareIndex(self::$user_id);
+    }
+
     /**
      * 发布分享内容
      * @return [type] [description]
