@@ -59,6 +59,8 @@ class UserController extends Controller {
                 return;
             }
         }else{
+//            p(get_defined_constants(true));
+//            die;
             $this->display();
         }
     }

@@ -1,11 +1,13 @@
 <?php
 namespace Home\Controller;
+
 use Think\Controller;
 
 /**
  * Home个人中心控制器
  */
-class MycenterController extends BaseController {
+class MycenterController extends BaseController
+{
 
     /**
      * 设置屏蔽/开启自己的分享
@@ -16,6 +18,47 @@ class MycenterController extends BaseController {
         // 接受参数{无}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
+        $shareId = I('post.share_id', '', 'strip_tags');
+        $userId = $this->getUserId();
+        $dao = D('content');
+        $dao->startTrans();
+
+        $where = array(
+            's_id'    => $shareId,
+            'user_id' => $userId,
+        );
+        $share = $dao->getShare($where, [], 1, 1, true);
+        if(!$share){
+            $dao->rollback();
+            $ret = [
+                'success' => false,
+                'message' => '修改失败',
+            ];
+        }else{
+            $share = $share[0];
+            $newStatus = $share['isPublic'] ? 0 : 1;
+            $updateData = [
+                'isPublic' => $newStatus,
+            ];
+            $result = $dao->editShare($where, $updateData);
+            if($result === false){
+                $dao->rollback();
+                $ret = [
+                    'success' => false,
+                    'message' => '修改失败',
+                ];
+            }else{
+                $dao->commit();
+                $ret = [
+                    'success' => true,
+                    'message' => '修改成功',
+                ];
+            }
+        }
+        if (IS_POST){
+
+        }
+        $this->ajaxReturn($ret);
     }
 
     /**
@@ -25,15 +68,60 @@ class MycenterController extends BaseController {
     public function selfshare() {
         // 独立1个页面展示
         // GET请求
+        $page = I('param.page', 1, 'strip_tags');
+        $page = intval($page) ? intval($page) : 1;
+        $limit = I('param.limit', 25, 'strip_tags');
+        $limit = intval($limit) ? intval($limit) : 25;
+        $dao = D('content');
+        $userId = $this->getUserId();
+        $where = [
+            'user_id' => $userId,
+        ];
+
+        $allcount = intval($dao->countShare($where));
+        $data["data"] = $dao->getShare($where, [], $page, $limit, false);
+        $data['allcount'] = $allcount;
+        $this->assign('data', $data);
+        $this->display();   //
     }
 
-    /**
-     * 自己点赞/评论过的分享(self Thumbed aNd Commented)
-     * @return [type] [description]
-     */
-    public function selftncshare() {
-        // 独立1个页面展示自己点赞/评论过的分享
-        // GET请求
+
+    public function selfThumb()
+    {
+        $page = intval(I('param.page', 1, 'strip_tags'));
+        $page = $page ? $page : 1;
+        $limit = intval(I('param.limit', 25, 'strip_tags'));
+        $limit = $limit ? $limit : 25;
+
+        $userId = $this->getUserId();
+        $dao = D('thumb');
+
+        $where = [
+            'user_id' => $userId,
+        ];
+        $data['allcount'] = $dao->countThumb($where);
+        $data['data'] = $dao->getSelfThumb($userId, $page, $limit);
+
+        $this->display();
+    }
+    
+    public function selfComment()
+    {
+        $page = intval(I('param.page', 1, 'strip_tags'));
+        $page = $page ? $page : 1;
+        $limit = intval(I('param.limit', 25, 'strip_tags'));
+        $limit = $limit ? $limit : 25;
+
+        $userId = $this->getUserId();
+        $dao = D('comment');
+
+        $where = [
+            'user_id' => $userId,
+        ];
+        $data['allcount'] = $dao->countComment($where);
+        $data['data'] = $dao->getSelfComment($userId, $page, $limit);
+
+        $this->display();
     }
 
     /**

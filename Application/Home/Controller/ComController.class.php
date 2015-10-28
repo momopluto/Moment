@@ -31,6 +31,15 @@ class ComController extends BaseController {
         // GET请求
         
         // 限制搜索条件
+        $q = I("param.wd", '', 'strip_tags');
+        $page = intval(I('post.page', 1, 'strip_tags'));
+        $page = $page ? $page : 1;
+        $limit = intval(I('post.limit', 25, 'strip_tags'));
+        $limit = $limit ? $limit : 25;
+        $q = "%" . $q . "%";
+        $data['data'] = D('content')->searchShare($q, $page, $limit);
+        $this->assign('data', $data);
+        $this->display();
     }
 
     /**
