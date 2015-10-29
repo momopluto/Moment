@@ -69,6 +69,14 @@ class ThumbModel extends BaseModel{
             $this->error = $err;
             return false;
         }
+        // 验证shareId所属的用户账号状态是否为启用
+        if (!$this->checkUserStatus_byShareId($shareId)){
+            $err['errcode'] = 412;
+            $err['errmsg'] = "target share's user was disabled";// shareId所属的用户账号状态为禁用
+            $this->error = $err;
+            return false;
+        }
+        
         // 检验shareId和userId记录未存在
         if ($this->where("s_id = %d AND user_id = %d",array($shareId,$userId))->count()){
             $err['errcode'] = 414;
@@ -104,10 +112,18 @@ class ThumbModel extends BaseModel{
      * @return boolean 另: 模型的error可获取错误提示信息
      */
     public function cclThumb($shareId, $userId){
+        // 验证shareId所属的用户账号状态是否为启用
+        if (!$this->checkUserStatus_byShareId($shareId)){
+            $err['errcode'] = 412;
+            $err['errmsg'] = "target share's user was disabled";// shareId所属的用户账号状态为禁用
+            $this->error = $err;
+            return false;
+        }
+        
         // 验证$shareId和$userId记录存在
         $result = $this->where("s_id = %d AND user_id = %d",array($shareId,$userId))->delete();
         if($result === false){
-            $err['errcode'] = 412;
+            $err['errcode'] = 404;
             $err['errmsg'] = "no match record";
             $this->error = $err;
             return false;
