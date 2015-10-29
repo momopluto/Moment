@@ -21,14 +21,15 @@ class UserController extends Controller {
         }
         
         if (IS_POST){
-            $login_ask = 'User/login';
+            $login_ask = 'usr/signin';
             
             $verify = new \Think\Verify();
             if ($verify->check(I('post.verify'))){
                 $this->redirect($login_ask, '', 3, '验证码错误！');
                 return;
             }
-            
+//            $username = 'testuser_1';
+//            $password = md5('testuser_1');
             $username = I('post.username');
             $password = I('post.password');
             if ($username == '' || $password == ''){
@@ -71,8 +72,8 @@ class UserController extends Controller {
      */
     public function signup() {
         if (IS_POST){
-            $login_ask = 'User/login';
-            $signup_ask = 'User/signup';
+            $login_ask = 'usr/signin';
+            $signup_ask = 'usr/signup';
             
             $verify = new \Think\Verify();
             if ($verify->check(I('post.verify'))) {
