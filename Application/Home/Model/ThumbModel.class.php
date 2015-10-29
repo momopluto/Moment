@@ -17,7 +17,8 @@ class ThumbModel extends BaseModel{
         // 全部
         $sql_all = 'SELECT tb.s_id, COUNT(*) AS total, sh.user_id, sh.text, sh.imgs, FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime'
                 . ' FROM mn_thumb tb LEFT JOIN mn_share sh ON tb.s_id=sh.s_id'
-                . ' WHERE sh.isPublic=1'
+                . ' LEFT JOIN mn_user ur ON sh.user_id=ur.user_id'/*验证 分享所属的用户 是否为启用状态*/
+                . ' WHERE (ur.`status`=1 AND sh.isPublic=1)'/*限制'启用的用户'且分享为公开 才能参与排行榜*/
                 . ' GROUP BY tb.s_id'
                 . ' ORDER BY total DESC'
                 . ' LIMIT '.$lmt;
@@ -27,14 +28,18 @@ class ThumbModel extends BaseModel{
         $today_ed = strtotime(date('Y-m-d 23:59:59',$theday_timestr));
         $sql_week = 'SELECT tb.s_id, COUNT(*) AS total, sh.user_id, sh.text, sh.imgs, FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime'
                 . ' FROM mn_thumb tb LEFT JOIN mn_share sh ON tb.s_id=sh.s_id'
-                . ' WHERE (tb.cTime BETWEEN '.$monday.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
+                . ' LEFT JOIN mn_user ur ON sh.user_id=ur.user_id'/*验证 分享所属的用户 是否为启用状态*/
+                . ' WHERE ((tb.cTime BETWEEN '.$monday.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
+                . ' AND (ur.`status`=1 AND sh.isPublic=1))'/*限制'启用的用户'且分享为公开 才能参与排行榜*/
                 . ' GROUP BY tb.s_id'
                 . ' ORDER BY total DESC'
                 . ' LIMIT '.$lmt;
         // 今天
         $sql_today = 'SELECT tb.s_id, COUNT(*) AS total, sh.user_id, sh.text, sh.imgs, FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime'
                 . ' FROM mn_thumb tb LEFT JOIN mn_share sh ON tb.s_id=sh.s_id'
-                . ' WHERE (tb.cTime BETWEEN '.$today_st.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
+                . ' LEFT JOIN mn_user ur ON sh.user_id=ur.user_id'/*验证 分享所属的用户 是否为启用状态*/
+                . ' WHERE ((tb.cTime BETWEEN '.$today_st.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
+                . ' AND (ur.`status`=1 AND sh.isPublic=1))'/*限制'启用的用户'且分享为公开 才能参与排行榜*/
                 . ' GROUP BY tb.s_id'
                 . ' ORDER BY total DESC'
                 . ' LIMIT '.$lmt;
