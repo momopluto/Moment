@@ -57,6 +57,10 @@ class UserModel extends BaseModel {
             if (($rst = $this->where($map)->find()) != false){
                 if ($rst['user_pwd'] === md5($password)){
                     // 通过验证
+                    if ($rst['status'] == 0){
+                        $this->error = '账号被封停！请联系管理员！';
+                        return false;
+                    }
                     unset($rst['user_pwd']);// 删除密码
                     return $rst;// 返回用户账号数据
                 }  else {
