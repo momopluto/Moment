@@ -14,43 +14,67 @@ class ThumbModel extends BaseModel{
      * @return mix 分享内容信息数组
      */
     public function get_thumbuplist($theday_timestr,$lmt=10){
+        
         // 全部
-        $sql_all = 'SELECT tb.s_id, COUNT(*) AS total, sh.user_id, sh.text, sh.imgs, FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime'
-                . ' FROM mn_thumb tb LEFT JOIN mn_share sh ON tb.s_id=sh.s_id'
-                . ' LEFT JOIN mn_user ur ON sh.user_id=ur.user_id'/*验证 分享所属的用户 是否为启用状态*/
-                . ' WHERE (ur.`status`=1 AND sh.isPublic=1)'/*限制'启用的用户'且分享为公开 才能参与排行榜*/
-                . ' GROUP BY tb.s_id'
-                . ' ORDER BY total DESC'
-                . ' LIMIT '.$lmt;
+        $all = D('Share')->cache('all_thumblist',1800)->alias('sh')
+                ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+                ->field('sh.s_id,
+                    sh.user_id,
+                    sh.text,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.tb_count')
+                ->where('sh.tb_count>0 AND sh.isPublic=1 AND ur.`status`=1')/*限制公开的分享，且'启用的用户' 才能参与排行榜*/
+                ->order('sh.tb_count DESC')
+                ->limit($lmt)
+                ->select();
         // 上周一至今
         $monday   = strtotime('-1 week Monday', $theday_timestr);// 过去的周一
         $today_st = strtotime(date('Y-m-d 00:00:00',$theday_timestr));
         $today_ed = strtotime(date('Y-m-d 23:59:59',$theday_timestr));
-        $sql_week = 'SELECT tb.s_id, COUNT(*) AS total, sh.user_id, sh.text, sh.imgs, FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime'
-                . ' FROM mn_thumb tb LEFT JOIN mn_share sh ON tb.s_id=sh.s_id'
-                . ' LEFT JOIN mn_user ur ON sh.user_id=ur.user_id'/*验证 分享所属的用户 是否为启用状态*/
-                . ' WHERE ((tb.cTime BETWEEN '.$monday.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
-                . ' AND (ur.`status`=1 AND sh.isPublic=1))'/*限制'启用的用户'且分享为公开 才能参与排行榜*/
-                . ' GROUP BY tb.s_id'
-                . ' ORDER BY total DESC'
-                . ' LIMIT '.$lmt;
+        $week = $this->alias('tb')
+                ->join('LEFT JOIN mn_share sh ON tb.s_id=sh.s_id')
+                ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+                ->field('tb.s_id,
+                    COUNT(*) AS tb_count,
+                    sh.user_id,
+                    sh.text,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime')
+                ->where('((tb.cTime BETWEEN '.$monday.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
+                        . ' AND  (ur.`status`=1 AND sh.isPublic=1))')/*限制公开的分享，且'启用的用户' 才能参与排行榜*/
+                ->group('tb.s_id')
+                ->order('tb_count DESC')
+                ->limit($lmt)
+                ->select();
         // 今天
-        $sql_today = 'SELECT tb.s_id, COUNT(*) AS total, sh.user_id, sh.text, sh.imgs, FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime'
-                . ' FROM mn_thumb tb LEFT JOIN mn_share sh ON tb.s_id=sh.s_id'
-                . ' LEFT JOIN mn_user ur ON sh.user_id=ur.user_id'/*验证 分享所属的用户 是否为启用状态*/
-                . ' WHERE ((tb.cTime BETWEEN '.$today_st.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
-                . ' AND (ur.`status`=1 AND sh.isPublic=1))'/*限制'启用的用户'且分享为公开 才能参与排行榜*/
-                . ' GROUP BY tb.s_id'
-                . ' ORDER BY total DESC'
-                . ' LIMIT '.$lmt;
+        $today = $this->alias('tb')
+                ->join('LEFT JOIN mn_share sh ON tb.s_id=sh.s_id')
+                ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+                ->field('tb.s_id,
+                    COUNT(*) AS tb_count,
+                    sh.user_id,
+                    sh.text,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime')
+                ->where('((tb.cTime BETWEEN '.$today_st.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
+                        . ' AND  (ur.`status`=1 AND sh.isPublic=1))')/*限制公开的分享，且'启用的用户' 才能参与排行榜*/
+                ->group('tb.s_id')
+                ->order('tb_count DESC')
+                ->limit($lmt)
+                ->select();
+        
+        $data['all'] = $all;
+        $data['week'] = $week;
+        $data['today'] = $today;
         
 //        $data['all'] = $sql_all;
 //        $data['week'] = $sql_week;
 //        $data['today'] = $sql_today;
         
-        $data['all'] = $this->query($sql_all);
-        $data['week'] = $this->query($sql_week);
-        $data['today'] = $this->query($sql_today);
+//        $data['all'] = $this->query($sql_all);
+//        $data['week'] = $this->query($sql_week);
+//        $data['today'] = $this->query($sql_today);
 
         return $data;
     }
@@ -62,7 +86,7 @@ class ThumbModel extends BaseModel{
      * @return boolean 另: 模型的error可获取错误提示信息
      */
     public function insertThumb($shareId, $userId){
-        // 检验shareId有效
+        // 检验shareId存在
         if (!M('share')->where("s_id = %d",$shareId)->count()){
             $err['errcode'] = 404;
             $err['errmsg'] = "sid invalid";
@@ -99,6 +123,7 @@ class ThumbModel extends BaseModel{
             return false;
         }
         
+//        $this->update_share_tb_count($shareId);// 更新tb_count
         $err['errcode'] = 0;
         $err['errmsg'] = "ok";
         $this->error = $err;
@@ -129,12 +154,13 @@ class ThumbModel extends BaseModel{
             return false;
         }
 
+//        $this->update_share_tb_count($shareId);// 更新tb_count
         $err['errcode'] = 0;
         $err['errmsg'] = "ok";
         $this->error = $err;
         return true;
     }
-
+    
     /**
      * [按条件]返回点赞的数目
      * @param mix $map 条件
@@ -145,17 +171,42 @@ class ThumbModel extends BaseModel{
     }
 
     /**
-     * 获取自己点赞过的分享
+     * 获取(userId)点赞过的分享
      * @param integer $userId 用户id
-     * @return string sql语句
+     * @param boolean $self 是否用户本人
+     * @return string 成功返回sql语句;失败返回false
      */
-    public function getSelfThumbShare_sql($userId){
-        $sql = 'SELECT FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS tb_cTime, sh.s_id, sh.user_id, sh.text, sh.imgs, FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS sh_cTime, sh.isPublic'
-                . ' FROM mn_thumb tb LEFT JOIN mn_share sh ON tb.s_id=sh.s_id'
-                . ' WHERE (sh.isPublic=1 AND tb.user_id='.$userId.' OR (tb.user_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$userId.'))'
-                /*OR条件为选择 自己点赞->自己的私密发布分享*/
-                . ' ORDER BY tb.cTime DESC';/*按点赞时间逆序*/
-
+    public function getThumbShare_sql($userId, $self=false){
+        
+        // 验证userId有效，账号启用
+        if (!$this->checkUserStatus($userId)){
+            $err['errcode'] = 412;
+            $err['errmsg'] = "target user was disabled or not found";// userId账号状态为禁用，或者无此账号
+            $this->error = $err;
+            return false;
+        }
+        
+        // userId是否用户本身，不同的过滤条件
+        $where = '(sh.isPublic=1 AND tb.user_id='.$userId.' AND ur.`status`=1)';/*自己点赞的->公开的分享，且用户账号为启用*/
+        if ($self){
+            $where .= ' OR (tb.user_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$userId.')';/*自己点赞的->自己的私密分享*/
+            $where = '( '.$where.' )';
+        }
+        $sql = $this->alias('tb')
+                ->join('LEFT JOIN mn_share sh ON tb.s_id=sh.s_id')
+                ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+                ->field('FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS thumbTime,
+                    sh.s_id,
+                    sh.user_id,
+                    sh.text,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.isPublic,
+                    sh.cmt_count,
+                    sh.tb_count')
+                ->where($where)
+                ->order('tb.cTime DESC')/*按点赞时间逆序*/
+                ->buildsql();
         return $sql;
     }
 }

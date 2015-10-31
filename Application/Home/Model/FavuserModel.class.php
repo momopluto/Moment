@@ -10,15 +10,30 @@ class FavuserModel extends BaseModel{
     /**
      * 获取所有收藏的用户
      * @param integer $ownerId 拥有者id
-     * @return string sql语句
+     * @param boolean $self 是否用户本人
+     * @return string 成功返回sql语句;失败返回false
      */
-    public function getAllFavusers_sql($ownerId){
-        // 不管被收藏用户的账号是否启用，一律返回
-        // 允许取消收藏'被禁用的用户'
-        $sql = 'SELECT FROM_UNIXTIME(fu.cTime,"%Y-%m-%d %H:%i:%s") AS cTime, fu.user_id, ur.reg_time, ur.last_login_time, ur.`status`'
-                . ' FROM mn_favuser fu LEFT JOIN mn_user ur ON fu.user_id=ur.user_id'
-                . ' WHERE (fu.owner_id='.$ownerId.')'
-                . ' ORDER BY fu.cTime DESC';
+    public function getAllFavusers_sql($ownerId, $self=false){
+        // 验证ownerId有效，账号启用
+        if (!$this->checkUserStatus($ownerId)){
+            $err['errcode'] = 412;
+            $err['errmsg'] = "target user was disabled or not found";// ownerId账号状态为禁用，或者无此账号
+            $this->error = $err;
+            return false;
+        }
+        
+        // 是否用户本人对查询结果无影响
+        
+        $sql = $this->alias('fu')
+                ->join('LEFT JOIN mn_user ur ON fu.user_id=ur.user_id')
+                ->field('FROM_UNIXTIME(fu.cTime,"%Y-%m-%d %H:%i:%s") AS collectTime,
+                    fu.user_id,
+                    ur.reg_time,
+                    ur.last_login_time,
+                    ur.`status`')
+                ->where('(fu.owner_id='.$ownerId.' AND ur.`status`=1)')/*验证用户账号启用*/
+                ->order('fu.cTime DESC')/*按收藏时间逆序*/
+                ->buildsql();
         return $sql;
     }
 
@@ -39,7 +54,7 @@ class FavuserModel extends BaseModel{
         // 验证userId有效，账号启用
         if (!$this->checkUserStatus($userId)){
             $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled";// userId账号状态为禁用
+            $err['errmsg'] = "target user was disabled or not found";// userId账号状态为禁用，或者无此账号
             $this->error = $err;
             return false;
         }
@@ -78,14 +93,13 @@ class FavuserModel extends BaseModel{
      * @return boolean 另: 模型的error可获取错误提示信息
      */
     public function delFavuser($ownerId, $userId){
-//        // 验证userId有效，账号启用
-//        // 允许取消收藏'被禁用的用户'
-//        if (!$this->checkUserStatus($userId)) {
-//            $err['errcode'] = 412;
-//            $err['errmsg'] = "target user was disabled"; // userId账号状态为禁用
-//            $this->error = $err;
-//            return false;
-//        }
+        // 验证userId有效，账号是否启用
+        if (!$this->checkUserStatus($userId)) {
+            $err['errcode'] = 412;
+            $err['errmsg'] = "target user was disabled"; // userId账号状态为禁用
+            $this->error = $err;
+            return false;
+        }
         // 验证$ownerId和$userId记录存在
         $result = $this->where("owner_id = %d AND user_id = %d", array($ownerId, $userId))->delete();
         if ($result === false) {
