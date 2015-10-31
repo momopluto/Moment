@@ -176,4 +176,21 @@ class MycenterController extends BaseController
         }
     }
 
+    public function  test(){
+        echo '<br/>test -------------<br/>';
+//        $model = D('Thumb');
+//        $model->insertThumb(4170006, self::$user_id);
+//        echo $model->getThumbShare_sql(self::$user_id, true);
+//        $model = D('Favuser');
+//        echo $model->getAllFavusers_sql(self::$user_id);
+//        $model = D('Favshare');
+//        echo $model->getAllFavshares_sql(self::$user_id);
+//        p($model->get_thumbuplist(strtotime('0 day')));
+        $model = D('Comment');
+//        $model->delComment(4194008, self::$user_id);
+        echo $model->getCommentShare_sql(self::$user_id, true);
+//        $model = D('Content');
+//        echo $model->getOnesShare_sql(self::$user_id);
+//        p($model);
+    }
 }
