@@ -147,7 +147,7 @@ class CommentModel extends BaseModel{
      * @param boolean $self 是否用户本人
      * @return string 成功返回sql语句;失败返回false
      */
-    public function getCommentShare_sql($userId, $self=false){
+    public function getCommentSendShare_sql($userId, $self=false){
         // 验证userId有效，账号启用
         if (!$this->checkUserStatus($userId)){
             $err['errcode'] = 412;
@@ -168,6 +168,7 @@ class CommentModel extends BaseModel{
                 ->join('LEFT JOIN mn_share sh ON cmt.s_id=sh.s_id')
                 ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
                 ->field('FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
+                    cmt.content,
                     sh.s_id,
                     sh.user_id,
                     sh.text,
@@ -179,6 +180,47 @@ class CommentModel extends BaseModel{
                 ->where($where)
                 ->order('cmt.cTime DESC')/*按评论时间逆序*/
                 ->buildsql();
+        return $sql;
+    }
+
+    /**
+     * 获取自己被评论过的分享(同一分享可能因为多人评论而出现多次)
+     * 针对自己
+     * @param integer $userId 用户id
+     * @return string sql语句
+     */
+    public function getCommentRecieveShare_sql($userId){
+
+        // $sql = 'SELECT cmt.user_id,
+        //             FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
+        //             sh.s_id,
+        //             sh.text,
+        //             sh.imgs,
+        //             FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+        //             sh.isPublic,
+        //             sh.cmt_count,
+        //             sh.tb_count 
+        //             FROM mn_share sh LEFT JOIN mn_comment cmt ON sh.s_id=cmt.s_id LEFT JOIN mn_user ur ON cmt.user_id=ur.user_id 
+        //             WHERE ( sh.user_id='.$userId.' AND ur.`status`=1 ) 
+        //             ORDER BY cmt.cTime DESC';
+
+        $sql = M('share')->alias('sh')
+                ->join('LEFT JOIN mn_comment cmt ON sh.s_id=cmt.s_id')
+                ->join('LEFT JOIN mn_user ur ON cmt.user_id=ur.user_id')
+                ->field('cmt.user_id,
+                    cmt.content,
+                    FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
+                    sh.s_id,
+                    sh.text,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.isPublic,
+                    sh.cmt_count,
+                    sh.tb_count')
+                ->where('( sh.user_id='.$userId.' AND ur.`status`=1 )')
+                ->order('cmt.cTime DESC')
+                ->buildsql();
+
         return $sql;
     }
 }

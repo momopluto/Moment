@@ -176,7 +176,7 @@ class ThumbModel extends BaseModel{
      * @param boolean $self 是否用户本人
      * @return string 成功返回sql语句;失败返回false
      */
-    public function getThumbShare_sql($userId, $self=false){
+    public function getThumbSendShare_sql($userId, $self=false){
         
         // 验证userId有效，账号启用
         if (!$this->checkUserStatus($userId)){
@@ -210,25 +210,44 @@ class ThumbModel extends BaseModel{
         return $sql;
     }
 
-    // 针对自己
-    public function getThumbMyShare_sql($userId){
-        // userId必合法，只能是自己查看 自己收到的点赞
+    /**
+     * 获取自己被点赞过的分享(同一分享可能因为多人点赞而出现多次)
+     * 针对自己
+     * @param integer $userId 用户id
+     * @return string sql语句
+     */
+    public function getThumbRecieveShare_sql($userId){
+        // userId必合法，只能是自己查看 自己被点赞过的分享
 
-        $sql = 'SELECT '
+        // $sql = 'SELECT tb.user_id,
+        //             FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS thumbTime,
+        //             sh.s_id,
+        //             sh.text,
+        //             sh.imgs,
+        //             FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+        //             sh.isPublic,
+        //             sh.cmt_count,
+        //             sh.tb_count 
+        //         FROM mn_share sh LEFT JOIN mn_thumb tb ON sh.s_id=tb.s_id LEFT JOIN mn_user ur ON tb.user_id=ur.user_id 
+        //         WHERE ( sh.user_id='.$userId.' AND ur.`status`=1 ) 
+        //         ORDER BY tb.cTime DESC';
 
-        $sql = $this->alias('tb')
-                ->join('LEFT JOIN mn_share sh ON tb.s_id=sh.s_id')
-                ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
-                ->field('FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS thumbTime,
+        $sql = M('share')->alias('sh')
+                ->join('LEFT JOIN mn_thumb tb ON sh.s_id=tb.s_id')
+                ->join('LEFT JOIN mn_user ur ON tb.user_id=ur.user_id')
+                ->field('tb.user_id,
+                    FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS thumbTime,
                     sh.s_id,
-                    sh.user_id,
                     sh.text,
                     sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.isPublic,
                     sh.cmt_count,
                     sh.tb_count')
-                ->where('(sh.isPublic=1 AND tb.user_id='.$userId.' AND ur.`status`=1)'
-                    .' OR (tb.user_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$userId.')')
+                ->where('( sh.user_id='.$userId.' AND ur.`status`=1 )')
+                ->order('tb.cTime DESC')
+                ->buildsql();
+
+        return $sql;
     }
 }
