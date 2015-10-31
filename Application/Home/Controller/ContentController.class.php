@@ -26,6 +26,29 @@ class ContentController extends BaseController
         // 如果有上传文件，在此处理
         // 成功返回true，前端再接着展示新增的分享
         // TODO，失败返回错误信息数组[格式待定]
+        
+        // 有上传图片（前端限制能够上传的图片后缀）
+        //      1、判断$_FILES中文件数目是否 等于 imgcount。 不等，则直接返回错误信息'upload $imgcount files failed'
+        //      2、以上确保图片正确上传后，调用模型方法insertShare得到返回的s_id
+        // 得到s_id，组装imgs字段
+//        if ($imgcount) {// 如果有图片
+//            $imgArr = array();
+//            for ($i = 0; $i < $imgcount; $i++) {
+//                $upload->saveName = md5($s_id . '_$i');// 设置上传文件名
+//                $info = $upload->uploadOne($oneFile);// 单个文件上传
+//                if ($info){
+//                    array_push($imgArr, $upload->saveName);
+//                }
+//            }
+//            $imgs = implode(',', $imgArr);// 得到所有上传图片的saveName字符串，以,号分隔
+//        }
+        //      3、使用tp的Upload类，每次设置好saveName后，用uploadOne()上传，确保每个上传的文件都按照我们的意愿命名
+        //          这里如果有个别文件没uploadOne成功，咋办？
+        // 没上传图片
+        //      1、调用模型方法insertShare得到返回的s_id
+        // 
+        // 不管有没图片，只要上传成功后，都返回s_id
+        
         if(IS_AJAX && IS_POST){
             $text = I('post.text', '', 'strip_tags');
             $imgs = I('post.imgs', '', 'strip_tags');
