@@ -72,7 +72,7 @@ class FavuserModel extends BaseModel{
                     ur.reg_time,
                     ur.last_login_time,
                     ur.`status`')
-                ->where('( fu.user_id='.$user_id.' AND ur.`status`=1 )')
+                ->where('( fu.user_id='.$userId.' AND ur.`status`=1 )')
                 ->order('fu.cTime DESC')
                 ->buildsql();
 

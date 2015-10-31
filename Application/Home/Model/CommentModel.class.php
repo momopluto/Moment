@@ -189,7 +189,7 @@ class CommentModel extends BaseModel{
      * @param integer $userId 用户id
      * @return string sql语句
      */
-    public function getCommentRecieveShare_sql($userId){
+    public function getCommentReceiveShare_sql($userId){
 
         // $sql = 'SELECT cmt.user_id,
         //             FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,

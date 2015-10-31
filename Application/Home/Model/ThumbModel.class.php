@@ -216,7 +216,7 @@ class ThumbModel extends BaseModel{
      * @param integer $userId 用户id
      * @return string sql语句
      */
-    public function getThumbRecieveShare_sql($userId){
+    public function getThumbReceiveShare_sql($userId){
         // userId必合法，只能是自己查看 自己被点赞过的分享
 
         // $sql = 'SELECT tb.user_id,
