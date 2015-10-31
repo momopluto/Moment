@@ -13,22 +13,37 @@ class BaseModel extends CommonModel{
     /**
      * 查询userId账号状态
      * @param integer $userId 用户id
-     * $return integer 1为账号启用，0为账号被禁
+     * @return boolean
      */
     protected function checkUserStatus($userId){
-        return M('user')->where('`status`=1 AND user_id=%d',$userId)->count();
+        if (M('user')/*->cache('check_user_status',1800)*/->where('`status`=1 AND user_id=%d',$userId)->count() == 0){
+            $err['errcode'] = 412;
+            $err['errmsg'] = "target user was disabled or not found";// userId账号状态为禁用，或者无此账号
+            $this->error = $err;
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * 查询shareId所属的用户账号状态
      * @param integer $shareId 分享内容的id
-     * @return integer 1为账号启用，0为账号被禁
+     * @return boolean
      */
     protected function checkUserStatus_byShareId($shareId){
-        return M('share')->alias('sh')
+        if (M('share')/*->cache('check_shares_user_status',1800)*/->alias('sh')
                 ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
                 ->where('ur.`status`=1 AND sh.s_id=%d',$shareId)
-                ->count();
+                ->count() == 0){
+
+            $err['errcode'] = 412;
+            $err['errmsg'] = "target share's user was disabled";// shareId所属的用户账号状态为禁用
+            $this->error = $err;
+            return false;
+        }
+
+        return true;
     }
     
     /**

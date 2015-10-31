@@ -8,6 +8,16 @@ use Think\Model;
 class FavuserModel extends BaseModel{
 
     /**
+     * 获取(ownerId)收藏[关注]的用户总数
+     * @param integer $ownerId 拥有者id
+     * @param boolean $self 是否用户本人
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getFavusers_count($ownerId, $self=false){
+        return $this->table($this->getFavusers_sql($ownerId, $self).' tmp')/*->cache('count_focus',1800)*/->count();
+    }
+
+    /**
      * 获取(ownerId)收藏[关注]的用户
      * @param integer $ownerId 拥有者id
      * @param boolean $self 是否用户本人
@@ -16,9 +26,6 @@ class FavuserModel extends BaseModel{
     public function getFavusers_sql($ownerId, $self=false){
         // 验证ownerId有效，账号启用
         if (!$this->checkUserStatus($ownerId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled or not found";// ownerId账号状态为禁用，或者无此账号
-            $this->error = $err;
             return false;
         }
         
@@ -38,6 +45,16 @@ class FavuserModel extends BaseModel{
     }
 
     /**
+     * 获取(userId的)粉丝总数
+     * @param integer $userId 被关注者id
+     * @param boolean $self 是否用户本人
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getFans_count($userId, $self=false){
+        return $this->table($this->getFans_sql($userId, $self).' tmp')/*->cache('count_fans',1800)*/->count();
+    }
+
+    /**
      * 获取(userId的)粉丝
      * @param integer $userId 被关注者id
      * @param boolean $self 是否用户本人
@@ -48,9 +65,6 @@ class FavuserModel extends BaseModel{
 
         // 验证userId有效，账号启用
         if (!$this->checkUserStatus($userId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled or not found";// userId账号状态为禁用，或者无此账号
-            $this->error = $err;
             return false;
         }
         
@@ -95,9 +109,6 @@ class FavuserModel extends BaseModel{
         }
         // 验证userId有效，账号启用
         if (!$this->checkUserStatus($userId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled or not found";// userId账号状态为禁用，或者无此账号
-            $this->error = $err;
             return false;
         }
         // 验证ownerId和userId记录未存在
@@ -137,9 +148,6 @@ class FavuserModel extends BaseModel{
     public function delFavuser($ownerId, $userId){
         // 验证userId有效，账号是否启用
         if (!$this->checkUserStatus($userId)) {
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled"; // userId账号状态为禁用
-            $this->error = $err;
             return false;
         }
         // 验证$ownerId和$userId记录存在
