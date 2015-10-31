@@ -93,8 +93,10 @@ class ContentModel extends BaseModel
      * @param boolean $self   是否为用户本人
      * @return integer 成功返回总数;失败返回false
      */
-    public function getOnesShare_count($userId, $self = false){
-        return $this->table($this->getOnesShare_sql($userId, $self).' tmp')/*->cache('count_share',1800)*/->count();
+    public function getOnesShare_count($userId, $self = false)
+    {
+        return $this->table($this->getOnesShare_sql($userId, $self) . ' tmp')/*->cache('count_share',1800)*/
+        ->count();
     }
 
     /**
@@ -117,18 +119,14 @@ class ContentModel extends BaseModel
             $where = '( ' . $where . ' )';
         }
 
-        $sql = $this->alias('sh')
-            ->field('sh.s_id,
+        $sql = $this->alias('sh')->field('sh.s_id,
                 sh.user_id,
                 sh.`text`,
                 sh.imgs,
                 FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                 sh.isPublic,
                 sh.cmt_count,
-                sh.tb_count')
-            ->where($where)
-            ->order('sh.cTime DESC')
-            ->buildSql();
+                sh.tb_count')->where($where)->order('sh.cTime DESC')->buildSql();
 
         return $sql;
     }
@@ -393,10 +391,9 @@ class ContentModel extends BaseModel
 
         $err['errcode'] = 0;
         $err['errmsg'] = 'ok';
-        $err['data'] = $picArray;
         $this->error = $err;
 
-        return true;
+        return $picArray;
     }
 
     /**
@@ -435,9 +432,8 @@ class ContentModel extends BaseModel
 
         $err['errcode'] = 0;
         $err['errmsg'] = 'ok';
-        $err['data'] = $picArray;
         $this->error = $err;
 
-        return true;
+        return $picArray;
     }
 }
