@@ -25,9 +25,6 @@ class CommentModel extends BaseModel{
         }
         // 验证shareId所属的用户账号状态为启用
         if (!$this->checkUserStatus_byShareId($shareId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target share's user was disabled";// shareId所属的用户账号状态为禁用
-            $this->error = $err;
             return false;
         }
         
@@ -142,6 +139,16 @@ class CommentModel extends BaseModel{
     }
 
     /**
+     * 获取(userId的)评论总数
+     * @param integer $userId 用户id
+     * @param boolean $self 是否用户本人
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getCommentSend_count($userId, $self=false){
+        return $this->table($this->getCommentSendShare_sql($userId, $self).' tmp')->count();
+    }
+
+    /**
      * 获取(userId)评论过的分享(同一分享可能重复出现)
      * @param integer $userId 用户id
      * @param boolean $self 是否用户本人
@@ -150,9 +157,6 @@ class CommentModel extends BaseModel{
     public function getCommentSendShare_sql($userId, $self=false){
         // 验证userId有效，账号启用
         if (!$this->checkUserStatus($userId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled or not found";// userId账号状态为禁用，或者无此账号
-            $this->error = $err;
             return false;
         }
         
@@ -181,6 +185,16 @@ class CommentModel extends BaseModel{
                 ->order('cmt.cTime DESC')/*按评论时间逆序*/
                 ->buildsql();
         return $sql;
+    }
+
+    /**
+     * 获取自己收到的评论总数
+     * 针对自己
+     * @param integer $userId 用户id
+     * @return integer 总数
+     */
+    public function getCommentReceive_count($userId){
+        return $this->table($this->getCommentReceiveShare_sql($userId).' tmp')->count();
     }
 
     /**

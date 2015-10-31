@@ -6,6 +6,17 @@ use Think\Model;
  * mn_favshare
  */
 class FavshareModel extends BaseModel{
+
+    /**
+     * 获取收藏的分享总数
+     * 针对本人
+     * @param integer $ownerId 拥有者id
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getSelfFavshares_count($ownerId){
+        return $this->table($this->getSelfFavshares_sql($ownerId).' tmp')->count();
+    }
+
     /**
      * 获取收藏的分享
      * 针对本人
@@ -15,9 +26,6 @@ class FavshareModel extends BaseModel{
     public function getSelfFavshares_sql($ownerId) {
         // // 验证ownerId有效，账号启用
         // if (!$this->checkUserStatus($ownerId)){
-        //     $err['errcode'] = 412;
-        //     $err['errmsg'] = "target user was disabled or not found";// ownerId账号状态为禁用，或者无此账号
-        //     $this->error = $err;
         //     return false;
         // }
         
@@ -63,9 +71,6 @@ class FavshareModel extends BaseModel{
         }
         // 验证shareId所属的用户账号状态是否为启用
         if (!$this->checkUserStatus_byShareId($shareId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target share's user was disabled";// shareId所属的用户账号状态为禁用
-            $this->error = $err;
             return false;
         }
         // 检验ownerId和shareId记录未存在
@@ -104,9 +109,6 @@ class FavshareModel extends BaseModel{
     public function delFavshare($ownerId, $shareId){
         // 验证shareId所属的用户账号状态是否为启用
         if (!$this->checkUserStatus_byShareId($shareId)) {
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target share's user was disabled"; // shareId所属的用户账号状态为禁用
-            $this->error = $err;
             return false;
         }
         // 验证$ownerId和$userId记录存在

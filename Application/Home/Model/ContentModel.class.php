@@ -88,6 +88,16 @@ class ContentModel extends BaseModel
     }
 
     /**
+     * 获取(userId)用户的分享总数
+     * @param integer $userId 用户id
+     * @param boolean $self   是否为用户本人
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getOnesShare_count($userId, $self = false){
+        return $this->table($this->getOnesShare_sql($userId, $self).' tmp')/*->cache('count_share',1800)*/->count();
+    }
+
+    /**
      * 获取(userId)用户的分享
      * @param integer $userId 用户id
      * @param boolean $self   是否为用户本人
@@ -97,21 +107,28 @@ class ContentModel extends BaseModel
     {
         // 验证userId有效，账号启用
         if(!$this->checkUserStatus($userId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled or not found";// userId账号状态为禁用，或者无此账号
-            $this->error = $err;
-
             return false;
         }
 
         // userId是否用户本身，不同的过滤条件
-        $where = '(user_id=' . $userId . ')';
+        $where = '(sh.user_id=' . $userId . ')';
         if(!$self){// 非用户本身
-            $where .= ' AND (isPublic=1)';// 只允许查看公开的
+            $where .= ' AND (sh.isPublic=1)';// 只允许查看公开的
             $where = '( ' . $where . ' )';
         }
 
-        $sql = $this->field(true)->where($where)->buildSql();
+        $sql = $this->alias('sh')
+            ->field('sh.s_id,
+                sh.user_id,
+                sh.`text`,
+                sh.imgs,
+                FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                sh.isPublic,
+                sh.cmt_count,
+                sh.tb_count')
+            ->where($where)
+            ->order('sh.cTime DESC')
+            ->buildSql();
 
         return $sql;
     }
