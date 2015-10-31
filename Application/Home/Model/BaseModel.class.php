@@ -13,7 +13,7 @@ class BaseModel extends CommonModel{
      * $return integer 1为账号启用，0为账号被禁
      */
     protected function checkUserStatus($userId){
-        return M('user')->where('ur.`status`=1 AND user_id=%d',$userId)->count();
+        return M('user')->where('`status`=1 AND user_id=%d',$userId)->count();
     }
 
     /**
@@ -26,5 +26,41 @@ class BaseModel extends CommonModel{
                 ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
                 ->where('ur.`status`=1 AND sh.s_id=%d',$shareId)
                 ->count();
+    }
+    
+    /**
+     * 更新mn_share表的cmt_count字段
+     * 代替数据库的触发器
+     * @param integer $shareId
+     * @return boolean
+     */
+    protected function update_share_cmt_count($shareId){
+        $sql = 'UPDATE mn_share
+            SET cmt_count=(
+                SELECT COUNT(*) AS cmt_total
+                FROM mn_comment
+                WHERE s_id='.$shareId.'
+                GROUP BY s_id
+            )
+            WHERE mn_share.s_id='.$shareId;
+        return $this->execute($sql);
+    }
+    
+    /**
+     * 更新mn_share表的tb_count字段
+     * 代替数据库的触发器
+     * @param integer $shareId
+     * @return boolean
+     */
+    protected function update_share_tb_count($shareId){
+        $sql = 'UPDATE mn_share
+            SET tb_count=(
+                SELECT COUNT(*) AS tb_total
+                FROM mn_thumb
+                WHERE s_id='.$shareId.'
+                GROUP BY s_id
+            )
+            WHERE mn_share.s_id='.$shareId;
+        return $this->execute($sql);
     }
 }
