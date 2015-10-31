@@ -62,27 +62,48 @@ class MycenterController extends BaseController
     }
 
     /**
-     * 自己分布的所有分享
-     * @return [type] [description]
+     * 获取xx发布的分享
+     * 在xx的主页
+     * @param integer id [GET]用户id
+     * @return html页面/[AJAX] JSON
      */
     public function selfshare() {
-        // 独立1个页面展示
         // GET请求
-        $page = I('param.page', 1, 'strip_tags');
-        $page = intval($page) ? intval($page) : 1;
-        $limit = I('param.limit', 25, 'strip_tags');
-        $limit = intval($limit) ? intval($limit) : 25;
-        $dao = D('content');
-        $userId = $this->getUserId();
-        $where = [
-            'user_id' => $userId,
-        ];
+        // 查看自己的分享，路由为 myct/share
+        // 查看别人的分享，路由为 other/share
 
-        $allcount = intval($dao->countShare($where));
-        $data["data"] = $dao->getShare($where, [], $page, $limit, false);
-        $data['allcount'] = $allcount;
-        $this->assign('data', $data);
-        $this->display();   //
+
+        $userId = I('param.id', self::$user_id);
+// TODO, 测试测试测试
+        // $userId = 541;
+
+        $model = D('Content');
+        $sql = $model->getOnesShare_sql($userId, $userId == self::$user_id);
+        
+        $count      = $model->getOnesShare_count($userId, $userId == self::$user_id);// 查询满足要求的总记录数
+        $Page       = new \Think\Page($count,10);// 实例化分页类 传入总记录数和每页显示的记录数(10)
+        // p($Page);
+        $show       = $Page->show();// 分页显示输出
+        // p($show);
+        $sql .= ' limit '.$Page->firstRow.','.$Page->listRows;// 拼装分页语句
+        $list       = $model->query($sql);
+
+        if (IS_AJAX){
+            // AJAX请求时，则只返回分享内容的数组
+            $rData = json_decode($list);
+            $this->ajaxReturn($rData);
+            return;
+        }
+
+        // 获取(userId的) 关注.粉丝.分享 总数
+        $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
+        $this->assign('count',$countData);
+        // 获取相册的前几张图片
+        // xxx
+
+        $this->assign('list',json_encode($list));// 赋值数据集
+        $this->assign('page',$show);// 赋值分页输出，可考虑同上json返回
+        $this->display('home'); // 输出模板
     }
 
 
@@ -178,22 +199,25 @@ class MycenterController extends BaseController
 
     public function  test(){
         echo '<br/>test -------------<br/>';
+        // p(getUser_FocusFanShare_Count(541));
+
        // $model = D('Thumb');
 //        $model->insertThumb(4170006, self::$user_id);
        // echo $model->getThumbReceiveShare_sql(self::$user_id);
 //        echo $model->getThumbShare_sql(self::$user_id, true);
-       $model = D('Favuser');
-       echo $model->getFans_sql(self::$user_id);
+       // $model = D('Favuser');
+       // echo $model->getFans_sql(self::$user_id);
 
-       p(get_defined_constants(true));
-       p($_SERVER);
+       // p(get_defined_constants(true));
+       // p($_SERVER);
 //        $model = D('Favshare');
 //        echo $model->getAllFavshares_sql(self::$user_id);
 //        p($model->get_thumbuplist(strtotime('0 day')));
         // $model = D('Comment');
 //        $model->delComment(4194008, self::$user_id);
         // echo $model->getCommentReceiveShare_sql(self::$user_id);
-//        $model = D('Content');
+       // $model = D('Content');
+       // echo $model->getOnesShare_count(/*self::$user_id*/541);
 //        echo $model->getOnesShare_sql(self::$user_id);
 //        p($model);
     }
