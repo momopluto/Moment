@@ -209,4 +209,26 @@ class ThumbModel extends BaseModel{
                 ->buildsql();
         return $sql;
     }
+
+    // 针对自己
+    public function getThumbMyShare_sql($userId){
+        // userId必合法，只能是自己查看 自己收到的点赞
+
+        $sql = 'SELECT '
+
+        $sql = $this->alias('tb')
+                ->join('LEFT JOIN mn_share sh ON tb.s_id=sh.s_id')
+                ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+                ->field('FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS thumbTime,
+                    sh.s_id,
+                    sh.user_id,
+                    sh.text,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.isPublic,
+                    sh.cmt_count,
+                    sh.tb_count')
+                ->where('(sh.isPublic=1 AND tb.user_id='.$userId.' AND ur.`status`=1)'
+                    .' OR (tb.user_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$userId.')')
+    }
 }

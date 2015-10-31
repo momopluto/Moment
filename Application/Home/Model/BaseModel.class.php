@@ -6,6 +6,9 @@ class BaseModel extends CommonModel{
     /**
      * Home模块总模型，直接继承CommonModel
      */
+
+// 说明：isPublic只能在发布share时设置。私密的分享，只允许自己点赞、评论、收藏。
+//      在操作share时，要确保该share为公开的 OR 该share属于自己
     
     /**
      * 查询userId账号状态

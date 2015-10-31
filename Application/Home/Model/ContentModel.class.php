@@ -34,7 +34,8 @@ class ContentModel extends BaseModel{
 
     */
 
-    // 统计userId共发布了xx条分享、收藏xx人、收藏xx分享
+    // 统计userId共发布了xx条分享、收藏[关注]xx人、被xx人收藏[关注]
+    // 收藏xx分享
     // 评论了xx条，点赞了xx个，收获了xx个点赞
     // xxxxx
     public function getUserData($userId){
