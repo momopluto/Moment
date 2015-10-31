@@ -345,7 +345,6 @@ class ContentModel extends BaseModel
      * 获取最新一条分享的图片
      * @param            $userId
      * @param bool|false $self
-     * @param int        $limit
      * @return bool
      */
     public function getPic($userId, $self = false)
@@ -385,7 +384,8 @@ class ContentModel extends BaseModel
 
     /**
      * 获取所有图片的链接
-     * @param $userId
+     * @param            $userId
+     * @param bool|false $self
      * @return bool
      */
     public function getAlbum($userId, $self = false)
@@ -401,7 +401,6 @@ class ContentModel extends BaseModel
                 'isPublic' => 1,
             ];
         }
-
 
         $result = $this->where($where)->field('imgs')->order('cTime desc')->select();
 
