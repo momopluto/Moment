@@ -74,11 +74,11 @@ class MycenterController extends BaseController
 
         $userId = I('param.id', self::$user_id);
 // TODO, 测试测试测试
-        // $userId = 541;
+//         $userId = 541;
 
         $model = D('Content');
         $sql = $model->getOnesShare_sql($userId, $userId == self::$user_id);
-        
+
         $count      = $model->getOnesShare_count($userId, $userId == self::$user_id);// 查询满足要求的总记录数
         $Page       = new \Think\Page($count,10);// 实例化分页类 传入总记录数和每页显示的记录数(10)
         // p($Page);
@@ -94,12 +94,16 @@ class MycenterController extends BaseController
             return;
         }
 
+        $pics = [];
+        $result = $model->getPic($userId, $userId == self::$user_id);
+        if($result){
+            $pics = $model->getError()['data'];
+        }
         // 获取(userId的) 关注.粉丝.分享 总数
         $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
         $this->assign('count',$countData);
         // 获取相册的前几张图片
-        // xxx
-
+        $this->assign('pics', $pics);
         $this->assign('list',json_encode($list));// 赋值数据集
         $this->assign('page',$show);// 赋值分页输出，可考虑同上json返回
         $this->display('home'); // 输出模板
