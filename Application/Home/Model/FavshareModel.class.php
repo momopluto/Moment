@@ -7,26 +7,26 @@ use Think\Model;
  */
 class FavshareModel extends BaseModel{
     /**
-     * 获取所有收藏的分享
+     * 获取收藏的分享
+     * 针对本人
      * @param integer $ownerId 拥有者id
-     * @param boolean $self 是否用户本人
-     * @return string 成功返回sql语句;失败返回false
+     * @return string sql语句
      */
-    public function getAllFavshares_sql($ownerId, $self=false) {
-        // 验证ownerId有效，账号启用
-        if (!$this->checkUserStatus($ownerId)){
-            $err['errcode'] = 412;
-            $err['errmsg'] = "target user was disabled or not found";// ownerId账号状态为禁用，或者无此账号
-            $this->error = $err;
-            return false;
-        }
+    public function getSelfFavshares_sql($ownerId) {
+        // // 验证ownerId有效，账号启用
+        // if (!$this->checkUserStatus($ownerId)){
+        //     $err['errcode'] = 412;
+        //     $err['errmsg'] = "target user was disabled or not found";// ownerId账号状态为禁用，或者无此账号
+        //     $this->error = $err;
+        //     return false;
+        // }
         
-        // ownerId是否用户本身，不同的过滤条件
-        $where = '(fs.owner_id=' . $ownerId . ' AND sh.isPublic=1 AND ur.`status`=1)';/*自己收藏的->公开的分享，且账号状态为启用*/
-        if ($self){
-            $where .= ' OR (fs.owner_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$ownerId.')';/*自己收藏的->自己私密的分享*/
-            $where = '( '.$where.' )';
-        }
+        // // ownerId是否用户本身，不同的过滤条件
+        // $where = '(fs.owner_id=' . $ownerId . ' AND sh.isPublic=1 AND ur.`status`=1)';/*自己收藏的->公开的分享，且账号状态为启用*/
+        // if ($self){
+        //     $where .= ' OR (fs.owner_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$ownerId.')';/*自己收藏的->自己私密的分享*/
+        //     $where = '( '.$where.' )';
+        // }
         
         $sql = $this->alias('fs')
                 ->join('LEFT JOIN mn_share sh ON fs.s_id=sh.s_id')
@@ -40,7 +40,8 @@ class FavshareModel extends BaseModel{
                     sh.isPublic,
                     sh.cmt_count,
                     sh.tb_count')
-                ->where($where)
+                ->where('( (fs.owner_id=' . $ownerId . ' AND sh.isPublic=1 AND ur.`status`=1)'
+                    .' OR (fs.owner_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$ownerId.') )')
                 ->order('fs.cTime DESC')/*按收藏时间逆序*/
                 ->buildsql();
         return $sql;
