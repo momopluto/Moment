@@ -74,7 +74,7 @@ class MycenterController extends BaseController
 
         $userId = I('param.id', self::$user_id);
 // TODO, 测试测试测试
-//         $userId = 541;
+        // $userId = 541;
 
         $model = D('Content');
         $sql = $model->getOnesShare_sql($userId, $userId == self::$user_id);
@@ -94,18 +94,35 @@ class MycenterController extends BaseController
             return;
         }
 
-        $pics = [];
-        $result = $model->getPic($userId, $userId == self::$user_id);
-        if($result){
-            $pics = $model->getError()['data'];
-        }
         // 获取(userId的) 关注.粉丝.分享 总数
         $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
         $this->assign('count',$countData);
         // 获取相册的前几张图片
+        $pics = [];
+        $result = $model->getPic($userId, $userId == self::$user_id);
+        if($result){
+            $picDir = md5($userId);
+            $picPath = PATH_IMG."/$picDir/";
+            $this->assign('picPath',$picPath);// 访问url，后面直接拼图片名即可访问
+            
+            $pics = $result;
+        }
         $this->assign('pics', $pics);
         $this->assign('list',json_encode($list));// 赋值数据集
+        $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
+        $this->assign('totalPages',$totalPages);
         $this->assign('page',$show);// 赋值分页输出，可考虑同上json返回
+        // 分享内容json格式
+        // p(json_encode($list));
+        // echo '分页内容<br/>';
+        // // p($show);
+        // echo $totalPages.'<br/>';
+        // echo '用户的统计数据<br/>';
+        // p($countData);
+        // echo '相册<br/>';
+        // echo $picPath;
+        // p($pics);
+        // die;
         $this->display('home'); // 输出模板
     }
 

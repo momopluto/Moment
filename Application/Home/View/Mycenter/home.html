@@ -67,12 +67,17 @@
                     <div class="card">
                         <div class="card-title">相册</div>
                         <div class="photo_wrap">
+                        <{foreach $pics as $imgName}>
+                            <div class="photo" style="background-image:url(<{$picPath}><{$imgName}>)"></div>
+                        <{/foreach}>
+                        <{* smarty注释掉的内容不会出现在替换后的文件中
                             <div class="photo" style="background-image:url(<{$smarty.const.PATH_IMG}>/1.jpg)"></div>
                             <div class="photo" style="background-image:url(<{$smarty.const.PATH_IMG}>/2.jpg)"></div>
                             <div class="photo" style="background-image:url(<{$smarty.const.PATH_IMG}>/3.jpg)"></div>
                             <div class="photo" style="background-image:url(<{$smarty.const.PATH_IMG}>/4.jpg)"></div>
                             <div class="photo" style="background-image:url(<{$smarty.const.PATH_IMG}>/5.jpg)"></div>
                             <div class="photo" style="background-image:url(<{$smarty.const.PATH_IMG}>/6.jpg)"></div>
+                        *}>
                         </div>
                         <a href="javascript:;" class="card-more">查看更多</a>
                     </div>
@@ -183,6 +188,7 @@
         </div>
     </div>
     <div>
+        <{* 前端不需要$page *}>
         <{$page}>
     </div>
 
