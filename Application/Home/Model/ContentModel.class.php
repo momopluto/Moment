@@ -180,17 +180,28 @@ class ContentModel extends BaseModel
     public function delShare($shareId, $userId)
     {
         // 验证shareId和userId对应的记录存在，即userId对shareId具备拥有权
-        if(!M('share')->where('s_id = %d AND user_id = %d', array($shareId, $userId))->count()){
+        if(!M('share')->where('s_id = %d AND user_id = %d', array(
+            $shareId,
+            $userId,
+        ))->count()
+        ){
             $err['errcode'] = 404;
             $err['errmsg'] = "no match record";
             $this->error = $err;
+
             return false;
         }
 
         // 获取将被删除的share的记录
-        $old_row = $this->where('s_id = %d AND user_id = %d', array($shareId, $userId))->find();
+        $old_row = $this->where('s_id = %d AND user_id = %d', array(
+            $shareId,
+            $userId,
+        ))->find();
         // 删除share
-        $result = $this->where('s_id = %d AND user_id = %d', array($shareId, $userId))->delete();
+        $result = $this->where('s_id = %d AND user_id = %d', array(
+            $shareId,
+            $userId,
+        ))->delete();
         //      (再删除share下的所有comment、所有thumb、所有收藏的share)!!!!按理不能删啊，直接让他们的comment或thumb找不到share然后提示已删除就好了喂！
         //      !!!!但是是是是是，虽然都是LEFT JOIN mn_share sh，但有where sh.isPublic = 1，这也无济于事啊，被删掉的share肯定找不着
         //      考虑都来就复杂了，目前暂且采用"全关联删除"吧
@@ -198,21 +209,22 @@ class ContentModel extends BaseModel
             $err['errcode'] = 400;
             $err['errmsg'] = "delete share failed";
             $this->error = $err;
+
             return false;
         }
 
         // 删除涉及到的图片
-        if ($old_row['imgs'] != ''){
+        if($old_row['imgs'] != ''){
             $imgsArr = explode(',', $old_row['imgs']);
             $dirname = md5($userId);
-            foreach ($imgsArr as $imgName) {
-                $imgPath = AS_PATH_IMG."/$dirname/".$imgName;
+            foreach($imgsArr as $imgName){
+                $imgPath = AS_PATH_IMG . "/$dirname/" . $imgName;
                 unlink($imgPath);// 删除图片，不检查是否删除成功
             }
         }
-        
-        while (true){// 确保删除share的所有comment
-            if (D('comment')->where('s_id = %d', $shareId)->delete() !== false){
+
+        while(true){// 确保删除share的所有comment
+            if(D('comment')->where('s_id = %d', $shareId)->delete() !== false){
                 break;
             }
             echo '擦咧，comment没删除成功<br/>';
@@ -330,40 +342,37 @@ class ContentModel extends BaseModel
     }
 
     /**
-     * 获取6张图片的链接
-     * @param     $userId
-     * @param int $limit
+     * 获取最新一条分享的图片
+     * @param            $userId
+     * @param bool|false $self
+     * @param int        $limit
      * @return bool
      */
-    public function getPic($userId, $limit = 6)
+    public function getPic($userId, $self = false)
     {
-        // 同时取多条。
-        $count = $this->countShare(['user_id' => $userId]);
-        $eachTime = 25;
-        $maxPage = intval(($count + $eachTime) / $eachTime);
-        $page = 1;
-        $picArray = [];
-        while($page <= $maxPage){
-            $result = $this->where([
+        if($self){
+            $where = [
                 'user_id'  => $userId,
                 'isPublic' => 1,
-            ])->field('imgs')->page(1, $eachTime)->order('cTime desc')->select();
+                'imgs'     => [
+                    'neq',
+                    '',
+                ],
+            ];
+        }else{
+            $where = [
+                'user_id' => $userId,
+                'imgs'    => [
+                    'neq',
+                    '',
+                ],
+            ];
+        }
 
-            $tmp = array_column($result, 'imgs');
-            foreach($tmp as $value){
-                if($value){
-                    $picArray = array_merge($picArray, explode(',', $value));
-                    if(count($picArray) >= $limit){
-                        break;
-                    }
-                }
-            }
-
-            if(count($picArray) >= $limit){
-                $picArray = array_chunk($picArray, $limit)[0];
-                break;
-            }
-            ++$page;
+        $result = $this->field('imgs')->where($where)->limit(1)->order('cTime desc')->select();
+        $picArray = explode(',', $result[0]['imgs']);
+        if(!end($picArray)){
+            array_pop($picArray);
         }
 
         $err['errcode'] = 0;
@@ -379,20 +388,29 @@ class ContentModel extends BaseModel
      * @param $userId
      * @return bool
      */
-    public function getAlbum($userId)
+    public function getAlbum($userId, $self = false)
     {
-        $result = $this->where([
-            'user_id'  => $userId,
-            'isPublic' => 1,
-        ])->field('imgs')->order('cTime desc')->select();
+        // 判断
+        if($self){
+            $where = [
+                'user_id' => $userId,
+            ];
+        }else{
+            $where = [
+                'user_id'  => $userId,
+                'isPublic' => 1,
+            ];
+        }
+
+
+        $result = $this->where($where)->field('imgs')->order('cTime desc')->select();
 
         $tmp = array_column($result, 'imgs');
-        dump($tmp);
         $picArray = [];
         foreach($tmp as $value){
             if($value){
                 $temp = explode(',', $value);
-                if (end($temp) == ''){
+                if(end($temp) == ''){
                     array_pop($temp);
                 }
                 $picArray = array_merge($picArray, $temp);

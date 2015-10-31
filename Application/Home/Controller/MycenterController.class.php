@@ -13,7 +13,8 @@ class MycenterController extends BaseController
      * 设置屏蔽/开启自己的分享
      * @return [type] [description]
      */
-    public function sharetoggle() {
+    public function sharetoggle()
+    {
         // AJAX POST
         // 接受参数{无}
         // 成功返回true
@@ -55,8 +56,7 @@ class MycenterController extends BaseController
                 ];
             }
         }
-        if (IS_POST){
-
+        if(IS_POST){
         }
         $this->ajaxReturn($ret);
     }
@@ -65,7 +65,8 @@ class MycenterController extends BaseController
      * 自己分布的所有分享
      * @return [type] [description]
      */
-    public function selfshare() {
+    public function selfshare()
+    {
         // 独立1个页面展示
         // GET请求
         $page = I('param.page', 1, 'strip_tags');
@@ -85,7 +86,6 @@ class MycenterController extends BaseController
         $this->display();   //
     }
 
-
     public function selfThumb()
     {
         $page = intval(I('param.page', 1, 'strip_tags'));
@@ -104,7 +104,7 @@ class MycenterController extends BaseController
 
         $this->display();
     }
-    
+
     public function selfComment()
     {
         $page = intval(I('param.page', 1, 'strip_tags'));
@@ -129,7 +129,8 @@ class MycenterController extends BaseController
      * @access public
      * @return void
      */
-    public function logout() {
+    public function logout()
+    {
         session('LOGIN_FLAG', null);
         session('USERDATA', null);
         session('SESSION_EXPIRE', null);
@@ -142,59 +143,92 @@ class MycenterController extends BaseController
      * @access public
      * @return void
      */
-    public function chpwd() {
-        if (IS_POST){
+    public function chpwd()
+    {
+        if(IS_POST){
             $cur_ask = 'Mycenter/chpwd';
             $verify = new \Think\Verify();
-            if ($verify->check(I('post.verify'))) {
+            if($verify->check(I('post.verify'))){
                 $this->redirect($cur_ask, '', 3, '验证码错误！');
+
                 return;
             }
 
             $old_pwd = I('post.oldpassword');
-            if ($old_pwd == '') {
+            if($old_pwd == ''){
                 $this->redirect($cur_ask, '', 3, '原密码不能为空！');
+
                 return;
             }
             $new_pwd = I('post.password');
             $renew_pwd = I('post.repassword');
-            if ($new_pwd !== $renew_pwd){
+            if($new_pwd !== $renew_pwd){
                 $this->redirect($cur_ask, '', 3, '两次输入的密码不一致！');
+
                 return;
             }
-            
+
             $model = D('User');
-            if ($model->chpwd(self::$user_id, $old_pwd, $new_pwd)){
+            if($model->chpwd(self::$user_id, $old_pwd, $new_pwd)){
                 $this->redirect($cur_ask, '', 3, '修改密码成功');
+
                 return;
-            }  else {
+            }else{
                 $this->redirect($cur_ask, '', 3, $model->getError());
+
                 return;
             }
-        }  else {
+        }else{
             $this->display();
         }
     }
 
-    public function  test(){
-        echo '<br/>test -------------<br/>';
-       // $model = D('Thumb');
-//        $model->insertThumb(4170006, self::$user_id);
-       // echo $model->getThumbReceiveShare_sql(self::$user_id);
-//        echo $model->getThumbShare_sql(self::$user_id, true);
-       $model = D('Favuser');
-       echo $model->getFans_sql(self::$user_id);
+    public function album()
+    {
+        if(IS_GET){
+            $userId = I('param.id', '');
+            $dao = D('Content');
+            $result = $dao->getAlbum($userId, $userId == self::$user_id);
+            if($result){
+                $this->assign('pics', $dao->getError()['data']);
+                $this->display();
+            }
+        }
+    }
 
-       p(get_defined_constants(true));
-       p($_SERVER);
-//        $model = D('Favshare');
-//        echo $model->getAllFavshares_sql(self::$user_id);
-//        p($model->get_thumbuplist(strtotime('0 day')));
+    public function pic()
+    {
+        if(IS_GET){
+            $userId = I('param.id', '');
+            $dao = D('Content');
+            $result = $dao->getPic($userId, $userId == self::$user_id);
+            if($result){
+                $this->assign('pics', $dao->getError()['data']);
+                $this->display();
+            }
+        }
+    }
+
+    public function  test()
+    {
+        echo '<br/>test -------------<br/>';
+        // $model = D('Thumb');
+        //        $model->insertThumb(4170006, self::$user_id);
+        // echo $model->getThumbReceiveShare_sql(self::$user_id);
+        //        echo $model->getThumbShare_sql(self::$user_id, true);
+        $model = D('Favuser');
+        echo $model->getFans_sql(self::$user_id);
+
+        p(get_defined_constants(true));
+        p($_SERVER);
+        //        $model = D('Favshare');
+        //        echo $model->getAllFavshares_sql(self::$user_id);
+        //        p($model->get_thumbuplist(strtotime('0 day')));
         // $model = D('Comment');
-//        $model->delComment(4194008, self::$user_id);
+        //        $model->delComment(4194008, self::$user_id);
         // echo $model->getCommentReceiveShare_sql(self::$user_id);
-//        $model = D('Content');
-//        echo $model->getOnesShare_sql(self::$user_id);
-//        p($model);
+        //        $model = D('Content');
+        //        echo $model->getOnesShare_sql(self::$user_id);
+        //        p($model);
     }
 }
