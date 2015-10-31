@@ -207,6 +207,8 @@ class ContentModel extends BaseModel{
             return false;
         }
         
+        // 获取将被删除的share的记录
+        $old_row = $this->where('s_id = %d AND user_id = %d', array($shareId, $userId))->find();
         // 删除share
         $result = $this->where('s_id = %d AND user_id = %d', array($shareId, $userId))->delete();
         //      (再删除share下的所有comment、所有thumb、所有收藏的share)!!!!按理不能删啊，直接让他们的comment或thumb找不到share然后提示已删除就好了喂！
@@ -217,6 +219,16 @@ class ContentModel extends BaseModel{
             $err['errmsg'] = "delete share failed";
             $this->error = $err;
             return false;
+        }
+
+        // 删除涉及到的图片
+        if ($old_row['imgs'] != ''){
+            $imgsArr = explode(',', $old_row['imgs']);
+            $dirname = md5($userId);
+            foreach ($imgsArr as $imgName) {
+                $imgPath = AS_PATH_IMG."/$dirname/".$imgName;
+                unlink($imgPath);// 删除图片，不检查是否删除成功
+            }
         }
         
         while (true){// 确保删除share的所有comment
@@ -237,6 +249,7 @@ class ContentModel extends BaseModel{
             }
             echo '擦咧，favshare没删除成功<br/>';
         }
+
         // 以上都删除，则成功，返回true
         //      ..不允许失败
         $err['errcode'] = 0;
