@@ -9,7 +9,7 @@ class MycenterController extends BaseController
 {
 
     /**
-     * 设置屏蔽/开启自己的分享
+     * [废弃]设置屏蔽/开启自己的分享
      * @return [type] [description]
      */
     public function sharetoggle()
@@ -61,8 +61,8 @@ class MycenterController extends BaseController
     }
 
     /**
-     * 获取xx发布的分享
-     * 在xx的主页
+     * 查看xx发布的分享
+     * 在xx的分享页面
      * @param integer id [GET]用户id
      * @return html页面/[AJAX] JSON
      */
@@ -71,13 +71,16 @@ class MycenterController extends BaseController
         // 查看自己的分享，路由为 myct/share
         // 查看别人的分享，路由为 other/share
 
-
         $userId = I('param.id', self::$user_id);
 // TODO, 测试测试测试
         // $userId = 541;
 
         $model = D('Content');
         $sql = $model->getOnesShare_sql($userId, $userId == self::$user_id);
+        if (!$sql){
+            $this->redirect('myct/share', '', 3, $model->getError());
+            return;
+        }
 
         $count      = $model->getOnesShare_count($userId, $userId == self::$user_id);// 查询满足要求的总记录数
         $Page       = new \Think\Page($count,10);// 实例化分页类 传入总记录数和每页显示的记录数(10)
@@ -94,20 +97,9 @@ class MycenterController extends BaseController
             return;
         }
 
-        // 获取(userId的) 关注.粉丝.分享 总数
-        $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
-        $this->assign('count',$countData);
-        // 获取相册的前几张图片
-        $pics = [];
-        $result = $model->getPic($userId, $userId == self::$user_id);
-        if($result){
-            $picDir = md5($userId);
-            $picPath = PATH_IMG."/$picDir/";
-            $this->assign('picPath',$picPath);// 访问url，后面直接拼图片名即可访问
-            
-            $pics = $result;
-        }
-        $this->assign('pics', $pics);
+        // 获取home主页公共的数据
+        $this->get_home_public_data($userId);
+        
         $this->assign('list',json_encode($list));// 赋值数据集
         $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
         $this->assign('totalPages',$totalPages);
@@ -117,13 +109,153 @@ class MycenterController extends BaseController
         // echo '分页内容<br/>';
         // // p($show);
         // echo $totalPages.'<br/>';
-        // echo '用户的统计数据<br/>';
-        // p($countData);
-        // echo '相册<br/>';
-        // echo $picPath;
-        // p($pics);
         // die;
         $this->display('home'); // 输出模板
+    }
+    
+    /**
+     * 查看user关注的人
+     * @param integer id [GET]用户id
+     * @return html页面???
+     */
+    public function selffocus(){
+        // GET请求
+        // 查看自己关注的人，路由为 myct/focus
+        // 查看别人关注的人，路由为 other/focus
+        
+        $userId = I('param.id', self::$user_id);
+// TODO, 测试测试测试
+//         $userId = 17765;
+//         $userId = 7839;
+
+        $model = D('Favuser');
+        $sql = $model->getFavusers_sql($userId, $userId == self::$user_id);
+        if (!$sql){
+            $this->redirect('myct/focus', '', 3, $model->getError());
+            return;
+        }
+
+        $count      = $model->getFavusers_count($userId, $userId == self::$user_id);// 查询满足要求的总记录数
+        $Page       = new \Think\Page($count,20);// 实例化分页类 传入总记录数和每页显示的记录数
+        // p($Page);
+        $show       = $Page->show();// 分页显示输出
+        // p($show);
+        $sql .= ' limit '.$Page->firstRow.','.$Page->listRows;// 拼装分页语句
+        $list       = $model->query($sql);
+//        p($list);die;
+        
+        if (IS_AJAX){
+            // AJAX请求时，则只返回分享内容的数组
+            $rData = json_decode($list);
+            $this->ajaxReturn($rData);
+            return;
+        }
+        
+        // 获取home主页公共的数据
+        $this->get_home_public_data($userId);
+        
+        
+        $this->assign('data',$list);// 赋值数据集Array
+        
+        $this->assign('list',json_encode($list));// 赋值数据集String
+        $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
+        $this->assign('totalPages',$totalPages);
+        
+        $this->assign('page',$show);// 赋值分页输出，可考虑同上json返回
+        $this->display('follow'); // 输出模板
+    }
+    
+    /**
+     * 查看user的粉丝
+     * @param integer id [GET]用户id
+     * @return html页面???
+     */
+    public function selffans(){
+        // GET请求
+        // 查看自己关注的人，路由为 myct/fans
+        // 查看别人关注的人，路由为 other/fans
+        
+        $userId = I('param.id', self::$user_id);
+// TODO, 测试测试测试
+//         $userId = 17765;
+//         $userId = 541;
+
+        $model = D('Favuser');
+        $sql = $model->getFans_sql($userId, $userId == self::$user_id);
+        if (!$sql){
+            $this->redirect('myct/fans', '', 3, $model->getError());
+            return;
+        }
+
+        $count      = $model->getFans_count($userId, $userId == self::$user_id);// 查询满足要求的总记录数
+        $Page       = new \Think\Page($count,20);// 实例化分页类 传入总记录数和每页显示的记录数
+        // p($Page);
+        $show       = $Page->show();// 分页显示输出
+        // p($show);
+        $sql .= ' limit '.$Page->firstRow.','.$Page->listRows;// 拼装分页语句
+        $list       = $model->query($sql);
+//        p($list);die;
+        
+        if (IS_AJAX){
+            // AJAX请求时，则只返回分享内容的数组
+            $rData = json_decode($list);
+            $this->ajaxReturn($rData);
+            return;
+        }
+        
+        // 获取home主页公共的数据
+        $this->get_home_public_data($userId);
+        
+        
+        $this->assign('data',$list);// 赋值数据集Array
+        
+        $this->assign('list',json_encode($list));// 赋值数据集String
+        $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
+        $this->assign('totalPages',$totalPages);
+        
+        $this->assign('page',$show);// 赋值分页输出，可考虑同上json返回
+        $this->display('fans'); // 输出模板
+    }
+    
+    /**
+     * 查看自己收藏的分享
+     * 登录用户本人
+     * @return html页面/[AJAX] JSON
+     */
+    public function selfcollect(){
+        // GET请求
+
+        $userId = self::$user_id;
+// TODO, 测试测试测试
+//        $userId = 50001;
+
+        $model = D('Favshare');
+        $sql = $model->getSelfFavshares_sql($userId);
+
+        $count = $model->getSelfFavshares_count($userId); // 查询满足要求的总记录数
+        $this->assign('collectCount',$count);
+        $Page = new \Think\Page($count, 10); // 实例化分页类 传入总记录数和每页显示的记录数(10)
+        // p($Page);
+        $show = $Page->show(); // 分页显示输出
+        // p($show);
+        $sql .= ' limit ' . $Page->firstRow . ',' . $Page->listRows; // 拼装分页语句
+        $list = $model->query($sql);
+//        p($list);die;
+        if (IS_AJAX) {
+            // AJAX请求时，则只返回分享内容的数组
+            $rData = json_decode($list);
+            $this->ajaxReturn($rData);
+            return;
+        }
+        
+        // 获取index页面公共的数据
+        $this->get_index_public_data($userId);
+ 
+        $this->assign('list', json_encode($list)); // 赋值数据集
+        $totalPages = ceil($Page->totalRows / $Page->listRows); // 计算页数
+        $this->assign('totalPages', $totalPages);
+        $this->assign('page', $show); // 赋值分页输出，可考虑同上json返回
+        $this->display('collect');
     }
 
     public function selfThumb()
@@ -252,6 +384,7 @@ class MycenterController extends BaseController
     public function  test()
     {
         echo '<br/>test -------------<br/>';
+        p(get_defined_constants(true));
         // p(getUser_FocusFanShare_Count(541));
 
        // $model = D('Thumb');
