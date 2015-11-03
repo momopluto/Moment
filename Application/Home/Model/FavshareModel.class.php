@@ -47,7 +47,8 @@ class FavshareModel extends BaseModel{
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.isPublic,
                     sh.cmt_count,
-                    sh.tb_count')
+                    sh.tb_count,
+                    1 AS collected')/*必已收藏标志*/
                 ->where('( (fs.owner_id=' . $ownerId . ' AND sh.isPublic=1 AND ur.`status`=1)'
                     .' OR (fs.owner_id=sh.user_id AND sh.isPublic=0 AND sh.user_id='.$ownerId.') )')
                 ->order('fs.cTime DESC')/*按收藏时间逆序*/
