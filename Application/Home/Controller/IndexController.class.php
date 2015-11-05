@@ -47,6 +47,13 @@ class IndexController extends BaseController {
         $this->assign('list', json_encode($list)); // 赋值数据集
         $totalPages = ceil($Page->totalRows / $Page->listRows); // 计算页数
         $this->assign('totalPages', $totalPages);
+        
+//        echo '$lists = <br/>';
+//        p(json_encode($list));
+//        echo '$totalPages = <br/>';
+//        echo $totalPages;
+//        die;
+        
         $this->assign('page', $show); // 赋值分页输出，可考虑同上json返回
         $this->display();
     }

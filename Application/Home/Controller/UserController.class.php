@@ -8,10 +8,10 @@ use Think\Controller;
 class UserController extends Controller {
 
     /**
-     * 登录
-     * @access public
-     * @return void
-     */
+         * 登录
+         * @access public
+         * @return void
+         */
     public function login() {
         // 判断是否存在session
         if (session('?LOGIN_FLAG') && session('LOGIN_FLAG')) {
@@ -67,9 +67,9 @@ class UserController extends Controller {
     }
 
     /**
-     * 注册
-     * @return [type] [description]
-     */
+         * 注册
+         * @return [type] [description]
+         */
     public function signup() {
         if (IS_POST){
             $login_ask = 'usr/signin';
@@ -109,9 +109,9 @@ class UserController extends Controller {
     }
     
     /**
-     * 获取验证码
-     * @access public
-     */
+         * 获取验证码
+         * @access public
+         */
     public function verify() {
 
         $config = array(

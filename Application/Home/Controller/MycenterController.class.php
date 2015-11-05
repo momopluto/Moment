@@ -155,11 +155,17 @@ class MycenterController extends BaseController
         $this->get_home_public_data($userId);
         
         
-        $this->assign('data',$list);// 赋值数据集Array
+//        $this->assign('data',$list);// 赋值数据集Array
         
         $this->assign('list',json_encode($list));// 赋值数据集String
         $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
         $this->assign('totalPages',$totalPages);
+        
+//        echo '$lists = <br/>';
+//        p(json_encode($list));
+//        echo '$totalPages = <br/>';
+//        echo $totalPages;
+//        die;
         
         $this->assign('page',$show);// 赋值分页输出，可考虑同上json返回
         $this->display('follow'); // 输出模板
@@ -213,6 +219,12 @@ class MycenterController extends BaseController
         $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
         $this->assign('totalPages',$totalPages);
         
+//        echo '$lists = <br/>';
+//        p(json_encode($list));
+//        echo '$totalPages = <br/>';
+//        echo $totalPages;
+//        die;
+        
         $this->assign('page',$show);// 赋值分页输出，可考虑同上json返回
         $this->display('fans'); // 输出模板
     }
@@ -254,6 +266,13 @@ class MycenterController extends BaseController
         $this->assign('list', json_encode($list)); // 赋值数据集
         $totalPages = ceil($Page->totalRows / $Page->listRows); // 计算页数
         $this->assign('totalPages', $totalPages);
+        
+//        echo '$lists = <br/>';
+//        p(json_encode($list));
+//        echo '$totalPages = <br/>';
+//        echo $totalPages;
+//        die;
+        
         $this->assign('page', $show); // 赋值分页输出，可考虑同上json返回
         $this->display('collect');
     }

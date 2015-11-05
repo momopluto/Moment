@@ -21,7 +21,6 @@ class ThumbModel extends BaseModel{
                 ->field('sh.s_id,
                     sh.user_id,
                     sh.text,
-                    sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.tb_count')
                 ->where('sh.tb_count>0 AND sh.isPublic=1 AND ur.`status`=1')/*限制公开的分享，且'启用的用户' 才能参与排行榜*/
@@ -39,7 +38,6 @@ class ThumbModel extends BaseModel{
                     COUNT(*) AS tb_count,
                     sh.user_id,
                     sh.text,
-                    sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime')
                 ->where('((tb.cTime BETWEEN '.$monday.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
                         . ' AND  (ur.`status`=1 AND sh.isPublic=1))')/*限制公开的分享，且'启用的用户' 才能参与排行榜*/
@@ -55,7 +53,6 @@ class ThumbModel extends BaseModel{
                     COUNT(*) AS tb_count,
                     sh.user_id,
                     sh.text,
-                    sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime')
                 ->where('((tb.cTime BETWEEN '.$today_st.' AND '.$today_ed.')'/*时间段查询导致ALL全表扫描，待改进*/
                         . ' AND  (ur.`status`=1 AND sh.isPublic=1))')/*限制公开的分享，且'启用的用户' 才能参与排行榜*/

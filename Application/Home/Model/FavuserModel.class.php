@@ -75,7 +75,6 @@ class FavuserModel extends BaseModel{
                 ->join('LEFT JOIN mn_user ur ON fu.owner_id=ur.user_id')
                 ->join('LEFT JOIN mn_favuser fu2 ON (fu2.user_id=fu.owner_id AND fu2.owner_id=fu.user_id)')/*判断是否已经与粉丝互相关注*/
                 ->field('FROM_UNIXTIME(fu.cTime,"%Y-%m-%d %H:%i:%s") AS followTime,
-                    fu.owner_id,
                     ur.username,
                     ur.reg_time,
                     ur.last_login_time,
