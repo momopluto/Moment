@@ -35,6 +35,7 @@ class FavuserModel extends BaseModel{
                 ->join('LEFT JOIN mn_user ur ON fu.user_id=ur.user_id')
                 ->field('FROM_UNIXTIME(fu.cTime,"%Y-%m-%d %H:%i:%s") AS focusTime,
                     fu.user_id,
+                    ur.username,
                     ur.reg_time,
                     ur.last_login_time,
                     ur.`status`')
@@ -70,22 +71,15 @@ class FavuserModel extends BaseModel{
         
         // 是否用户本人对查询结果无影响
 
-        // $sql = 'SELECT FROM_UNIXTIME(fu.cTime,"%Y-%m-%d %H:%i:%s") AS followTime,
-        //             fu.owner_id,
-        //             ur.reg_time,
-        //             ur.last_login_time,
-        //             ur.`status` 
-        //         FROM mn_favuser fu LEFT JOIN mn_user ur ON fu.owner_id=ur.user_id 
-        //         WHERE ( fu.user_id='.$user_id.' AND ur.`status`=1 ) 
-        //         ORDER BY fu.cTime DESC';
-
         $sql = $this->alias('fu')
                 ->join('LEFT JOIN mn_user ur ON fu.owner_id=ur.user_id')
+                ->join('LEFT JOIN mn_favuser fu2 ON (fu2.user_id=fu.owner_id AND fu2.owner_id=fu.user_id)')/*判断是否已经与粉丝互相关注*/
                 ->field('FROM_UNIXTIME(fu.cTime,"%Y-%m-%d %H:%i:%s") AS followTime,
-                    fu.owner_id,
+                    ur.username,
                     ur.reg_time,
                     ur.last_login_time,
-                    ur.`status`')
+                    ur.`status`,
+                    IF(fu2.cTime,1,0) AS correlated')/*correlated为1代表已互相关注，0为未关注粉丝*/
                 ->where('( fu.user_id='.$userId.' AND ur.`status`=1 )')
                 ->order('fu.cTime DESC')
                 ->buildsql();

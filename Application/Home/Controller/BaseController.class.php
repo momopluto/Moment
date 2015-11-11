@@ -62,6 +62,61 @@ class BaseController extends CommonController
         self::$nickname = '';
         self::$userdata = $userdata;
     }
+    
+    /**
+     * 获取home页面公共的数据
+     * 1、关注.粉丝.分享 总数
+     * 2、相册的前几张图片
+     * @param integer $userId 用户id
+     */
+    protected function get_home_public_data($userId){
+        // 获取(userId的) 关注.粉丝.分享 总数
+        $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
+        $this->assign('count',$countData);
+//        echo '$count = <br/>';
+//        p($countData);
+        // 获取相册的前几张图片
+        $pics = [];
+        $result = D('Content')->getPic($userId, $userId == self::$user_id);
+        if($result){
+            $picDir = md5($userId);
+            $picPath = PATH_IMG."/$picDir/";
+            $this->assign('picPath',$picPath);// 访问url，后面直接拼图片名即可访问
+            
+            $pics = $result;
+        }
+        $this->assign('pics', $pics);
+//        echo '$picPath = <br/>';
+//        echo $picPath;
+//        echo '$pics = <br/>';
+//        p($pics);
+    }
+    
+    /**
+     * 获取index页面公共的数据
+     * 1、关注.粉丝.分享 总数
+     * 2、点赞榜
+     * @param integer $userId
+     */
+    protected function get_index_public_data($userId){
+        // 获取(userId的) 关注.粉丝.分享 总数
+        $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
+        $this->assign('count', $countData);
+//        echo '$count = <br/>';
+//        p($countData);
+
+        // 获取点赞榜
+        $thumblist = D('Thumb')->get_thumbuplist(NOW_TIME, 5);
+        $this->assign('thumblist', $thumblist);
+//        echo '$thumblist = <br/>';
+//        p($thumblist);
+        
+        $picDir = md5($userId);
+        $picPath = PATH_IMG."/";
+        $this->assign('picPath',$picPath);// 访问url，后面md5($userId)为文件夹名后，再拼图片名即可访问
+//        echo '$picPath = <br/>';
+//        echo $picPath;
+    }
 
     protected function getUserId()
     {

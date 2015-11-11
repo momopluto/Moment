@@ -86,6 +86,60 @@ class ContentModel extends BaseModel
             'list'     => $list,
         ];
     }
+    
+    /**
+     * 获取(userId)用户可查看的分享总数
+     * 限制分享的发布时间为[一周内]
+     * TODO ，耗时长，需缓存
+     * @param integer $userId 用户id
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getAllCanSeeShare_count($userId){
+        return $this->table($this->getAllCanSeeShare_sql($userId).' tmp')->count();
+    }
+
+    /**
+     * 获取(userId)用户可查看的分享
+     * 限制分享的发布时间为[一周内]
+     * TODO ，耗时长，需缓存
+     * @param integer $userId 用户id
+     * @return boolean 成功返回sql语句;失败返回false
+     */
+    public function getAllCanSeeShare_sql($userId){
+        // 验证userId有效，账号启用
+        if(!$this->checkUserStatus($userId)){
+            return false;
+        }
+        
+        $theday = strtotime('-0 day',NOW_TIME);// 方便测试
+        $monday   = strtotime('-1 week Monday', $theday);// 过去的周一
+//        $today_st = strtotime(date('Y-m-d 00:00:00',$theday));
+        $today_ed = strtotime(date('Y-m-d 23:59:59',$theday));
+        $sql = $this->alias('sh')
+                ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+                ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id='.$userId)/*判断userId是否有收藏此分享*/
+                ->field('sh.s_id,
+                    sh.user_id,
+                    sh.`text`,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.isPublic,
+                    sh.cmt_count,
+                    sh.tb_count,
+                    IF(fs.cTime,1,0) AS collected')/*collected为1代表已收藏，0为未收藏*/
+                ->where('('
+                        . ' (sh.cTime BETWEEN '.$monday.' AND '.$today_ed.')'/*限制时间段*/
+                        . ' AND ('
+                            . ' (sh.isPublic=1 AND ur.`status`=1)'/*公开的分享，且分享所属用户状态为启用*/
+                                . ' OR (sh.isPublic=0 AND sh.user_id='.$userId.')'/*自己发布的私密分享*/
+                        . ' )'
+                        . ' )')
+                ->order('sh.cTime DESC')
+                ->buildSql();
+        // 还要判断userId是否有收藏此分享
+
+        return $sql;
+    }
 
     /**
      * 获取(userId)用户的分享总数
@@ -119,15 +173,20 @@ class ContentModel extends BaseModel
             $where = '( ' . $where . ' )';
         }
 
-        $sql = $this->alias('sh')->field('sh.s_id,
-                sh.user_id,
-                sh.`text`,
-                sh.imgs,
-                FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
-                sh.isPublic,
-                sh.cmt_count,
-                sh.tb_count')->where($where)->order('sh.cTime DESC')->buildSql();
-
+        $sql = $this->alias('sh')
+                ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id='.$userId)/*判断userId是否有收藏此分享*/
+                ->field('sh.s_id,
+                    sh.user_id,
+                    sh.`text`,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.isPublic,
+                    sh.cmt_count,
+                    sh.tb_count,
+                    IF(fs.cTime,1,0) AS collected')/*collected为1代表已收藏，0为未收藏*/
+                ->where($where)
+                ->order('sh.cTime DESC')
+                ->buildSql();
         return $sql;
     }
 
