@@ -384,10 +384,16 @@ class ContentModel extends BaseModel
         }
 
         $result = $this->field('imgs')->where($where)->limit(1)->order('cTime desc')->select();
-        $picArray = explode(',', $result[0]['imgs']);
-        if(!end($picArray)){
-            array_pop($picArray);
+
+        if($result){
+            $picArray = explode(',', $result[0]['imgs']);
+            if(!end($picArray)){
+                array_pop($picArray);
+            }
+        }else{
+            $picArray = [];
         }
+
 
         $err['errcode'] = 0;
         $err['errmsg'] = 'ok';
