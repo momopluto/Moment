@@ -18,10 +18,15 @@ function getUser_FocusFanShare_Count($targetId, $self = false)
     return $data;
 }
 
+/**
+ * 创建目录
+ * @param $path
+ * @return bool
+ */
 function checkPathOrCreate($path)
 {
     if(file_exists($path)){
-        return true;
+        return;
     }else{
         mkdir($path, 0777, true);
     }
