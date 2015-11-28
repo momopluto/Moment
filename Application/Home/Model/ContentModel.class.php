@@ -40,6 +40,8 @@ class ContentModel extends BaseModel
     // 收藏xx分享
     // 评论了xx条，被评论了xx条，点赞了xx个，收获了xx个点赞
     // xxxxx
+
+/*
     public function getUserData($userId)
     {
         $where = ['user_id' => $userId];
@@ -53,7 +55,7 @@ class ContentModel extends BaseModel
             'share_count'     => $shareCount,
         ];
     }
-
+    
     // ?? 内部分好页？
     public function getShareIndex($userId)
     {
@@ -86,7 +88,7 @@ class ContentModel extends BaseModel
             'list'     => $list,
         ];
     }
-
+*/
     /**
      * 获取(userId)用户可查看的分享总数
      * 限制分享的发布时间为[一周内]
@@ -131,10 +133,21 @@ class ContentModel extends BaseModel
                     sh.cmt_count,
                     sh.tb_count,
                     IF(fs.cTime,1,0) AS collected,
-                    IF(th.cTime,1,0) AS thumbed')      /*collected为1代表已收藏，0为未收藏, thumbed为1代表点赞了*/
-            ->where('(' . ' (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . ')'/*限制时间段*/
-                . ' AND (' . ' (sh.isPublic=1 AND ur.`status`=1)'/*公开的分享，且分享所属用户状态为启用*/
-                . ' OR (sh.isPublic=0 AND sh.user_id=' . $userId . ')'/*自己发布的私密分享*/ . ' )' . ' )')
+                    IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏, thumbed为1代表点赞了*/
+            // ->where('('
+            //         . ' (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . ')'/*限制时间段*/
+            //         . ' AND ('
+            //             . ' (sh.isPublic=1 AND ur.`status`=1)'/*公开的分享，且分享所属用户状态为启用*/
+            //             . ' OR (sh.isPublic=0 AND sh.user_id=' . $userId . ')'/*自己发布的私密分享*/
+            //         . ' )'
+            //     . ' )')
+            ->where('( (ur.`status`=1'/*分享所属用户状态为启用*/
+                    . ' AND (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . '))'/*限制时间段*/
+                    . ' AND ('
+                        . ' (sh.isPublic=1 AND sh.user_id<>' . $userId . ')'/*其它用户发布的公开的分享*/
+                        . ' OR (sh.user_id=' . $userId . ')'/*自己发布的所有分享*/
+                    . ' )'
+                . ' )')
             ->order('sh.cTime DESC')
             ->buildSql();
 
@@ -338,30 +351,56 @@ class ContentModel extends BaseModel
         return intval($this->where($map)->count());
     }
 
-    // 搜索share
-    public function searchShare($q, $page, $limit)
-    {
-        $field = 's.s_id, s.user_id, s.text, s.imgs, s.cTime, u.username';
-        $where = [
-            's.text'     => [
-                'like',
-                $q,
-            ],
-            's.isPublic' => 1,
-        ];
-        $ret = [];
-        $ret['allcount'] = $this->alias('s')
-            ->join('left join mn_user u on s.user_id=u.user_id')
-            ->$where($where)
-            ->count();
-        $ret['data'] = $this->alias('s')
-            ->join('left join mn_user u on s.user_id=u.user_id')
-            ->$where($where)
-            ->field($field)
-            ->page($page, $limit)
-            ->select();
+    // 还没有搜索用户的功能
 
-        return $ret;
+    /**
+     * 获取搜索结果总数
+     * @param integer $userId 发起搜索的用户的id
+     * @param string $key 搜索关键字
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getSearchShare_count($userId, $key)
+    {
+        return $this->table($this->getSearchShare_sql($userId, $key) . ' tmp')->count();
+    }
+
+    // 搜索share
+    // 对于自己的分享，都可以查找
+    // 对于他人的分享，只能查找公开的
+    /**
+     * 获取搜索结果
+     * @param integer $userId 发起搜索的用户的id
+     * @param string $key 搜索关键字
+     * @return string sql语句
+     */
+    public function getSearchShare_sql($userId, $key)
+    {
+        // 验证userId有效，账号启用
+        if(!$this->checkUserStatus($userId)){
+            return false;
+        }
+
+        $sql = $this->alias('sh')
+            ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+            ->field('sh.s_id,
+                    sh.user_id,
+                    md5(sh.user_id) AS imgPath,
+                    sh.`text`,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.isPublic,
+                    sh.cmt_count,
+                    sh.tb_count')
+            ->where("(ur.`status`=1"/*分享所属用户状态为启用*/
+                ." AND sh.`text` like '%{$key}%')"/*查询关键字*/
+                 ." AND ("
+                    ." ( sh.user_id={$userId} )"/*用户自己发布的所有分享*/
+                    ." OR ( sh.user_id<>{$userId} AND sh.isPublic=1 )"/*其它用户发布的公开的分享*/
+                 ." )")
+            ->order('sh.cTime DESC')
+            ->buildSql();
+
+        return $sql;
     }
 
 
