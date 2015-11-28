@@ -151,7 +151,7 @@ class ContentController extends BaseController
         $content = I('post.content', '', 'strip_tags');
 
         $model = D('comment');
-        $result = $model->insertComment($shareId, $pid, $userId, $content);
+        $result = $model->insertComment($shareId, $userId, $content, $pid);
 
         $this->ajaxReturn($model->getError());
     }
