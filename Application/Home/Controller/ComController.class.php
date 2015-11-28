@@ -10,10 +10,9 @@ class ComController extends BaseController
 {
 
     /**
-     * 最热的[若干条]分享
-     * ps: 限制游客可浏览的分享数目
-     *       注册用户浏览需要分页
-     * @return [type] [description]
+     * 最热的[随机1页的10条]分享
+     * 30分钟内最热的[随机1页的10条]分享内容一致
+     * @return JSON
      */
     public function hotshare()
     {
@@ -21,8 +20,31 @@ class ComController extends BaseController
         // 不然最新的分享相对来说变化较快
         // 而且最热的几条分享也能诱导用户注册
 
+        $userId = session('?LOGIN_FLAG') ? self::$user_id : -100;// -100为游客标识
+
         // 独立1个页面展示  ->游客
         // GET请求
+        $model = D('Content');
+        $sql = $model->getHotShare_sql($userId);
+        // echo $sql;die;
+        $page_listRows = 10;// 默认可见10条
+        $allCount = $model->getHotShare_count($userId);
+        // echo $allCount;die;
+        $totalPages = ceil($allCount / $page_listRows);
+
+        if (S('return_hotShare')) {
+            // echo "************";
+            $list = S('return_hotShare');
+        } else {
+            $cur_page = mt_rand(1, $totalPages);// 随机展示1页
+            $page_begin = ($cur_page - 1) * $page_listRows;
+            $sql .= " limit {$page_begin},{$page_listRows}";
+            // echo $sql;die;
+            $list = $model->query($sql);
+            S('return_hotShare', $list, 1800);// 缓存30分钟
+        }
+
+        $this->ajaxReturn($list);
     }
 
     /**
@@ -36,7 +58,7 @@ class ComController extends BaseController
         // 独立1个页面展示搜索结果
         // get请求
         // P($_SERVER);die;
-        // if (IS_AJAX) {
+        if (IS_AJAX) {
             $key = I('param.key');
             if ($key == '') {
                 $this->redirect('Index/index', '', 3, '搜索关键字不能为空');
@@ -45,6 +67,7 @@ class ComController extends BaseController
 
             $model = D('Content');
             $sql = $model->getSearchShare_sql(self::$user_id, $key);
+            // echo $sql;die;
             if (!$sql){
                 $this->redirect('Index/index', '', 3, $model->getError());
                 return;
@@ -62,7 +85,7 @@ class ComController extends BaseController
             $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
             $rData['totalPages'] = $totalPages;
             $this->ajaxReturn($rData);
-        // }
+        }
     }
 
     /**

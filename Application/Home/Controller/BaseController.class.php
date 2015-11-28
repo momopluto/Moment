@@ -35,6 +35,7 @@ class BaseController extends CommonController
         // 判断是否存在session
         if(!(session('?LOGIN_FLAG') && session('LOGIN_FLAG'))){
             // 未登录
+            // 跳转至hotshare热门分享，该页面右上角有"登录/注册"入口
             $this->redirect('usr/signin', '', 3, '未登录！');
  
             return;
