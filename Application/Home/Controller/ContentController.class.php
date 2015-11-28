@@ -76,7 +76,7 @@ class ContentController extends BaseController
             checkPathOrCreate($upload->rootPath);
             $i = 0;
             foreach($_FILES as $key => $value){
-                $upload->saveName = $id . '-' . $i++;
+                $upload->saveName = md5($id . '_' . $i++);
                 // 上传文件
                 $result = $upload->uploadOne($value);
                 if($result){
