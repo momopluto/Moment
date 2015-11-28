@@ -25,14 +25,14 @@ var Moment = React.createClass({
 		}
 
 		var imgs = moment.imgs.length > 0 ? moment.imgs.split(',').map(function(item, index) {
-			return <li className="picItem" key={index} data-id={index} onClick={this.handlePicZoomIn} style={{backgroundImage: 'url(' + item + ')'}}></li>;
+			return <li className="picItem" key={index} data-id={index} onClick={this.handlePicZoomIn} style={{backgroundImage: 'url(' + picPath + item + ')'}}></li>;
 		}.bind(this)) : null;
 
 		var picZoomIn = this.state.isZoomingOut ? (
 			<div className="pic_zoom_in">
 				{this.state.zoomInIndex > 0 ? <a className="iconfont pic_prev" href="javascript:;" onClick={this.handlePrevPic}>&#xe604;</a> : null}
 				{this.state.zoomInIndex < imgs.length - 1 ? <a className="iconfont pic_next" href="javascript:;"  onClick={this.handleNextPic}>&#xe605;</a> : null}
-				<img src={imgs[this.state.zoomInIndex]} onClick={this.handlePicZoomOut} />
+				<img src={picPath + moment.imgs.split(',')[this.state.zoomInIndex]} onClick={this.handlePicZoomOut} />
 			</div>
 		) : null;
 

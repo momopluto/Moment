@@ -92,14 +92,14 @@ var Moment = React.createClass({displayName: "Moment",
 		}
 
 		var imgs = moment.imgs.length > 0 ? moment.imgs.split(',').map(function(item, index) {
-			return React.createElement("li", {className: "picItem", key: index, "data-id": index, onClick: this.handlePicZoomIn, style: {backgroundImage: 'url(' + item + ')'}});
+			return React.createElement("li", {className: "picItem", key: index, "data-id": index, onClick: this.handlePicZoomIn, style: {backgroundImage: 'url(' + picPath + item + ')'}});
 		}.bind(this)) : null;
 
 		var picZoomIn = this.state.isZoomingOut ? (
 			React.createElement("div", {className: "pic_zoom_in"}, 
 				this.state.zoomInIndex > 0 ? React.createElement("a", {className: "iconfont pic_prev", href: "javascript:;", onClick: this.handlePrevPic}, "") : null, 
 				this.state.zoomInIndex < imgs.length - 1 ? React.createElement("a", {className: "iconfont pic_next", href: "javascript:;", onClick: this.handleNextPic}, "") : null, 
-				React.createElement("img", {src: imgs[this.state.zoomInIndex], onClick: this.handlePicZoomOut})
+				React.createElement("img", {src: picPath + moment.imgs.split(',')[this.state.zoomInIndex], onClick: this.handlePicZoomOut})
 			)
 		) : null;
 
@@ -332,6 +332,23 @@ var Publisher = React.createClass({displayName: "Publisher",
             alert('分享的内容不能为空');
             return;
         }
+
+        // 发送表单
+        var formData = new FormData();
+        for (var i = 0; i < this.state.picFiles.length; i++) {
+            formData.append('img' + (i + 1), this.state.picFiles[i]);
+        }
+        formData.append('isPublic', this.state.isPublished);
+        formData.append('content', this.state.text);
+        formData.append('imgcount', this.state.pics.length);
+        $.ajax({
+            type: 'post',
+            url: '/cnt/doshare',
+            data: formData,
+            processData: false,
+            contentType: false
+        });
+
         this.props.addMoment({
             cmt_count: "0",
             collected: "0",
@@ -342,6 +359,7 @@ var Publisher = React.createClass({displayName: "Publisher",
             text: this.state.text,
             user_id: "test"
         });
+
         this.setState({
             text: '',
             picFiles: [],  // 图片file对象

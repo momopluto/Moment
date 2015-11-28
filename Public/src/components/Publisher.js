@@ -129,6 +129,23 @@ var Publisher = React.createClass({
             alert('分享的内容不能为空');
             return;
         }
+
+        // 发送表单
+        var formData = new FormData();
+        for (var i = 0; i < this.state.picFiles.length; i++) {
+            formData.append('img' + (i + 1), this.state.picFiles[i]);
+        }
+        formData.append('isPublic', this.state.isPublished);
+        formData.append('content', this.state.text);
+        formData.append('imgcount', this.state.pics.length);
+        $.ajax({
+            type: 'post',
+            url: '/cnt/doshare',
+            data: formData,
+            processData: false,
+            contentType: false
+        });
+
         this.props.addMoment({
             cmt_count: "0",
             collected: "0",
@@ -139,6 +156,7 @@ var Publisher = React.createClass({
             text: this.state.text,
             user_id: "test"
         });
+
         this.setState({
             text: '',
             picFiles: [],  // 图片file对象
