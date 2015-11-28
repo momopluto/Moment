@@ -52,10 +52,15 @@ class ContentController extends BaseController
         if(IS_POST){
             $text = I('post.text', '', 'strip_tags');
             $isPublic = I('post.is_public', '', 'strip_tags');
-
+            $fileCount = I('post.file_count');
+            if($fileCount !== count($_FILES)){
+                $this->dataReturn('100', '文件上传失败');
+            }
             $userId = self::$user_id;
             $model = D('content');
-            //            $id = $model->insertShare($userId, $text, $isPublic);
+            $id = $model->insertShare($userId, $text, $isPublic);
+            //            $dealFile = $this->dealFiles($_FILES);
+            $imgs = [];
             $upload = new Upload();
             $upload->maxSize = 3145728;// 设置附件上传大小
             $upload->exts = array(
@@ -65,17 +70,33 @@ class ContentController extends BaseController
                 'jpeg',
             );// 设置附件上传类型
 
-            $upload->rootPath = './Public/uploads/' . $userId . '/';  // 设置附件上传根目录
-            $upload->savePath = ''; // 设置附件上传（子）目录
+            $upload->rootPath = AS_PATH_IMG . '/';  // 设置附件上传根目录
+            $upload->savePath = md5($userId) . '/'; // 设置附件上传（子）目录
+            $upload->subName = '';
             checkPathOrCreate($upload->rootPath);
+            $i = 0;
+            foreach($_FILES as $key => $value){
+                $upload->saveName = $id . '-' . $i++;
+                // 上传文件
+                $result = $upload->uploadOne($value);
+                if($result){
+                    $imgs[] = $result;
+                }
+            }
 
-            // 上传文件
-            $result = $upload->upload();
+            if(count($imgs) !== count($_FILES)){
+                $this->dataReturn('100', 'Upload failed');
+            }
+
+            $imgs = array_column($imgs, 'savename');
+            $imgs = implode($imgs, ',');
+
+            $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
 
             if($result === false){
                 $this->dataReturn('100', $model->getError());
             }else{
-                $this->dataReturn();
+                $this->dataReturn(0, '', $this->getShareById($id));
             }
         }else{
             $this->dataReturn('100', '非法请求');
@@ -195,6 +216,30 @@ class ContentController extends BaseController
             $this->dataReturn('100', $model->getError());
         }
         $this->dataReturn();
+    }
+
+    private function dealFiles($files)
+    {
+        $fileArray = array();
+        $n = 0;
+        foreach($files as $key => $file){
+            if(is_array($file['name'])){
+                $keys = array_keys($file);
+                $count = count($file['name']);
+                for($i = 0; $i < $count; $i++){
+                    $fileArray[$n]['key'] = $key;
+                    foreach($keys as $_key){
+                        $fileArray[$n][$_key] = $file[$_key][$i];
+                    }
+                    $n++;
+                }
+            }else{
+                $fileArray = $files;
+                break;
+            }
+        }
+
+        return $fileArray;
     }
 
 }
