@@ -131,7 +131,7 @@ class ContentModel extends BaseModel
                     sh.cmt_count,
                     sh.tb_count,
                     IF(fs.cTime,1,0) AS collected,
-                    IF(th.cTime,1,0) AS thumbed,')      /*collected为1代表已收藏，0为未收藏, thumbed为1代表点赞了*/
+                    IF(th.cTime,1,0) AS thumbed')      /*collected为1代表已收藏，0为未收藏, thumbed为1代表点赞了*/
             ->where('(' . ' (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . ')'/*限制时间段*/
                 . ' AND (' . ' (sh.isPublic=1 AND ur.`status`=1)'/*公开的分享，且分享所属用户状态为启用*/
                 . ' OR (sh.isPublic=0 AND sh.user_id=' . $userId . ')'/*自己发布的私密分享*/ . ' )' . ' )')
