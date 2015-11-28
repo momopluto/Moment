@@ -57,7 +57,7 @@ class FavController extends BaseController
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
         $ownerId = self::$user_id;
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
 
         $model = D('favshare');
         $result = $model->insertFavshare($ownerId, $shareId);
@@ -77,7 +77,7 @@ class FavController extends BaseController
         // TODO，失败返回错误信息数组[格式待定]
 
         $ownerId = self::$user_id;
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
 
         $model = D('favshare');
         $result = $model->delFavshare($ownerId, $shareId);
