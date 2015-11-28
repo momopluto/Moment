@@ -145,11 +145,4 @@ class BaseController extends CommonController
         }
     }
 
-    protected function dataReturn($errcode = 0, $errmsg = '', $data = null, $type = '', $json_option = 0)
-    {
-        $ret['errcode'] = $errcode;
-        $ret['errmsg'] = $errmsg;
-        $ret['data'] = $data;
-        parent::ajaxReturn($ret, $type, $json_option);
-    }
 }

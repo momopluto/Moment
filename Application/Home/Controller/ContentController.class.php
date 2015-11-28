@@ -54,8 +54,12 @@ class ContentController extends BaseController
             $isPublic = I('post.is_public', '', 'strip_tags');
             $fileCount = I('post.file_count');
             if(intval($fileCount) !== count($_FILES)){
-                $this->dataReturn('100', '文件上传失败');
+                $this->ajaxReturn([
+                    'errcode' => '400',
+                    'errmsg'  => 'upload failed',
+                ]);
             }
+
             $userId = self::$user_id;
             $model = D('content');
             $id = $model->insertShare($userId, $text, $isPublic);
@@ -85,21 +89,28 @@ class ContentController extends BaseController
             }
 
             if(count($imgs) !== count($_FILES)){
-                $this->dataReturn('100', 'Upload failed');
+                $this->ajaxReturn([
+                    'errcode' => '400',
+                    'errmsg'  => 'upload failed',
+                ]);
             }
 
             $imgs = array_column($imgs, 'savename');
             $imgs = implode($imgs, ',');
 
             $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
+            if(!$result){
+                $this->ajaxReturn($model->getError());
 
-            if($result === false){
-                $this->dataReturn('100', $model->getError());
-            }else{
-                $this->dataReturn(0, '', $model->getShareById($id));
+                return;
             }
+
+            $this->ajaxReturn($model->getShareById($id));
         }else{
-            $this->dataReturn('100', '非法请求');
+            $this->ajaxReturn([
+                'errcode' => '404',
+                'errmsg'  => 'request failed',
+            ]);
         }
     }
 
@@ -119,11 +130,8 @@ class ContentController extends BaseController
         $shareId = I('post.s_id', '', 'strip_tags');
 
         $result = $model->delShare($shareId, self::$user_id);
-        if($result === true){
-            $this->dataReturn();
-        }else{
-            $this->dataReturn('100', $model->getError());
-        }
+
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -144,11 +152,8 @@ class ContentController extends BaseController
 
         $model = D('comment');
         $result = $model->insertComment($shareId, $pid, $userId, $content);
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
 
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -168,11 +173,7 @@ class ContentController extends BaseController
         $model = D('comment');
         $result = $model->delComment($commentId, self::$user_id);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -191,10 +192,7 @@ class ContentController extends BaseController
 
         $result = $model->insertThumb($shareId, $userId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -211,35 +209,9 @@ class ContentController extends BaseController
         $userId = self::$user_id;
 
         $model = D('thumb');
-        $result = D('thumb')->delThumb($shareId, $userId);
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
-    }
+        $result = D('thumb')->cclThumb($shareId, $userId);
 
-    private function dealFiles($files)
-    {
-        $fileArray = array();
-        $n = 0;
-        foreach($files as $key => $file){
-            if(is_array($file['name'])){
-                $keys = array_keys($file);
-                $count = count($file['name']);
-                for($i = 0; $i < $count; $i++){
-                    $fileArray[$n]['key'] = $key;
-                    foreach($keys as $_key){
-                        $fileArray[$n][$_key] = $file[$_key][$i];
-                    }
-                    $n++;
-                }
-            }else{
-                $fileArray = $files;
-                break;
-            }
-        }
-
-        return $fileArray;
+        $this->ajaxReturn($model->getError());
     }
 
 }
