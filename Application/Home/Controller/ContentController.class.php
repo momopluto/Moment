@@ -52,7 +52,10 @@ class ContentController extends BaseController
         if(IS_POST){
             $text = I('post.text', '', 'strip_tags');
             $isPublic = I('post.is_public', '', 'strip_tags');
-
+            $fileCount = I('post.file_count');
+            if($fileCount !== count($_FILES)){
+                $this->dataReturn('100', '文件上传失败');
+            }
             $userId = self::$user_id;
             $model = D('content');
             $id = $model->insertShare($userId, $text, $isPublic);
