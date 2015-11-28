@@ -518,4 +518,9 @@ class ContentModel extends BaseModel
             return false;
         }
     }
+
+    public function getShareById($id)
+    {
+        return $this->where(['s_id' => $id])->select();
+    }
 }
