@@ -112,7 +112,7 @@ class BaseController extends CommonController
         //        p($thumblist);
 
         $picDir = md5($userId);
-        $picPath = PATH_IMG . "/$picDir/";
+        $picPath = PATH_IMG . "/";
         $this->assign('picPath', $picPath);// 访问url，后面md5($userId)为文件夹名后，再拼图片名即可访问
         //        echo '$picPath = <br/>';
         //        echo $picPath;
