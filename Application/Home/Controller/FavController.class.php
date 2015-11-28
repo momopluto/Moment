@@ -24,11 +24,7 @@ class FavController extends BaseController
         $model = D('favuser');
 
         $result = $model->insertFavuser($ownerId, $userId);
-
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -45,13 +41,9 @@ class FavController extends BaseController
         $ownerId = self::$user_id;
 
         $model = D('favuser');
-        $result = $model->DelFavuser($ownerId, $userId);
+        $result = $model->delFavuser($ownerId, $userId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -65,16 +57,12 @@ class FavController extends BaseController
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
         $ownerId = self::$user_id;
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
 
         $model = D('favshare');
         $result = $model->insertFavshare($ownerId, $shareId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -89,15 +77,49 @@ class FavController extends BaseController
         // TODO，失败返回错误信息数组[格式待定]
 
         $ownerId = self::$user_id;
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
 
         $model = D('favshare');
         $result = $model->delFavshare($ownerId, $shareId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
+        $this->ajaxReturn($model->getError());
+    }
 
-        $this->dataReturn();
+    /**
+     * 点赞
+     * @return [type] [description]
+     */
+    public function thumb()
+    {
+        // AJAX POST
+        // 接受参数{"sid":"分享内容id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
+        $shareId = I('post.sid', '', 'strip_tags');
+        $userId = self::$user_id;
+        $model = D('thumb');
+
+        $result = $model->insertThumb($shareId, $userId);
+
+        $this->ajaxReturn($model->getError());
+    }
+
+    /**
+     * 取消点赞
+     * @return [type] [description]
+     */
+    public function cclthumb()
+    {
+        // AJAX POST
+        // 接受参数{"sid":"分享内容id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
+        $shareId = I('post.sid', '', 'strip_tags');
+        $userId = self::$user_id;
+
+        $model = D('thumb');
+        $result = D('thumb')->cclThumb($shareId, $userId);
+
+        $this->ajaxReturn($model->getError());
     }
 }

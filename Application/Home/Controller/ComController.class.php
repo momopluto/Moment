@@ -1,5 +1,6 @@
 <?php
 namespace Home\Controller;
+
 use Think\Controller;
 
 /**
@@ -251,6 +252,18 @@ class ComController extends BaseController
         $this->assign('list', json_encode($list));// 赋值数据集
         $this->assign('page', $show);// 赋值分页输出，可考虑同上json返回
         $this->display('thumb_send'); // 输出模板
+    }
+
+    /**
+     * 获取单条分享的评论。
+     */
+    public function getComment()
+    {
+        $sId = I('post.sid', '', 'strip_tags');
+        $model = D('comment');
+        $comments = $model->getCommentById($sId);
+
+        $this->ajaxReturn($comments);
     }
 
 }
