@@ -24,7 +24,7 @@ class UserController extends Controller {
             $login_ask = 'usr/signin';
 
             $verify = new \Think\Verify();
-            if ($verify->check(I('post.verify'))){
+            if (!$verify->check(I('post.verify'))){
                 $this->redirect($login_ask, '', 3, '验证码错误！');
                 return;
             }
