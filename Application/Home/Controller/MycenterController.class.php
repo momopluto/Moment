@@ -326,7 +326,7 @@ class MycenterController extends BaseController
         session('USERDATA', null);
         session('SESSION_EXPIRE', null);
 
-        $this->redirect('User/login', '', 3, '安全退出！跳转至登录页面...');
+        $this->redirect('usr/signin', '', 3, '安全退出！跳转至登录页面...');
     }
 
     /**
