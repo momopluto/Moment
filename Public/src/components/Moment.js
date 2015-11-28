@@ -104,6 +104,17 @@ var Moment = React.createClass({
 
 	// 展开评论列表
 	handleOpenComment: function(e) {
+		$.ajax({
+			type: 'post',
+			url: url.get_comment,
+			data: {
+				sid: this.props.moment.s_id
+			},
+			success: function(data) {
+				console.log(data)
+			}
+		});
+
 		this.setState(assign({}, this.state, {
 			isOpeningComment: !this.state.isOpeningComment
 		}));
