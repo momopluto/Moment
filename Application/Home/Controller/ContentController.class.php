@@ -2,13 +2,13 @@
 namespace Home\Controller;
 
 use Think\Controller;
+use Think\Upload;
 
 /**
  * Home分享内容控制器
  */
 class ContentController extends BaseController
 {
-
     public function getShareIndex()
     {
         $model = D('content');
@@ -26,37 +26,70 @@ class ContentController extends BaseController
         // 如果有上传文件，在此处理
         // 成功返回true，前端再接着展示新增的分享
         // TODO，失败返回错误信息数组[格式待定]
-        
+
         // 有上传图片（前端限制能够上传的图片后缀）
         //      1、判断$_FILES中文件数目是否 等于 imgcount。 不等，则直接返回错误信息'upload $imgcount files failed'
         //      2、以上确保图片正确上传后，调用模型方法insertShare得到返回的s_id
         // 得到s_id，组装imgs字段
-//        if ($imgcount) {// 如果有图片
-//            $imgArr = array();
-//            for ($i = 0; $i < $imgcount; $i++) {
-//                $upload->saveName = md5($s_id . '_$i');// 设置上传文件名
-//                $info = $upload->uploadOne($oneFile);// 单个文件上传
-//                if ($info){
-//                    array_push($imgArr, $upload->saveName);
-//                }
-//            }
-//            $imgs = implode(',', $imgArr);// 得到所有上传图片的saveName字符串，以,号分隔
-//        }
+        //        if ($imgcount) {// 如果有图片
+        //            $imgArr = array();
+        //            for ($i = 0; $i < $imgcount; $i++) {
+        //                $upload->saveName = md5($s_id . '_$i');// 设置上传文件名
+        //                $info = $upload->uploadOne($oneFile);// 单个文件上传
+        //                if ($info){
+        //                    array_push($imgArr, $upload->saveName);
+        //                }
+        //            }
+        //            $imgs = implode(',', $imgArr);// 得到所有上传图片的saveName字符串，以,号分隔
+        //        }
         //      3、使用tp的Upload类，每次设置好saveName后，用uploadOne()上传，确保每个上传的文件都按照我们的意愿命名
         //          这里如果有个别文件没uploadOne成功，咋办？
         // 没上传图片
         //      1、调用模型方法insertShare得到返回的s_id
         // 
         // 不管有没图片，只要上传成功后，都返回s_id
-        
-        if(IS_AJAX && IS_POST){
-            $text = I('post.text', '', 'strip_tags');
-            $imgs = I('post.imgs', '', 'strip_tags');
-            $isPublic = I('post.is_public', '', 'strip_tags');
-            $userId = self::$user_id;
 
+        if(IS_POST){
+            $text = I('post.text', '', 'strip_tags');
+            $isPublic = I('post.is_public', '', 'strip_tags');
+
+            $userId = self::$user_id;
             $model = D('content');
-            $result = $model->insertShare($userId, $text, $imgs, $isPublic);
+            $id = $model->insertShare($userId, $text, $isPublic);
+            //            $dealFile = $this->dealFiles($_FILES);
+            $imgs = [];
+            $upload = new Upload();
+            $upload->maxSize = 3145728;// 设置附件上传大小
+            $upload->exts = array(
+                'jpg',
+                'gif',
+                'png',
+                'jpeg',
+            );// 设置附件上传类型
+
+            $upload->rootPath = AS_PATH_IMG . '/';  // 设置附件上传根目录
+            $upload->savePath = md5($userId) . '/'; // 设置附件上传（子）目录
+            $upload->subName = '';
+            checkPathOrCreate($upload->rootPath);
+            $i = 0;
+            foreach($_FILES as $key => $value){
+                $upload->saveName = $id . '-' . $i++;
+                // 上传文件
+                $result = $upload->uploadOne($value);
+                if($result){
+                    $imgs[] = $result;
+                }
+            }
+
+            if(count($imgs) !== count($_FILES)){
+                $this->dataReturn('100', 'Upload failed');
+            }
+
+            $imgs = array_column($imgs, 'savename');
+            $imgs = implode($imgs, ',');
+
+            $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
+
             if($result === false){
                 $this->dataReturn('100', $model->getError());
             }else{
@@ -180,6 +213,30 @@ class ContentController extends BaseController
             $this->dataReturn('100', $model->getError());
         }
         $this->dataReturn();
+    }
+
+    private function dealFiles($files)
+    {
+        $fileArray = array();
+        $n = 0;
+        foreach($files as $key => $file){
+            if(is_array($file['name'])){
+                $keys = array_keys($file);
+                $count = count($file['name']);
+                for($i = 0; $i < $count; $i++){
+                    $fileArray[$n]['key'] = $key;
+                    foreach($keys as $_key){
+                        $fileArray[$n][$_key] = $file[$_key][$i];
+                    }
+                    $n++;
+                }
+            }else{
+                $fileArray = $files;
+                break;
+            }
+        }
+
+        return $fileArray;
     }
 
 }
