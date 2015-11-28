@@ -130,10 +130,14 @@ var Publisher = React.createClass({
             return;
         }
         this.props.addMoment({
+            cmt_count: "0",
+            collected: "0",
+            ctime: new Date().getTime(),
+            imgs: this.state.pics.join(','),
+            ispublic: this.state.isPublished,
+            tb_count: "0",
             text: this.state.text,
-            pics: this.state.pics,
-            isPublished: this.state.isPublished,
-            createAt: new Date().getTime()
+            user_id: "test"
         });
         this.setState({
             text: '',
