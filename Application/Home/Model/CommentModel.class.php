@@ -46,6 +46,7 @@ class CommentModel extends BaseModel
         // 若pid不为0，验证c_id为此pid的评论存在
         if($pid && !$this->where('c_id = %d', $pid)->count()){
             $err['errcode'] = 404;
+            $err['pid'] = $pid;
             $err['errmsg'] = "pid invalid";
             $this->error = $err;
 
