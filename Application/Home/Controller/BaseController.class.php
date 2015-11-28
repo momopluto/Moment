@@ -85,10 +85,10 @@ class BaseController extends CommonController
             $pics = $result;
         }
         $this->assign('pics', $pics);
-        //        echo '$picPath = <br/>';
-        //        echo $picPath;
-        //        echo '$pics = <br/>';
-        //        p($pics);
+       // echo '$picPath = <br/>';
+       // echo $picPath;
+       // echo '$pics = <br/>';
+       // p($pics);die;
     }
 
     /**

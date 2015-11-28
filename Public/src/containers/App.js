@@ -1,41 +1,37 @@
 var React = require('react');
-var PropTypes = React.PropTypes;
-var bindActionCreators = require('redux').bindActionCreators;
-var connect = require('react-redux').connect;
-var MomentActions = require('../actions/moments');
 var Publisher = require('../components/Publisher');
 var MomentList = require('../components/MomentList');
+var assign = require('object-assign');
 
 var App = React.createClass({
-    propTypes: {
-        moments: PropTypes.array.isRequired,
-        actions: PropTypes.object.isRequired
+    getInitialState: function() {
+        return {
+            moments: this.props.moments
+        };
     },
+
     render: function() {
-        var moments = this.props.moments,
-            actions = this.props.actions;
+        var moments = this.state.moments;
+        console.log(moments);
         return (
             <div>
-                <Publisher addMoment={actions.addMoment} />
+                <Publisher addMoment={this.addMoment} />
                 <MomentList moments={moments} />
             </div>
         );
+    },
+
+    addMoment: function(moment) {
+        this.setState({
+            moments: [moment].concat(this.state.moments)
+        });
+    },
+
+    collectMoment: function(s_id) {
+        this.setState({}, this.state, {
+            moments: this
+        });
     }
 });
 
-function mapStateToProps (state) {
-    return {
-        moments: state.moments
-    };
-}
-
-function mapDispatchToProps (dispatch) {
-    return {
-        actions: bindActionCreators(MomentActions, dispatch)
-    };
-}
-
-module.exports = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(App);
+module.exports = App;

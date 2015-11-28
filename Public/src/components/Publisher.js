@@ -129,12 +129,29 @@ var Publisher = React.createClass({
             alert('分享的内容不能为空');
             return;
         }
-        this.props.addMoment({
-            text: this.state.text,
-            pics: this.state.pics,
-            isPublished: this.state.isPublished,
-            createAt: new Date().getTime()
+
+        // 发送表单
+        var formData = new FormData();
+        for (var i = 0; i < this.state.picFiles.length; i++) {
+            formData.append('img' + (i + 1), this.state.picFiles[i]);
+        }
+        formData.append('is_public', this.state.isPublished ? 1 : 0);
+        formData.append('content', this.state.text);
+        formData.append('file_count', this.state.pics.length);
+        $.ajax({
+            type: 'post',
+            url: '/cnt/doshare',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                console.log(data);
+                this.props.addMoment(assign({}, data.data[0], {
+                    collected: 0
+                }));
+            }.bind(this)
         });
+
         this.setState({
             text: '',
             picFiles: [],  // 图片file对象

@@ -76,7 +76,7 @@ class ContentController extends BaseController
             checkPathOrCreate($upload->rootPath);
             $i = 0;
             foreach($_FILES as $key => $value){
-                $upload->saveName = $id . '-' . $i++;
+                $upload->saveName = md5($id . '_' . $i++);
                 // 上传文件
                 $result = $upload->uploadOne($value);
                 if($result){
@@ -96,7 +96,7 @@ class ContentController extends BaseController
             if($result === false){
                 $this->dataReturn('100', $model->getError());
             }else{
-                $this->dataReturn(0, '', $this->getShareById($id));
+                $this->dataReturn(0, '', $model->getShareById($id));
             }
         }else{
             $this->dataReturn('100', '非法请求');
