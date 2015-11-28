@@ -97,8 +97,10 @@ class ContentController extends BaseController
 
             $imgs = array_column($imgs, 'savename');
             $imgs = implode($imgs, ',');
-
-            $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
+            $result = true;
+            if($imgs){
+                $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
+            }
             if(!$result){
                 $this->ajaxReturn($model->getError());
 
