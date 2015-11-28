@@ -24,11 +24,7 @@ class FavController extends BaseController
         $model = D('favuser');
 
         $result = $model->insertFavuser($ownerId, $userId);
-
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -45,13 +41,9 @@ class FavController extends BaseController
         $ownerId = self::$user_id;
 
         $model = D('favuser');
-        $result = $model->DelFavuser($ownerId, $userId);
+        $result = $model->delFavuser($ownerId, $userId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -70,11 +62,7 @@ class FavController extends BaseController
         $model = D('favshare');
         $result = $model->insertFavshare($ownerId, $shareId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -94,10 +82,6 @@ class FavController extends BaseController
         $model = D('favshare');
         $result = $model->delFavshare($ownerId, $shareId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 }
