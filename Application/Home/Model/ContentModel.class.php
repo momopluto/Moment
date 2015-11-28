@@ -90,6 +90,40 @@ class ContentModel extends BaseModel
     }
 */
     /**
+     * 获取最热的分享总数
+     * @param integer $userId 用户id
+     * @return integer 总数
+     */
+    public function getHotShare_count($userId){
+        return $this->table($this->getHotShare_sql($userId) . ' tmp')->cache('count_hotShare', 1800)->count();// 缓存30分钟
+    }
+
+    /**
+     * 获取最热的分享的
+     * @param integer $userId 用户id
+     * @return string sql语句
+     */
+    public function getHotShare_sql($userId){
+        $sql = $this->alias('sh')
+            ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
+            ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)/*判断userId是否有点赞此分享*/
+            ->field('sh.s_id,
+                md5(sh.user_id) AS imgPath,
+                sh.`text`,
+                sh.imgs,
+                FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                sh.isPublic,
+                sh.cmt_count,
+                sh.tb_count,
+                IF(fs.cTime,1,0) AS collected,
+                IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏; thumbed为1代表点赞了,0为未点赞*/
+            ->where('sh.cmt_count + sh.tb_count >= 500')
+            ->order('sh.cTime DESC')
+            ->buildsql();
+        return $sql;
+    }
+
+    /**
      * 获取(userId)用户可查看的分享总数
      * 限制分享的发布时间为[一周内]
      * TODO ，耗时长，需缓存
@@ -382,6 +416,8 @@ class ContentModel extends BaseModel
 
         $sql = $this->alias('sh')
             ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+            ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
+            ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)/*判断userId是否有点赞此分享*/
             ->field('sh.s_id,
                     sh.user_id,
                     md5(sh.user_id) AS imgPath,
@@ -390,7 +426,9 @@ class ContentModel extends BaseModel
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.isPublic,
                     sh.cmt_count,
-                    sh.tb_count')
+                    sh.tb_count,
+                    IF(fs.cTime,1,0) AS collected,
+                    IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏; thumbed为1代表点赞了,0为未点赞*/
             ->where("(ur.`status`=1"/*分享所属用户状态为启用*/
                 ." AND sh.`text` like '%{$key}%')"/*查询关键字*/
                  ." AND ("

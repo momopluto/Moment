@@ -20,24 +20,16 @@ class ComController extends BaseController
         // 不然最新的分享相对来说变化较快
         // 而且最热的几条分享也能诱导用户注册
 
+        $userId = session('?LOGIN_FLAG') ? self::$user_id : -100;// -100为游客标识
+
         // 独立1个页面展示  ->游客
         // GET请求
-        $model = M('share');
-        $sql = $model->alias('sh')
-            ->field('sh.s_id,
-                md5(sh.user_id) AS imgPath,
-                sh.`text`,
-                sh.imgs,
-                FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
-                sh.isPublic,
-                sh.cmt_count,
-                sh.tb_count')
-            ->where('sh.cmt_count + sh.tb_count >= 500')
-            ->order('sh.cTime DESC')
-            ->buildsql();
-        // echo $sql;
+        $model = D('Content');
+        $sql = $model->getHotShare_sql($userId);
+        // echo $sql;die;
         $page_listRows = 10;// 默认可见10条
-        $allCount = $model->table($sql . ' tmp')->cache('count_hotShare', 1800)->count();// 缓存30分钟
+        $allCount = $model->getHotShare_count($userId);
+        // echo $allCount;die;
         $totalPages = ceil($allCount / $page_listRows);
 
         if (S('return_hotShare')) {
@@ -66,7 +58,7 @@ class ComController extends BaseController
         // 独立1个页面展示搜索结果
         // get请求
         // P($_SERVER);die;
-        // if (IS_AJAX) {
+        if (IS_AJAX) {
             $key = I('param.key');
             if ($key == '') {
                 $this->redirect('Index/index', '', 3, '搜索关键字不能为空');
@@ -75,6 +67,7 @@ class ComController extends BaseController
 
             $model = D('Content');
             $sql = $model->getSearchShare_sql(self::$user_id, $key);
+            // echo $sql;die;
             if (!$sql){
                 $this->redirect('Index/index', '', 3, $model->getError());
                 return;
@@ -92,7 +85,7 @@ class ComController extends BaseController
             $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
             $rData['totalPages'] = $totalPages;
             $this->ajaxReturn($rData);
-        // }
+        }
     }
 
     /**
