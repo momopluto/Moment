@@ -120,9 +120,9 @@ class ContentController extends BaseController
 
         $result = $model->delShare($shareId, self::$user_id);
         if($result === true){
-            $this->dataReturn();
+            $this->ajaxReturn($model->getError());
         }else{
-            $this->dataReturn('100', $model->getError());
+            $this->dataReturn($model->getError());
         }
     }
 
@@ -144,11 +144,8 @@ class ContentController extends BaseController
 
         $model = D('comment');
         $result = $model->insertComment($shareId, $pid, $userId, $content);
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
 
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -168,11 +165,7 @@ class ContentController extends BaseController
         $model = D('comment');
         $result = $model->delComment($commentId, self::$user_id);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -191,10 +184,7 @@ class ContentController extends BaseController
 
         $result = $model->insertThumb($shareId, $userId);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -211,35 +201,9 @@ class ContentController extends BaseController
         $userId = self::$user_id;
 
         $model = D('thumb');
-        $result = D('thumb')->delThumb($shareId, $userId);
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
-    }
+        $result = D('thumb')->cclThumb($shareId, $userId);
 
-    private function dealFiles($files)
-    {
-        $fileArray = array();
-        $n = 0;
-        foreach($files as $key => $file){
-            if(is_array($file['name'])){
-                $keys = array_keys($file);
-                $count = count($file['name']);
-                for($i = 0; $i < $count; $i++){
-                    $fileArray[$n]['key'] = $key;
-                    foreach($keys as $_key){
-                        $fileArray[$n][$_key] = $file[$_key][$i];
-                    }
-                    $n++;
-                }
-            }else{
-                $fileArray = $files;
-                break;
-            }
-        }
-
-        return $fileArray;
+        $this->ajaxReturn($model->getError());
     }
 
 }
