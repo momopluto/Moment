@@ -240,7 +240,7 @@ class ComController extends BaseController
      */
     public function getComment()
     {
-        $sId = I('post.s_id', '', 'strip_tags');
+        $sId = I('post.sid', '', 'strip_tags');
         $model = D('comment');
         $comments = $model->getCommentById($sId);
 
