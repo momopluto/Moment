@@ -18,10 +18,9 @@ class IndexController extends BaseController {
         // 游客，跳转到common/hotshare
         
 // TODO，判断是游客还是注册用户
-
         $userId = self::$user_id;
 // TODO, 测试测试测试
-//         $userId = 541;
+        $userId = 3;
 
         $model = D('Content');
         $sql = $model->getAllCanSeeShare_sql($userId);

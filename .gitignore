@@ -50,3 +50,6 @@ Application/Runtime/
 # 忽略所有配置文件
 Application/*/Conf/*
 /nbproject/
+
+# 忽略node依赖模块
+/node_modules/*

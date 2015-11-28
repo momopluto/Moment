@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'iconfont';
-  src: url('http://at.alicdn.com/t/font_1445736047_9211295.eot'); /* IE9*/
-  src: url('http://at.alicdn.com/t/font_1445736047_9211295.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('http://at.alicdn.com/t/font_1445736047_9211295.woff') format('woff'), /* chrome、firefox */
-  url('http://at.alicdn.com/t/font_1445736047_9211295.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-  url('http://at.alicdn.com/t/font_1445736047_9211295.svg#iconfont') format('svg'); /* iOS 4.1- */
+  src: url('/Public/font/iconfont.eot'); /* IE9*/
+  src: url('/Public/font/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('/Public/font/iconfont.woff') format('woff'), /* chrome、firefox */
+  url('/Public/font/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+  url('/Public/font/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
 }
 
 body {
@@ -43,6 +43,11 @@ a:hover { color: #56abe4 }
 }
 .clearf{
     clear:both;
+}
+
+.uploader {
+    position: fixed;
+    visibility: hidden;
 }
 
 .icon-delete {
@@ -285,8 +290,8 @@ a:hover { color: #56abe4 }
     text-align: right;
 }
 .word_limit_num {
+    margin: 0 4px;
     font-size: 20px;
-    font-style: italic;
     color: #56abe4;
 }
 .func { text-align: right }
@@ -337,7 +342,10 @@ a:hover { color: #56abe4 }
     box-shadow: none;
     text-align: center;
 }
-.publish_btn:hover { background-color: #4e99cc }
+.publish_btn:hover {
+    background-color: #4e99cc;
+    color: #fff;
+}
 .arrow{
     display: inline-block;
     width: 16px;
@@ -347,7 +355,6 @@ a:hover { color: #56abe4 }
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAANwAAADcBYx2BhQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADvSURBVDiN3ZKxSsRAFEXvjGlCqu2FfIS/sIWwdbC0Wct0w2gX0o1hYD5g/QHJwrbCfoMfYDeprFUy1ZhrFZDEFWGLBW/1eO/ew3vwBEkcI3lU+n8AkrFomuZcSnmd57kpiuLzJ3Pbtmdd190Nw7DVWr9MN3gjufLe75xz6TTsnEu99zuSqzRNX2cnaK0/QghLkjLGuDfGLMaZMWYRY9yTlCGEZVmW7+NMTP+grusky7IHkhdJklwCQIzxSQjx3Pf9uqqq+N0/A4x9a+09ySsAEEI8KqVuAczMhwAAAGvtDQAopTaHPL8C/qLTP9LpAV/h8mokjhM3ugAAAABJRU5ErkJggg==);
 }
 .kinds {
-    width: 380px;
     margin-bottom: 10px;
     line-height: 0;
 }
@@ -387,6 +394,7 @@ a:hover { color: #56abe4 }
     display: inline-block;
     width: 60px;
     height: 60px;
+    margin-right: 10px;
     border-radius: 2px;
     background-size: cover;
     background-position: center;
@@ -445,9 +453,13 @@ a:hover { color: #56abe4 }
     height: 90px;
     margin: 0 6px 6px 0;
     overflow: hidden;
-    background-image: url(../img/1.jpg);
+    background-color: #eee;
     background-size: cover;
     cursor: -webkit-zoom-in;
+}
+.picItem:only-child {
+    width: 150px;
+    height: 150px;
 }
 .pic_zoom_in {
     position: relative;
