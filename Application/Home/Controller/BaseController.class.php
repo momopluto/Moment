@@ -21,10 +21,8 @@ class BaseController extends CommonController
     protected function _initialize()
     {
         parent::_initialize();
-
-        // echo "Home/BaseController";
-        //        p($_SERVER);
-        //        die;
+        // p($_SERVER);
+        // die;
         /*
         session格式
         array(
@@ -38,19 +36,19 @@ class BaseController extends CommonController
         if(!(session('?LOGIN_FLAG') && session('LOGIN_FLAG'))){
             // 未登录
             $this->redirect('Home/User/login', '', 3, '未登录！');
-
+ 
             return;
         }
-
+ 
         // 判断session是否过期
         if(NOW_TIME - session('LAST_OP_TIME') > self::SESSION_EXPIRE){
             // 用户2次操作时间间隔已经超过session过期时间间隔
             session('LOGIN_FLAG', null);
             session('USERDATA', null);
             session('LAST_OP_TIME', null);
-
+ 
             $this->redirect('Home/User/login', '', 3, '登录过期！请重新登录！');
-
+ 
             return;
         }
         session('LAST_OP_TIME', NOW_TIME);// 未过期，更新最后操作时间
@@ -62,60 +60,62 @@ class BaseController extends CommonController
         self::$nickname = '';
         self::$userdata = $userdata;
     }
-    
+
     /**
      * 获取home页面公共的数据
      * 1、关注.粉丝.分享 总数
      * 2、相册的前几张图片
      * @param integer $userId 用户id
      */
-    protected function get_home_public_data($userId){
+    protected function get_home_public_data($userId)
+    {
         // 获取(userId的) 关注.粉丝.分享 总数
         $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
-        $this->assign('count',$countData);
-//        echo '$count = <br/>';
-//        p($countData);
+        $this->assign('count', $countData);
+        //        echo '$count = <br/>';
+        //        p($countData);
         // 获取相册的前几张图片
         $pics = [];
         $result = D('Content')->getPic($userId, $userId == self::$user_id);
         if($result){
             $picDir = md5($userId);
-            $picPath = PATH_IMG."/$picDir/";
-            $this->assign('picPath',$picPath);// 访问url，后面直接拼图片名即可访问
-            
+            $picPath = PATH_IMG . "/$picDir/";
+            $this->assign('picPath', $picPath);// 访问url，后面直接拼图片名即可访问
+
             $pics = $result;
         }
         $this->assign('pics', $pics);
-//        echo '$picPath = <br/>';
-//        echo $picPath;
-//        echo '$pics = <br/>';
-//        p($pics);
+        //        echo '$picPath = <br/>';
+        //        echo $picPath;
+        //        echo '$pics = <br/>';
+        //        p($pics);
     }
-    
+
     /**
      * 获取index页面公共的数据
      * 1、关注.粉丝.分享 总数
      * 2、点赞榜
      * @param integer $userId
      */
-    protected function get_index_public_data($userId){
+    protected function get_index_public_data($userId)
+    {
         // 获取(userId的) 关注.粉丝.分享 总数
         $countData = getUser_FocusFanShare_Count($userId, $userId == self::$user_id);
         $this->assign('count', $countData);
-//        echo '$count = <br/>';
-//        p($countData);
+        //        echo '$count = <br/>';
+        //        p($countData);
 
         // 获取点赞榜
         $thumblist = D('Thumb')->get_thumbuplist(NOW_TIME, 5);
         $this->assign('thumblist', $thumblist);
-//        echo '$thumblist = <br/>';
-//        p($thumblist);
-        
+        //        echo '$thumblist = <br/>';
+        //        p($thumblist);
+
         $picDir = md5($userId);
-        $picPath = PATH_IMG."/";
-        $this->assign('picPath',$picPath);// 访问url，后面md5($userId)为文件夹名后，再拼图片名即可访问
-//        echo '$picPath = <br/>';
-//        echo $picPath;
+        $picPath = PATH_IMG . "/";
+        $this->assign('picPath', $picPath);// 访问url，后面md5($userId)为文件夹名后，再拼图片名即可访问
+        //        echo '$picPath = <br/>';
+        //        echo $picPath;
     }
 
     protected function getUserId()
