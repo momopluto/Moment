@@ -186,7 +186,7 @@ class ContentController extends BaseController
         // 接受参数{"sid":"分享内容id"}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
         $userId = self::$user_id;
         $model = D('thumb');
 
@@ -205,7 +205,7 @@ class ContentController extends BaseController
         // 接受参数{"sid":"分享内容id"}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
         $userId = self::$user_id;
 
         $model = D('thumb');
