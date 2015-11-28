@@ -137,7 +137,7 @@ var Publisher = React.createClass({
         }
         formData.append('isPublic', this.state.isPublished);
         formData.append('content', this.state.text);
-        formData.append('imgcount', this.state.pics.length);
+        formData.append('file_count', this.state.pics.length);
         $.ajax({
             type: 'post',
             url: '/cnt/doshare',
