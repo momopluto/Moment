@@ -507,9 +507,15 @@ class ContentModel extends BaseModel
             $err['errmsg'] = 'not found';
             $this->error = $err;
 
-            return;
+            return false;
         }
+        $result = $this->where($where)->data($saveData)->save();
+        if($result){
+            return true;
+        }else{
+            $this->error = '保存失败';
 
-        return $this->where($where)->data($saveData)->save();
+            return false;
+        }
     }
 }
