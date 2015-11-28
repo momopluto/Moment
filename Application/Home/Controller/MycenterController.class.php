@@ -155,7 +155,7 @@ class MycenterController extends BaseController
         $this->get_home_public_data($userId);
         
         
-       $this->assign('data',$list);// 赋值数据集Array
+        $this->assign('data',$list);// 赋值数据集Array
         
         $this->assign('list',json_encode($list));// 赋值数据集String
         $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
@@ -326,7 +326,7 @@ class MycenterController extends BaseController
         session('USERDATA', null);
         session('SESSION_EXPIRE', null);
 
-        $this->redirect('User/login', '', 3, '安全退出！跳转至登录页面...');
+        $this->redirect('usr/signin', '', 3, '安全退出！跳转至登录页面...');
     }
 
     /**

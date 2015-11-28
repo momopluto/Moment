@@ -26,24 +26,43 @@ class ComController extends BaseController
     }
 
     /**
-     * 查找分享
-     * @return [type] [description]
+     * [AJAX]搜索分享
+     * 在主页面展示
+     * @param string key [GET]关键字
+     * @return JSON
      */
     public function searchshare()
     {
         // 独立1个页面展示搜索结果
-        // GET请求
+        // get请求
+        // P($_SERVER);die;
+        // if (IS_AJAX) {
+            $key = I('param.key');
+            if ($key == '') {
+                $this->redirect('Index/index', '', 3, '搜索关键字不能为空');
+                return;
+            }
 
-        // 限制搜索条件
-        $q = I("param.wd", '', 'strip_tags');
-        $page = intval(I('post.page', 1, 'strip_tags'));
-        $page = $page ? $page : 1;
-        $limit = intval(I('post.limit', 25, 'strip_tags'));
-        $limit = $limit ? $limit : 25;
-        $q = "%" . $q . "%";
-        $data['data'] = D('content')->searchShare($q, $page, $limit);
-        $this->assign('data', $data);
-        $this->display();
+            $model = D('Content');
+            $sql = $model->getSearchShare_sql(self::$user_id, $key);
+            if (!$sql){
+                $this->redirect('Index/index', '', 3, $model->getError());
+                return;
+            }
+
+            $count      = $model->getSearchShare_count(self::$user_id, $key);// 查询满足要求的总记录数
+            $Page       = new \Think\Page($count,10);// 实例化分页类 传入总记录数和每页显示的记录数(10)
+            // p($Page);
+            $show       = $Page->show();// 分页显示输出
+            // p($show);
+            $sql .= ' limit '.$Page->firstRow.','.$Page->listRows;// 拼装分页语句
+            $list       = $model->query($sql);
+
+            $rData['result'] = $list;
+            $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
+            $rData['totalPages'] = $totalPages;
+            $this->ajaxReturn($rData);
+        // }
     }
 
     /**

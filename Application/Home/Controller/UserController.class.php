@@ -20,18 +20,18 @@ class UserController extends Controller {
             return;
         }
         
-//        if (IS_POST){
+        if (IS_POST){
             $login_ask = 'usr/signin';
-//
-//            $verify = new \Think\Verify();
-//            if ($verify->check(I('post.verify'))){
-//                $this->redirect($login_ask, '', 3, '验证码错误！');
-//                return;
-//            }
-            $username = 'testuser_1';
-            $password = md5('testuser_1');
-//            $username = I('post.username');
-//            $password = I('post.password');
+
+            $verify = new \Think\Verify();
+            if ($verify->check(I('post.verify'))){
+                $this->redirect($login_ask, '', 3, '验证码错误！');
+                return;
+            }
+            // $username = 'testuser_1';
+            // $password = md5('testuser_1');
+            $username = I('post.username');
+            $password = I('post.password');
             if ($username == '' || $password == ''){
                 $this->redirect($login_ask, '', 3, '用户名和密码不能为空！');
                 return;
@@ -59,11 +59,11 @@ class UserController extends Controller {
                 $this->redirect($login_ask, '', 3, $model->getError());
                 return;
             }
-//        }else{
-////            p(get_defined_constants(true));
-////            die;
-//            $this->display();
-//        }
+        }else{
+//             p(get_defined_constants(true));
+//             die;
+            $this->display();
+        }
     }
 
     /**
