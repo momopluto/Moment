@@ -560,7 +560,7 @@ class ContentModel extends BaseModel
             return false;
         }
         $result = $this->where($where)->data($saveData)->save();
-        if($result){
+        if($result !== false){
             $err['errcode'] = 0;
             $err['err'] = 'ok';
             $this->error = $err;
