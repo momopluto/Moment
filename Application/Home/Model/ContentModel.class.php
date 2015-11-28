@@ -122,6 +122,7 @@ class ContentModel extends BaseModel
             ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
             ->field('sh.s_id,
                     sh.user_id,
+                    md5(sh.user_id) AS imgPath,
                     sh.`text`,
                     sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
