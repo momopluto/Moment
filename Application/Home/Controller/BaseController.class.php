@@ -21,8 +21,8 @@ class BaseController extends CommonController
     protected function _initialize()
     {
         parent::_initialize();
-        p($_SERVER);
-        die;
+        // p($_SERVER);
+        // die;
         /*
         session格式
         array(
