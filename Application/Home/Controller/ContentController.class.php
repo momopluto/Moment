@@ -96,7 +96,7 @@ class ContentController extends BaseController
             if($result === false){
                 $this->dataReturn('100', $model->getError());
             }else{
-                $this->dataReturn();
+                $this->dataReturn(0, '', $this->getShareById($id));
             }
         }else{
             $this->dataReturn('100', '非法请求');
