@@ -10,10 +10,9 @@ class ComController extends BaseController
 {
 
     /**
-     * 最热的[若干条]分享
-     * ps: 限制游客可浏览的分享数目
-     *       注册用户浏览需要分页
-     * @return [type] [description]
+     * 最热的[随机1页的10条]分享
+     * 30分钟内最热的[随机1页的10条]分享内容一致
+     * @return JSON
      */
     public function hotshare()
     {
@@ -23,6 +22,37 @@ class ComController extends BaseController
 
         // 独立1个页面展示  ->游客
         // GET请求
+        $model = M('share');
+        $sql = $model->alias('sh')
+            ->field('sh.s_id,
+                md5(sh.user_id) AS imgPath,
+                sh.`text`,
+                sh.imgs,
+                FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                sh.isPublic,
+                sh.cmt_count,
+                sh.tb_count')
+            ->where('sh.cmt_count + sh.tb_count >= 500')
+            ->order('sh.cTime DESC')
+            ->buildsql();
+        // echo $sql;
+        $page_listRows = 10;// 默认可见10条
+        $allCount = $model->table($sql . ' tmp')->cache('count_hotShare', 1800)->count();// 缓存30分钟
+        $totalPages = ceil($allCount / $page_listRows);
+
+        if (S('return_hotShare')) {
+            // echo "************";
+            $list = S('return_hotShare');
+        } else {
+            $cur_page = mt_rand(1, $totalPages);// 随机展示1页
+            $page_begin = ($cur_page - 1) * $page_listRows;
+            $sql .= " limit {$page_begin},{$page_listRows}";
+            // echo $sql;die;
+            $list = $model->query($sql);
+            S('return_hotShare', $list, 1800);// 缓存30分钟
+        }
+
+        $this->ajaxReturn($list);
     }
 
     /**
