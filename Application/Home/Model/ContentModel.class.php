@@ -503,8 +503,8 @@ class ContentModel extends BaseModel
 
     /**
      * 更新share数据（目前仅用作更新imgs字段）
-     * @param string $where 条件
-     * @param array $saveData 更新的数据
+     * @param string $where    条件
+     * @param array  $saveData 更新的数据
      * @return boolean
      */
     public function saveShare($where, $saveData = [])
@@ -518,9 +518,15 @@ class ContentModel extends BaseModel
         }
         $result = $this->where($where)->data($saveData)->save();
         if($result){
+            $err['errcode'] = 0;
+            $err['err'] = 'ok';
+            $this->error = $err;
+
             return true;
         }else{
-            $this->error = '保存失败';
+            $err['errcode'] = '400';
+            $err['err'] = 'save failed';
+            $this->error = $err;
 
             return false;
         }
@@ -533,6 +539,8 @@ class ContentModel extends BaseModel
      */
     public function getShareById($id)
     {
-        return $this->field('s_id,user_id,md5(user_id) AS imgPath,text,imgs,cTime,isPublic,cmt_count,th_count')->where(['s_id' => $id])->select();
+        return $this->field('s_id,user_id,md5(user_id) AS imgPath,text,imgs,cTime,isPublic,cmt_count,th_count')
+            ->where(['s_id' => $id])
+            ->select();
     }
 }
