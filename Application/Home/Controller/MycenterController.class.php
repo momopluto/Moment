@@ -155,7 +155,7 @@ class MycenterController extends BaseController
         $this->get_home_public_data($userId);
         
         
-//        $this->assign('data',$list);// 赋值数据集Array
+       $this->assign('data',$list);// 赋值数据集Array
         
         $this->assign('list',json_encode($list));// 赋值数据集String
         $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
