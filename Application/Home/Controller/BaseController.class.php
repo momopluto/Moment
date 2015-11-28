@@ -22,7 +22,7 @@ class BaseController extends CommonController
     {
         parent::_initialize();
 
-        echo "Home/BaseController";
+        // echo "Home/BaseController";
         //        p($_SERVER);
         //        die;
         /*
