@@ -45,14 +45,14 @@ class ManagerController extends Controller
             if(!$result){
                 session('MANAGER_LOGIN_FLAG', false);
                 session('MANAGERDATA', null);
-                session('LAST_OP_TIME', null);
+                session('MANAGER_LAST_OP_TIME', null);
                 $this->redirect($login, '', 3, $model->getError()['err']);
 
                 return;
             }else{
                 session('MANAGER_LOGIN_FLAG', true);
                 session('MANAGERDATA', $result);
-                session('LAST_OP_TIME', NOW_TIME);
+                session('MANAGER_LAST_OP_TIME', NOW_TIME);
 
                 // 更新last_login_ip和last_login_time
                 $model->updateLoginData($result['mng_id']);
@@ -74,7 +74,7 @@ class ManagerController extends Controller
     {
         session('MANAGER_LOGIN_FLAG', false);
         session('MANAGERDATA', null);
-        session('LAST_OP_TIME', null);
+        session('MANAGER_LAST_OP_TIME', null);
         $login = '/Admin/mng/signin';
         $this->redirect($login, '', 1, '退出成功！正在跳转...');
     }

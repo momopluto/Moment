@@ -26,9 +26,9 @@ class BaseController extends CommonController
         /*
         session格式
         array(
-            'LOGIN_FLAG'    => true,
-            'USERDATA'      => mix,
-            'LAST_OP_TIME'=> 1445151324
+            'MANAGER_LOGIN_FLAG'    => true,
+            'MANAGERDATA'      => mix,
+            'MANAGER_LAST_OP_TIME'=> 1445151324
         );
         */
 
@@ -41,17 +41,17 @@ class BaseController extends CommonController
         }
 
         // 判断session是否过期
-        if(NOW_TIME - session('LAST_OP_TIME') > self::SESSION_EXPIRE){
+        if(NOW_TIME - session('MANAGER_LAST_OP_TIME') > self::SESSION_EXPIRE){
             // 用户2次操作时间间隔已经超过session过期时间间隔
-            session('LOGIN_FLAG', null);
+            session('MANAGER_LOGIN_FLAG', null);
             session('MANAGERDATA', null);
-            session('LAST_OP_TIME', null);
+            session('MANAGER_LAST_OP_TIME', null);
 
             $this->redirect('Admin/mng/signin', '', 3, '登录过期！请重新登录！');
 
             return;
         }
-        session('LAST_OP_TIME', NOW_TIME);// 未过期，更新最后操作时间
+        session('MANAGER_LAST_OP_TIME', NOW_TIME);// 未过期，更新最后操作时间
 
         // 通过检验，已登录
         // 进行全局静态变量赋值
