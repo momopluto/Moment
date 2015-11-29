@@ -95,11 +95,18 @@ class ContentController extends BaseController
                 ]);
             }
 
-            $imgs = array_column($imgs, 'savename');
-            $imgs = implode($imgs, ',');
+            /*
+                $imgs = array_column($imgs, 'savename');
+                $imgs = implode($imgs, ',');
+            */
+            $imgs_arr = array();
+            foreach ($imgs as $key => $value) {
+                array_push($imgs_arr, $value['savename']);
+            }
             $result = true;
-            if($imgs){
-                $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
+            if($imgs_arr){
+                $imgs_str = implode($imgs_arr, ',');
+                $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs_str]);
             }
             if(!$result){
                 $this->ajaxReturn($model->getError());
