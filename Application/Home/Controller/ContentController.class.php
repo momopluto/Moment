@@ -56,7 +56,7 @@ class ContentController extends BaseController
             if(intval($fileCount) !== count($_FILES)){
                 $this->ajaxReturn([
                     'errcode' => '400',
-                    'errmsg'  => 'upload failed',
+                    'errmsg'  => '上传文件缺失',
                 ]);
             }
 
@@ -91,7 +91,7 @@ class ContentController extends BaseController
             if(count($imgs) !== count($_FILES)){
                 $this->ajaxReturn([
                     'errcode' => '400',
-                    'errmsg'  => 'upload failed',
+                    'errmsg'  => '上传文件失败',
                 ]);
             }
 
@@ -118,7 +118,7 @@ class ContentController extends BaseController
         }else{
             $this->ajaxReturn([
                 'errcode' => '404',
-                'errmsg'  => 'request failed',
+                'errmsg'  => '请求无效',
             ]);
         }
     }
