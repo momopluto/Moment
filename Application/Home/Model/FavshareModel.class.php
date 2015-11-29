@@ -75,7 +75,7 @@ class FavshareModel extends BaseModel{
             return false;
         }
         // 检验ownerId和shareId记录未存在
-        if ($this->where("ownerId = %d AND s_id = %d", array($ownerId, $shareId))->count()) {
+        if ($this->where("owner_id = %d AND s_id = %d", array($ownerId, $shareId))->count()) {
             $err['errcode'] = 414;
             $err['errmsg'] = "duplicated";
             $this->error = $err;

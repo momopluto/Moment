@@ -25,14 +25,14 @@ var Moment = React.createClass({
 		}
 
 		var imgs = moment.imgs.length > 0 ? moment.imgs.split(',').map(function(item, index) {
-			return <li className="picItem" key={index} data-id={index} onClick={this.handlePicZoomIn} style={{backgroundImage: 'url(' + picPath + item + ')'}}></li>;
+			return <li className="picItem" key={index} data-id={index} onClick={this.handlePicZoomIn} style={{backgroundImage: 'url(' + picPath + moment.imgpath + '/' + item + ')'}}></li>;
 		}.bind(this)) : null;
 
 		var picZoomIn = this.state.isZoomingOut ? (
 			<div className="pic_zoom_in">
 				{this.state.zoomInIndex > 0 ? <a className="iconfont pic_prev" href="javascript:;" onClick={this.handlePrevPic}>&#xe604;</a> : null}
 				{this.state.zoomInIndex < imgs.length - 1 ? <a className="iconfont pic_next" href="javascript:;"  onClick={this.handleNextPic}>&#xe605;</a> : null}
-				<img src={picPath + moment.imgs.split(',')[this.state.zoomInIndex]} onClick={this.handlePicZoomOut} />
+				<img src={picPath + moment.imgpath + '/' + moment.imgs.split(',')[this.state.zoomInIndex]} onClick={this.handlePicZoomOut} />
 			</div>
 		) : null;
 
@@ -55,7 +55,7 @@ var Moment = React.createClass({
 				<div className="cardHandle">
 					<ul className="rowLine clearfix">
 						<li className={moment.collected == 0 ? '' : 'on'}>
-							<a className="row_btn" href="javascript:void(0);">
+							<a className="row_btn" href="javascript:;" onClick={this.handleCollect}>
 								<i className="iconfont">&#xe600;</i>
 								收藏
 								<span className="bubble bubble-add">收藏成功</span>
@@ -65,8 +65,8 @@ var Moment = React.createClass({
 						<li>
 							<a className="row_btn" href="javascript:;" onClick={this.handleOpenComment}><i className="iconfont">&#xe602;</i> 评论 <i>{moment.cmt_count}</i></a>
 						</li>											
-						<li>
-							<a className="row_btn" href="javascript:;"><i className="iconfont">&#xe601;</i> 赞 <i>{moment.tb_count}</i></a>
+						<li className={moment.thumbed == 0 ? '' : 'on'}>
+							<a className="row_btn" href="javascript:;" onClick={this.handleThumb}><i className="iconfont">&#xe601;</i> 赞 <i>{moment.tb_count}</i></a>
 						</li>																
 					</ul>
 					{this.state.isOpeningComment ? <CommentList /> : null}
@@ -104,9 +104,74 @@ var Moment = React.createClass({
 
 	// 展开评论列表
 	handleOpenComment: function(e) {
+		$.ajax({
+			type: 'post',
+			url: url.get_comment,
+			data: {
+				sid: this.props.moment.s_id
+			},
+			success: function(data) {
+				console.log(data)
+			}
+		});
+
 		this.setState(assign({}, this.state, {
 			isOpeningComment: !this.state.isOpeningComment
 		}));
+	},
+
+	// 收藏分享
+	handleCollect: function(e) {
+		if (this.props.moment.collected == 1) {
+			$.ajax({
+				type: 'post',
+				url: url.uncollect,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.collectMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		} else {
+			$.ajax({
+				type: 'post',
+				url: url.collect,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.collectMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		}
+	},
+
+	// 点赞分享
+	handleThumb: function(e) {
+		if (this.props.moment.thumbed == 1) {
+			$.ajax({
+				type: 'post',
+				url: url.unthumb,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.thumbMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		} else {
+			$.ajax({
+				type: 'post',
+				url: url.thumb,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.thumbMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		}
 	}
 });
 

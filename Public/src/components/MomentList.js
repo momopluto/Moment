@@ -8,8 +8,15 @@ var MomentList = React.createClass({
 
 	render: function() {
 		var momentList = this.props.moments.map(function(item, index) {
-			return <Moment key={index} moment={item} />;
-		});
+			return (
+				<Moment
+					key={index}
+					moment={item}
+					collectMoment={this.props.collectMoment}
+					thumbMoment={this.props.thumbMoment}
+				/>
+			);
+		}.bind(this));
 
 		return (
 			<div>{momentList}</div>

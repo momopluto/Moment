@@ -35,7 +35,8 @@ class BaseController extends CommonController
         // 判断是否存在session
         if(!(session('?LOGIN_FLAG') && session('LOGIN_FLAG'))){
             // 未登录
-            $this->redirect('Home/User/login', '', 3, '未登录！');
+            // 跳转至hotshare热门分享，该页面右上角有"登录/注册"入口
+            $this->redirect('usr/signin', '', 3, '未登录！');
  
             return;
         }
@@ -47,7 +48,7 @@ class BaseController extends CommonController
             session('USERDATA', null);
             session('LAST_OP_TIME', null);
  
-            $this->redirect('Home/User/login', '', 3, '登录过期！请重新登录！');
+            $this->redirect('usr/signin', '', 3, '登录过期！请重新登录！');
  
             return;
         }
@@ -112,7 +113,7 @@ class BaseController extends CommonController
         //        p($thumblist);
 
         $picDir = md5($userId);
-        $picPath = PATH_IMG . "/$picDir/";
+        $picPath = PATH_IMG . "/";
         $this->assign('picPath', $picPath);// 访问url，后面md5($userId)为文件夹名后，再拼图片名即可访问
         //        echo '$picPath = <br/>';
         //        echo $picPath;
@@ -123,7 +124,7 @@ class BaseController extends CommonController
         if(self::$user_id){
             return self::$user_id;
         }else{
-            $this->redirect('Home/User/login', '', 3, '未登录！');
+            $this->redirect('usr/signin', '', 3, '未登录！');
 
             return;
         }
@@ -145,11 +146,4 @@ class BaseController extends CommonController
         }
     }
 
-    protected function dataReturn($errcode = 0, $errmsg = '', $data = null, $type = '', $json_option = 0)
-    {
-        $ret['errcode'] = $errcode;
-        $ret['errmsg'] = $errmsg;
-        $ret['data'] = $data;
-        parent::ajaxReturn($ret, $type, $json_option);
-    }
 }

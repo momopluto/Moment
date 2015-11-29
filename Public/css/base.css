@@ -214,7 +214,7 @@ textarea {resize: none;}
 .login-error .iconfont{ color: #fcab2b;}
 
 /* 登录输入框 */
-.log-input { border: none; height: 20px; font-size: 16px; padding: 10px 2.5%; line-height: 20px; color:  #b8c4ce; background: #fff; width: 90%;}
+.log-input { border: none; height: 20px; font-size: 16px; padding: 10px 2.5%; line-height: 20px; background: #fff; width: 90%;}
 			/*30/400=7.5%,360/400=90%,10/400=2.5%*/
 .log-input-half { border: none; height: 20px; font-size: 16px; padding: 10px 5%; line-height: 20px; color:  #b8c4ce; background: #fff; width: 80%;}
 			/*30/200=15%,160/200=80%,10/200=5%*/

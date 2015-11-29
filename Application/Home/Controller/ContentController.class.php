@@ -50,12 +50,16 @@ class ContentController extends BaseController
         // 不管有没图片，只要上传成功后，都返回s_id
 
         if(IS_POST){
-            $text = I('post.text', '', 'strip_tags');
-            $isPublic = I('post.is_public', '', 'strip_tags');
-            $fileCount = I('post.file_count');
+            $text = I('post.content', '', 'strip_tags');
+            $isPublic = I('post.isPublic', '', 'strip_tags');
+            $fileCount = I('post.imgcount');
             if(intval($fileCount) !== count($_FILES)){
-                $this->dataReturn('100', '文件上传失败');
+                $this->ajaxReturn([
+                    'errcode' => '400',
+                    'errmsg'  => 'upload failed',
+                ]);
             }
+
             $userId = self::$user_id;
             $model = D('content');
             $id = $model->insertShare($userId, $text, $isPublic);
@@ -76,7 +80,7 @@ class ContentController extends BaseController
             checkPathOrCreate($upload->rootPath);
             $i = 0;
             foreach($_FILES as $key => $value){
-                $upload->saveName = $id . '-' . $i++;
+                $upload->saveName = md5($id . '_' . $i++);
                 // 上传文件
                 $result = $upload->uploadOne($value);
                 if($result){
@@ -85,21 +89,37 @@ class ContentController extends BaseController
             }
 
             if(count($imgs) !== count($_FILES)){
-                $this->dataReturn('100', 'Upload failed');
+                $this->ajaxReturn([
+                    'errcode' => '400',
+                    'errmsg'  => 'upload failed',
+                ]);
             }
 
-            $imgs = array_column($imgs, 'savename');
-            $imgs = implode($imgs, ',');
-
-            $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
-
-            if($result === false){
-                $this->dataReturn('100', $model->getError());
-            }else{
-                $this->dataReturn(0, '', $model->getShareById($id));
+            /*
+                $imgs = array_column($imgs, 'savename');
+                $imgs = implode($imgs, ',');
+            */
+            $imgs_arr = array();
+            foreach ($imgs as $key => $value) {
+                array_push($imgs_arr, $value['savename']);
             }
+            $result = true;
+            if($imgs_arr){
+                $imgs_str = implode($imgs_arr, ',');
+                $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs_str]);
+            }
+            if(!$result){
+                $this->ajaxReturn($model->getError());
+
+                return;
+            }
+
+            $this->ajaxReturn($model->getShareById($id));
         }else{
-            $this->dataReturn('100', '非法请求');
+            $this->ajaxReturn([
+                'errcode' => '404',
+                'errmsg'  => 'request failed',
+            ]);
         }
     }
 
@@ -116,14 +136,11 @@ class ContentController extends BaseController
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
         $model = D('content');
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
 
         $result = $model->delShare($shareId, self::$user_id);
-        if($result === true){
-            $this->dataReturn();
-        }else{
-            $this->dataReturn('100', $model->getError());
-        }
+
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -137,18 +154,15 @@ class ContentController extends BaseController
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
 
-        $shareId = I('post.s_id', '', 'strip_tags');
+        $shareId = I('post.sid', '', 'strip_tags');
         $pid = I('post.pid', '', 'strip_tags');
         $userId = self::$user_id;
         $content = I('post.content', '', 'strip_tags');
 
         $model = D('comment');
-        $result = $model->insertComment($shareId, $pid, $userId, $content);
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
+        $result = $model->insertComment($shareId, $userId, $content, $pid);
 
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
 
     /**
@@ -163,83 +177,11 @@ class ContentController extends BaseController
         // 接受参数{"cid":"评论id"}
         // 成功返回true
         // TODO，失败返回错误信息数组[格式待定]
-        $commentId = I('post.c_id', '', 'strip_tags');
+        $commentId = I('post.cid', '', 'strip_tags');
 
         $model = D('comment');
         $result = $model->delComment($commentId, self::$user_id);
 
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-
-        $this->dataReturn();
+        $this->ajaxReturn($model->getError());
     }
-
-    /**
-     * 点赞
-     * @return [type] [description]
-     */
-    public function thumb()
-    {
-        // AJAX POST
-        // 接受参数{"sid":"分享内容id"}
-        // 成功返回true
-        // TODO，失败返回错误信息数组[格式待定]
-        $shareId = I('post.s_id', '', 'strip_tags');
-        $userId = self::$user_id;
-        $model = D('thumb');
-
-        $result = $model->insertThumb($shareId, $userId);
-
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
-    }
-
-    /**
-     * 取消点赞
-     * @return [type] [description]
-     */
-    public function cclthumb()
-    {
-        // AJAX POST
-        // 接受参数{"sid":"分享内容id"}
-        // 成功返回true
-        // TODO，失败返回错误信息数组[格式待定]
-        $shareId = I('post.s_id', '', 'strip_tags');
-        $userId = self::$user_id;
-
-        $model = D('thumb');
-        $result = D('thumb')->delThumb($shareId, $userId);
-        if($result === false){
-            $this->dataReturn('100', $model->getError());
-        }
-        $this->dataReturn();
-    }
-
-    private function dealFiles($files)
-    {
-        $fileArray = array();
-        $n = 0;
-        foreach($files as $key => $file){
-            if(is_array($file['name'])){
-                $keys = array_keys($file);
-                $count = count($file['name']);
-                for($i = 0; $i < $count; $i++){
-                    $fileArray[$n]['key'] = $key;
-                    foreach($keys as $_key){
-                        $fileArray[$n][$_key] = $file[$_key][$i];
-                    }
-                    $n++;
-                }
-            }else{
-                $fileArray = $files;
-                break;
-            }
-        }
-
-        return $fileArray;
-    }
-
 }

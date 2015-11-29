@@ -140,7 +140,7 @@ var Publisher = React.createClass({
         formData.append('file_count', this.state.pics.length);
         $.ajax({
             type: 'post',
-            url: '/cnt/doshare',
+            url: url.doshare,
             data: formData,
             processData: false,
             contentType: false,

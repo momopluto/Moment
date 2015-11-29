@@ -92,14 +92,14 @@ var Moment = React.createClass({displayName: "Moment",
 		}
 
 		var imgs = moment.imgs.length > 0 ? moment.imgs.split(',').map(function(item, index) {
-			return React.createElement("li", {className: "picItem", key: index, "data-id": index, onClick: this.handlePicZoomIn, style: {backgroundImage: 'url(' + picPath + item + ')'}});
+			return React.createElement("li", {className: "picItem", key: index, "data-id": index, onClick: this.handlePicZoomIn, style: {backgroundImage: 'url(' + picPath + moment.imgpath + '/' + item + ')'}});
 		}.bind(this)) : null;
 
 		var picZoomIn = this.state.isZoomingOut ? (
 			React.createElement("div", {className: "pic_zoom_in"}, 
 				this.state.zoomInIndex > 0 ? React.createElement("a", {className: "iconfont pic_prev", href: "javascript:;", onClick: this.handlePrevPic}, "") : null, 
 				this.state.zoomInIndex < imgs.length - 1 ? React.createElement("a", {className: "iconfont pic_next", href: "javascript:;", onClick: this.handleNextPic}, "") : null, 
-				React.createElement("img", {src: picPath + moment.imgs.split(',')[this.state.zoomInIndex], onClick: this.handlePicZoomOut})
+				React.createElement("img", {src: picPath + moment.imgpath + '/' + moment.imgs.split(',')[this.state.zoomInIndex], onClick: this.handlePicZoomOut})
 			)
 		) : null;
 
@@ -122,7 +122,7 @@ var Moment = React.createClass({displayName: "Moment",
 				React.createElement("div", {className: "cardHandle"}, 
 					React.createElement("ul", {className: "rowLine clearfix"}, 
 						React.createElement("li", {className: moment.collected == 0 ? '' : 'on'}, 
-							React.createElement("a", {className: "row_btn", href: "javascript:void(0);"}, 
+							React.createElement("a", {className: "row_btn", href: "javascript:;", onClick: this.handleCollect}, 
 								React.createElement("i", {className: "iconfont"}, ""), 
 								"收藏", 
 								React.createElement("span", {className: "bubble bubble-add"}, "收藏成功"), 
@@ -132,8 +132,8 @@ var Moment = React.createClass({displayName: "Moment",
 						React.createElement("li", null, 
 							React.createElement("a", {className: "row_btn", href: "javascript:;", onClick: this.handleOpenComment}, React.createElement("i", {className: "iconfont"}, ""), " 评论 ", React.createElement("i", null, moment.cmt_count))
 						), 											
-						React.createElement("li", null, 
-							React.createElement("a", {className: "row_btn", href: "javascript:;"}, React.createElement("i", {className: "iconfont"}, ""), " 赞 ", React.createElement("i", null, moment.tb_count))
+						React.createElement("li", {className: moment.thumbed == 0 ? '' : 'on'}, 
+							React.createElement("a", {className: "row_btn", href: "javascript:;", onClick: this.handleThumb}, React.createElement("i", {className: "iconfont"}, ""), " 赞 ", React.createElement("i", null, moment.tb_count))
 						)																
 					), 
 					this.state.isOpeningComment ? React.createElement(CommentList, null) : null
@@ -171,9 +171,74 @@ var Moment = React.createClass({displayName: "Moment",
 
 	// 展开评论列表
 	handleOpenComment: function(e) {
+		$.ajax({
+			type: 'post',
+			url: url.get_comment,
+			data: {
+				sid: this.props.moment.s_id
+			},
+			success: function(data) {
+				console.log(data)
+			}
+		});
+
 		this.setState(assign({}, this.state, {
 			isOpeningComment: !this.state.isOpeningComment
 		}));
+	},
+
+	// 收藏分享
+	handleCollect: function(e) {
+		if (this.props.moment.collected == 1) {
+			$.ajax({
+				type: 'post',
+				url: url.uncollect,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.collectMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		} else {
+			$.ajax({
+				type: 'post',
+				url: url.collect,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.collectMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		}
+	},
+
+	// 点赞分享
+	handleThumb: function(e) {
+		if (this.props.moment.thumbed == 1) {
+			$.ajax({
+				type: 'post',
+				url: url.unthumb,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.thumbMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		} else {
+			$.ajax({
+				type: 'post',
+				url: url.thumb,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function() {
+					this.props.thumbMoment(this.props.moment.s_id);
+				}.bind(this)
+			});
+		}
 	}
 });
 
@@ -190,8 +255,15 @@ var MomentList = React.createClass({displayName: "MomentList",
 
 	render: function() {
 		var momentList = this.props.moments.map(function(item, index) {
-			return React.createElement(Moment, {key: index, moment: item});
-		});
+			return (
+				React.createElement(Moment, {
+					key: index, 
+					moment: item, 
+					collectMoment: this.props.collectMoment, 
+					thumbMoment: this.props.thumbMoment}
+				)
+			);
+		}.bind(this));
 
 		return (
 			React.createElement("div", null, momentList)
@@ -343,7 +415,7 @@ var Publisher = React.createClass({displayName: "Publisher",
         formData.append('file_count', this.state.pics.length);
         $.ajax({
             type: 'post',
-            url: '/cnt/doshare',
+            url: url.doshare,
             data: formData,
             processData: false,
             contentType: false,
@@ -386,7 +458,11 @@ var App = React.createClass({displayName: "App",
         return (
             React.createElement("div", null, 
                 React.createElement(Publisher, {addMoment: this.addMoment}), 
-                React.createElement(MomentList, {moments: moments})
+                React.createElement(MomentList, {
+                    moments: moments, 
+                    collectMoment: this.collectMoment, 
+                    thumbMoment: this.thumbMoment}
+                )
             )
         );
     },
@@ -398,9 +474,31 @@ var App = React.createClass({displayName: "App",
     },
 
     collectMoment: function(s_id) {
-        this.setState({}, this.state, {
-            moments: this
+        var newState = assign({}, this.state);
+        newState.moments = newState.moments.map(function(item, index) {
+                if (item.s_id == s_id) {
+                    item.collected = item.collected == 1 ? 0 : 1;
+                };
+                return item;
         });
+        this.setState(newState);
+    },
+
+    thumbMoment: function(s_id) {
+        var newState = assign({}, this.state);
+        newState.moments = newState.moments.map(function(item, index) {
+                if (item.s_id == s_id) {
+                    if (item.thumbed == 1) {
+                        item.thumbed = 0;
+                        item.tb_count--;
+                    } else {
+                        item.thumbed = 1;
+                        item.tb_count++;
+                    }
+                };
+                return item;
+        });
+        this.setState(newState);
     }
 });
 

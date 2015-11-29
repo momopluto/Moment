@@ -40,6 +40,8 @@ class ContentModel extends BaseModel
     // 收藏xx分享
     // 评论了xx条，被评论了xx条，点赞了xx个，收获了xx个点赞
     // xxxxx
+
+/*
     public function getUserData($userId)
     {
         $where = ['user_id' => $userId];
@@ -53,7 +55,7 @@ class ContentModel extends BaseModel
             'share_count'     => $shareCount,
         ];
     }
-
+    
     // ?? 内部分好页？
     public function getShareIndex($userId)
     {
@@ -85,6 +87,40 @@ class ContentModel extends BaseModel
             'show'     => $show,
             'list'     => $list,
         ];
+    }
+*/
+    /**
+     * 获取最热的分享总数
+     * @param integer $userId 用户id
+     * @return integer 总数
+     */
+    public function getHotShare_count($userId){
+        return $this->table($this->getHotShare_sql($userId) . ' tmp')->cache('count_hotShare', 1800)->count();// 缓存30分钟
+    }
+
+    /**
+     * 获取最热的分享的
+     * @param integer $userId 用户id
+     * @return string sql语句
+     */
+    public function getHotShare_sql($userId){
+        $sql = $this->alias('sh')
+            ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
+            ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)/*判断userId是否有点赞此分享*/
+            ->field('sh.s_id,
+                md5(sh.user_id) AS imgPath,
+                sh.`text`,
+                sh.imgs,
+                FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                sh.isPublic,
+                sh.cmt_count,
+                sh.tb_count,
+                IF(fs.cTime,1,0) AS collected,
+                IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏; thumbed为1代表点赞了,0为未点赞*/
+            ->where('sh.cmt_count + sh.tb_count >= 500')
+            ->order('sh.cTime DESC')
+            ->buildsql();
+        return $sql;
     }
 
     /**
@@ -120,16 +156,32 @@ class ContentModel extends BaseModel
         $sql = $this->alias('sh')
             ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
             ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
+            ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)/*判断userId是否有点赞此分享*/
             ->field('sh.s_id,
                     sh.user_id,
+                    md5(sh.user_id) AS imgPath,
                     sh.`text`,
                     sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.isPublic,
                     sh.cmt_count,
                     sh.tb_count,
-                    IF(fs.cTime,1,0) AS collected')/*collected为1代表已收藏，0为未收藏*/
-            ->where('(' . ' (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . ')'/*限制时间段*/ . ' AND (' . ' (sh.isPublic=1 AND ur.`status`=1)'/*公开的分享，且分享所属用户状态为启用*/ . ' OR (sh.isPublic=0 AND sh.user_id=' . $userId . ')'/*自己发布的私密分享*/ . ' )' . ' )')
+                    IF(fs.cTime,1,0) AS collected,
+                    IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏; thumbed为1代表点赞了,0为未点赞*/
+            // ->where('('
+            //         . ' (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . ')'/*限制时间段*/
+            //         . ' AND ('
+            //             . ' (sh.isPublic=1 AND ur.`status`=1)'/*公开的分享，且分享所属用户状态为启用*/
+            //             . ' OR (sh.isPublic=0 AND sh.user_id=' . $userId . ')'/*自己发布的私密分享*/
+            //         . ' )'
+            //     . ' )')
+            ->where('( (ur.`status`=1'/*分享所属用户状态为启用*/
+                    . ' AND (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . '))'/*限制时间段*/
+                    . ' AND ('
+                        . ' (sh.isPublic=1 AND sh.user_id<>' . $userId . ')'/*其它用户发布的公开的分享*/
+                        . ' OR (sh.user_id=' . $userId . ')'/*自己发布的所有分享*/
+                    . ' )'
+                . ' )')
             ->order('sh.cTime DESC')
             ->buildSql();
 
@@ -333,30 +385,60 @@ class ContentModel extends BaseModel
         return intval($this->where($map)->count());
     }
 
-    // 搜索share
-    public function searchShare($q, $page, $limit)
-    {
-        $field = 's.s_id, s.user_id, s.text, s.imgs, s.cTime, u.username';
-        $where = [
-            's.text'     => [
-                'like',
-                $q,
-            ],
-            's.isPublic' => 1,
-        ];
-        $ret = [];
-        $ret['allcount'] = $this->alias('s')
-            ->join('left join mn_user u on s.user_id=u.user_id')
-            ->$where($where)
-            ->count();
-        $ret['data'] = $this->alias('s')
-            ->join('left join mn_user u on s.user_id=u.user_id')
-            ->$where($where)
-            ->field($field)
-            ->page($page, $limit)
-            ->select();
+    // 还没有搜索用户的功能
 
-        return $ret;
+    /**
+     * 获取搜索结果总数
+     * @param integer $userId 发起搜索的用户的id
+     * @param string $key 搜索关键字
+     * @return integer 成功返回总数;失败返回false
+     */
+    public function getSearchShare_count($userId, $key)
+    {
+        return $this->table($this->getSearchShare_sql($userId, $key) . ' tmp')->count();
+    }
+
+    // 搜索share
+    // 对于自己的分享，都可以查找
+    // 对于他人的分享，只能查找公开的
+    /**
+     * 获取搜索结果
+     * @param integer $userId 发起搜索的用户的id
+     * @param string $key 搜索关键字
+     * @return string sql语句
+     */
+    public function getSearchShare_sql($userId, $key)
+    {
+        // 验证userId有效，账号启用
+        if(!$this->checkUserStatus($userId)){
+            return false;
+        }
+
+        $sql = $this->alias('sh')
+            ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
+            ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
+            ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)/*判断userId是否有点赞此分享*/
+            ->field('sh.s_id,
+                    sh.user_id,
+                    md5(sh.user_id) AS imgPath,
+                    sh.`text`,
+                    sh.imgs,
+                    FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
+                    sh.isPublic,
+                    sh.cmt_count,
+                    sh.tb_count,
+                    IF(fs.cTime,1,0) AS collected,
+                    IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏; thumbed为1代表点赞了,0为未点赞*/
+            ->where("(ur.`status`=1"/*分享所属用户状态为启用*/
+                ." AND sh.`text` like '%{$key}%')"/*查询关键字*/
+                 ." AND ("
+                    ." ( sh.user_id={$userId} )"/*用户自己发布的所有分享*/
+                    ." OR ( sh.user_id<>{$userId} AND sh.isPublic=1 )"/*其它用户发布的公开的分享*/
+                 ." )")
+            ->order('sh.cTime DESC')
+            ->buildSql();
+
+        return $sql;
     }
 
 
@@ -500,6 +582,12 @@ class ContentModel extends BaseModel
         return $picArray;
     }
 
+    /**
+     * 更新share数据（目前仅用作更新imgs字段）
+     * @param string $where    条件
+     * @param array  $saveData 更新的数据
+     * @return boolean
+     */
     public function saveShare($where, $saveData = [])
     {
         if(!$where || !$saveData){
@@ -510,17 +598,30 @@ class ContentModel extends BaseModel
             return false;
         }
         $result = $this->where($where)->data($saveData)->save();
-        if($result){
+        if($result !== false){
+            $err['errcode'] = 0;
+            $err['err'] = 'ok';
+            $this->error = $err;
+
             return true;
         }else{
-            $this->error = '保存失败';
+            $err['errcode'] = '400';
+            $err['err'] = 'save failed';
+            $this->error = $err;
 
             return false;
         }
     }
 
+    /**
+     * 通过分享的s_id得到该条分享数据
+     * @param integer $id 分享内容的id
+     * @return array 分享数据
+     */
     public function getShareById($id)
     {
-        return $this->where(['s_id' => $id])->select();
+        return $this->field('s_id,user_id,md5(user_id) AS imgPath,text,imgs,cTime,isPublic,cmt_count,tb_count')
+            ->where(['s_id' => $id])
+            ->select();
     }
 }

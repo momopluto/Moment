@@ -1,1 +1,73 @@
-登录页面
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>登录</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css" />
+        <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/iconfont.css">
+		<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/login-fluid.css" />
+        <!-- <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/home.css" /> -->
+        <style type="text/css">
+            .regForm label { cursor: default }
+            .title { text-align: center }
+            .vertify_code { position: absolute; top: 0; right: 0 }
+        </style>
+	</head>
+<body>
+	<div class="wp cl">
+        <div class="log-wrap cl">
+            <div class="log-hd">
+                 <div class="log-logo">
+                     <img src="<{$smarty.const.PATH_IMG}>/logo-fill.png"/> 
+                 </div>
+            </div>
+            <h4 class="title">
+                <span>
+                    <a href="<{U('usr/signin')}>" class="active">登录</a>
+                    <b>·</b>
+                    <a href="<{U('usr/signup')}>" class="">注册</a>
+                </span>
+            </h4>
+            <div class="log-content cl">
+                <div class="wpl pos cl">
+                    <div class="log-row-cx cl">
+                    	<div class="reg_left pos">
+                        <form action='<{$smarty.const.__SELF__}>' method="post" class='regForm' onSubmit="return check(this)">
+                            <div class="reg_cont_input">
+                            	<label class="login-icon pos">
+        							<!-- <i class="iconfont icon-user-line"></i> -->
+                                    <input type="text" name="username" autocomplete="off" class="log-input" dataType='username' errormsg="用户名应由3~20个字符组成!" nullmsg="用户名不能为空!"  placeholder='用户名'> 
+        						</label>
+                                <label class="login-icon pos">
+        							<!-- <i class="iconfont icon-lock-line"></i> -->
+                                    <input type="password" name="password" datatype='*6-20' errormsg="密码范围在6~20位之间!" autocomplete="off" class="log-input" nullmsg="请输入您的密码!" placeholder='密码'>
+        						</label>
+                                <label class="login-icon pos">
+                                    <!-- <i class="iconfont icon-lock-line"></i> -->
+                                    <input type="text" name="verify" class="log-input" placeholder="验证码">
+                                    <img class="vertify_code" src="<{U('/api/verify')}>?<{$smarty.const.NOW_TIME}>" id="verifyImg" onClick="changeVerify()" title="点击刷新验证码"/>
+                                </label>
+                                <input class="lang-btn js-confirm" type="submit">
+                            </div>
+                           </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
+	<script type="text/javascript" src="<{$smarty.const.PATH_JS}>/md5.js"></script>
+    <script type="text/javascript">
+        var verifyUrl = "<{U('/api/verify')}>";
+        function changeVerify(){
+            var timenow = new Date().getTime();
+            document.getElementById('verifyImg').src=verifyUrl+'?'+timenow;
+        }
+        function check(form) {
+            form.password.value = md5(form.password.value);
+            return true;
+        }
+    </script>
+</body>
+</html>

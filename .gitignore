@@ -53,3 +53,6 @@ Application/*/Conf/*
 
 # 忽略node依赖模块
 /node_modules/*
+
+# 忽略上传的图片
+/Public/img/*

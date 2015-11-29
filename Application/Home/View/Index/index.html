@@ -11,7 +11,7 @@
 	<div class="blog_header">
 		<div class="content clearfix">
 			<!-- logo -->
-			<a class="logo" href="##"></a>
+			<a class="logo" href="<{U('Index/index')}>"></a>
 			<!-- 搜索栏 -->
 			<div class="search">
 				<input type="text" autocomplete="off" class="w_input" placeholder="大家都在搜：谁日了赵日天">
@@ -22,11 +22,11 @@
 			<i class="nav_item" href="">
 				<{$smarty.session.USERDATA.username}>
 				<ul class="limits_list">
-					<li class="limits_item">个人主页</li>
-					<li class="limits_item">退出登录</li>
+					<li class="limits_item"><a href="<{U('myct/share')}>">个人主页</a></li>
+					<li class="limits_item"><a href="<{U('myct/signout')}>">退出登录</a></li>
 				</ul>
 			</i>
-			<a class="nav_item on" href="">首页</a>
+			<a class="nav_item on" href="<{U('Index/index')}>">首页</a>
 		</div>
 	</div>
 
@@ -39,7 +39,7 @@
 						<div class="left_nav_group">
 							<div class="lev_box on">
 								<h3 class="lev">
-									<a href="#" class="s_txt1">
+									<a href="<{U('Index/index')}>" class="s_txt1">
 										<span class="lev_txt">首页</span>
 										<i class="W_new"></i>
 									</a>
@@ -47,7 +47,7 @@
 							</div>
 							<div class="lev_box">
 								<h3 class="lev">
-									<a href="#" class="s_txt1">
+									<a href="<{U('myct/comment_receive')}>" class="s_txt1">
 										<span class="lev_txt">评论</span>
 										<i class="W_new"></i>
 									</a>
@@ -55,7 +55,7 @@
 							</div>
 							<div class="lev_box">
 								<h3 class="lev">
-									<a href="#" class="s_txt1">
+									<a href="<{U('myct/collect')}>" class="s_txt1">
 										<span class="lev_txt">收藏</span>
 										<i class="W_new"></i>
 									</a>
@@ -63,7 +63,7 @@
 							</div>
 							<div class="lev_box">
 								<h3 class="lev">
-									<a href="#" class="s_txt1">
+									<a href="<{U('myct/thumb_receive')}>" class="s_txt1">
 										<span class="lev_txt">赞</span>
 										<i class="W_new"></i>
 									</a>
@@ -85,19 +85,19 @@
 									<div class="namebox"><{$smarty.session.USERDATA.username}></div>
 									<ul class="user_atten">
 										<li class="s_line1">
-											<a href="#">
+											<a href="<{U('myct/focus')}>">
 												<strong><{$count['focus']}></strong>
 												<span class="s_txt2">关注</span>
 											</a>
 										</li>
 										<li class="s_line1">
-											<a href="#">
+											<a href="<{U('myct/fans')}>">
                                                 <strong><{$count['fans']}></strong>
 												<span class="s_txt2">粉丝</span>
 											</a>
 										</li>								
 										<li class="s_line1">
-											<a href="#">
+											<a href="<{U('myct/share')}>">
 												<strong><{$count['share']}></strong>
 												<span class="s_txt2">分享</span>
 											</a>
@@ -121,10 +121,10 @@
 								</a>
 							</div>
 							<h2 class="card_title">点赞榜</h2>
-                                                        <{foreach $thumblist as $type => $oneType}>
+                        <{foreach $thumblist as $type => $oneType}>
 							<ul class="<{$type}>-praise">
-                                                            <{foreach $oneType as $i => $share}>
-                                                                <li class="praise_item">
+                            <{foreach $oneType as $i => $share}>
+                                <li class="praise_item">
 									<div class="praise_rank"><{$i+1}></div>
 									<div class="praise_num">
 										<i class="iconfont">&#xe601;</i>
@@ -133,8 +133,8 @@
 									<div class="praise_name"><{$share['user_id']}></div>
 									<div class="praise_txt"><{$share['text']}></div>
 								</li>
-                                                            <{/foreach}>
-                                                            <{*
+                            <{/foreach}>
+                            <{*
 								<li class="praise_item">
 									<div class="praise_rank">1</div>
 									<div class="praise_num">
@@ -180,9 +180,9 @@
 									<div class="praise_name">五行属二</div>
 									<div class="praise_txt">最近养了一只猫，叫小狐狸，一个谜样の美少年……</div>
 								</li>
-                                                            *}>
+                            *}>
 							</ul>
-                                                        <{/foreach}>
+                        <{/foreach}>
 
 						</div>
 					</div>
@@ -196,6 +196,14 @@
     <script>
         var json_data='<{$list}>';
         var picPath = '<{$picPath}>';
+        var url = {
+        	doshare: "<{U('cnt/doshare')}>",
+        	collect: "<{U('fav/cnt')}>", // 收藏
+        	uncollect: "<{U('fav/cclcnt')}>", // 取消收藏
+        	thumb: "<{U('fav/thumb')}>", // 点赞
+        	unthumb: "<{U('fav/cclthumb')}>", // 取消赞
+        	get_comment: "<{U('myct/comment')}>" // 请求评论列表
+        };
     </script>
     <script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
 	<script type="text/javascript" src="<{$smarty.const.PATH_JS}>/html5shiv.min.js"></script>
