@@ -5,8 +5,18 @@
 <{block name=style}>
 	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css">
 	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/comm.css">
+    <style>
+        @font-face {
+          font-family: 'iconfont';
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot'); /* IE9*/
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.woff') format('woff'), /* chrome、firefox */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+          url('<{$smarty.const.PATH_FONT}>/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+        }
+    </style>
 <{/block}>
-
+<{block name=indexActive}>on<{/block}>
 <{block name=content}>
 	<div class="blog_frame_center" id="moment-container"></div>
 <{/block}>
