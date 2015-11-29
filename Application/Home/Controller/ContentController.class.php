@@ -186,6 +186,44 @@ class ContentController extends BaseController
     }
 
     /**
+     * 点赞
+     * @return [type] [description]
+     */
+    public function thumb()
+    {
+        // AJAX POST
+        // 接受参数{"sid":"分享内容id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
+        $shareId = I('post.sid', '', 'strip_tags');
+        $userId = self::$user_id;
+        $model = D('thumb');
+
+        $result = $model->insertThumb($shareId, $userId);
+
+        $this->ajaxReturn($model->getError());
+    }
+
+    /**
+     * 取消点赞
+     * @return [type] [description]
+     */
+    public function cclthumb()
+    {
+        // AJAX POST
+        // 接受参数{"sid":"分享内容id"}
+        // 成功返回true
+        // TODO，失败返回错误信息数组[格式待定]
+        $shareId = I('post.sid', '', 'strip_tags');
+        $userId = self::$user_id;
+
+        $model = D('thumb');
+        $result = D('thumb')->cclThumb($shareId, $userId);
+
+        $this->ajaxReturn($model->getError());
+    }
+
+    /**
      * 收到的评论
      */
     public function commentReceive()
