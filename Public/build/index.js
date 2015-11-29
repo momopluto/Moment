@@ -1,31 +1,60 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var React = require('react');
-var getTimeString = require('../util/util').getTimeString;
 
-var Comment = React.createClass({displayName: "Comment",
+var CommentList = React.createClass({displayName: "CommentList",
 	render: function() {
-		var comment = this.props.comment;
-		console.log(comment);
 		return (
-			React.createElement("li", {className: "comment_item"}, 
-				React.createElement("div", {className: "comment_avator"}), 
-				React.createElement("div", {className: "comment_content"}, 
-					React.createElement("span", {className: "comment_name"}, 
-						React.createElement("a", {href: "javascript:;"}, comment.c_id), 
-						 comment.pid > 0 ? '回复' : null, 
-						
-							comment.pid > 0 ? React.createElement("a", {href: "##"}, comment.pid) : null
-						
-					), 
-					"：", 
-					React.createElement("span", {className: "comment_text"}, comment.content), 
-					React.createElement("div", {className: "comment_option"}, 
-						React.createElement("span", {className: "comment_time"}, comment.ctime), 
-						React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
-					), 
-					React.createElement("div", {className: "comment_reply_box clearfix"}, 
-						React.createElement("textarea", {placeholder: "回复@怜逐", rows: "2"}), 
-						React.createElement("a", {href: "javascript:;"}, "评论")
+			React.createElement("ul", {className: "comment_list"}, 
+				React.createElement("li", {className: "comment_item"}, 
+					React.createElement("div", {className: "comment_avator"}), 
+					React.createElement("div", {className: "comment_content"}, 
+						React.createElement("span", {className: "comment_name"}, 
+							React.createElement("a", {href: "##"}, "你好杨小米"), 
+							"回复", 
+							React.createElement("a", {href: "##"}, "@怜逐")
+						), 
+						":", 
+						React.createElement("span", {className: "comment_text"}, "做你闺蜜嘛"), 
+						React.createElement("div", {className: "comment_option"}, 
+							React.createElement("span", {className: "comment_time"}, "39分钟前"), 
+							React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
+						)
+					)
+				), 
+				React.createElement("li", {className: "comment_item"}, 
+					React.createElement("div", {className: "comment_avator"}), 
+					React.createElement("div", {className: "comment_content"}, 
+						React.createElement("span", {className: "comment_name"}, 
+							React.createElement("a", {href: "##"}, "你好杨小米"), 
+							"回复", 
+							React.createElement("a", {href: "##"}, "@怜逐")
+						), 
+						":", 
+						React.createElement("span", {className: "comment_text"}, "年轻时你或许并不真正需要闺蜜，年华大好，青春扑面而来，光一个恋爱就够忙活几年。过了30你再看，那些为爱情断了友情的姑娘，守在无涯等待中，哭成一朵雨天的花。爱情让你流下的泪，友情帮你擦干它。真正的姐妹，比恋人更能天长地久。最好的闺蜜，是你的另一个自己—苏岑。"), 
+						React.createElement("div", {className: "comment_option"}, 
+							React.createElement("span", {className: "comment_time"}, "39分钟前"), 
+							React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
+						), 
+						React.createElement("div", {className: "comment_reply_box clearfix"}, 
+							React.createElement("textarea", {placeholder: "回复@怜逐", rows: "2"}), 
+							React.createElement("a", {href: "javascript:;"}, "评论")
+						)
+					)
+				), 
+				React.createElement("li", {className: "comment_item"}, 
+					React.createElement("div", {className: "comment_avator"}), 
+					React.createElement("div", {className: "comment_content"}, 
+						React.createElement("span", {className: "comment_name"}, 
+							React.createElement("a", {href: "##"}, "你好杨小米"), 
+							"回复", 
+							React.createElement("a", {href: "##"}, "@怜逐")
+						), 
+						":", 
+						React.createElement("span", {className: "comment_text"}, "做你闺蜜嘛"), 
+						React.createElement("div", {className: "comment_option"}, 
+							React.createElement("span", {className: "comment_time"}, "39分钟前"), 
+							React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
+						)
 					)
 				)
 			)
@@ -33,23 +62,9 @@ var Comment = React.createClass({displayName: "Comment",
 	}
 });
 
-var CommentList = React.createClass({displayName: "CommentList",
-	render: function() {
-		return (
-			React.createElement("ul", {className: "comment_list"}, 
-				
-					this.props.comments.map(function(item, index) {
-						return React.createElement(Comment, {comment: item, key: index});
-					})
-				
-			)
-		);
-	}
-});
-
 module.exports = CommentList;
 
-},{"../util/util":7,"react":165}],2:[function(require,module,exports){
+},{"react":165}],2:[function(require,module,exports){
 var React = require('react');
 var CommentList = require('./CommentList');
 var assign = require('object-assign');
