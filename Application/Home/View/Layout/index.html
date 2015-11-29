@@ -36,7 +36,7 @@
 				<div class="content">
 					<div class="blog_frame_left">
 						<div class="left_nav_group">
-							<div class="lev_box on">
+							<div class="lev_box <{block name=indexActive}><{/block}>">
 								<h3 class="lev">
 									<a href="<{U('Index/index')}>" class="s_txt1">
 										<span class="lev_txt">首页</span>
@@ -44,7 +44,7 @@
 									</a>
 								</h3>
 							</div>
-							<div class="lev_box">
+							<div class="lev_box <{block name=commentActive}><{/block}>">
 								<h3 class="lev">
 									<a href="<{U('myct/comment_receive')}>" class="s_txt1">
 										<span class="lev_txt">评论</span>
@@ -52,7 +52,7 @@
 									</a>
 								</h3>
 							</div>
-							<div class="lev_box">
+							<div class="lev_box <{block name=collectActive}><{/block}>">
 								<h3 class="lev">
 									<a href="<{U('myct/collect')}>" class="s_txt1">
 										<span class="lev_txt">收藏</span>
@@ -60,7 +60,7 @@
 									</a>
 								</h3>
 							</div>
-							<div class="lev_box">
+							<div class="lev_box <{block name=thumbActive}><{/block}>">
 								<h3 class="lev">
 									<a href="<{U('myct/thumb_receive')}>" class="s_txt1">
 										<span class="lev_txt">赞</span>
