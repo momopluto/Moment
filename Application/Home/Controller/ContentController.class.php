@@ -50,9 +50,9 @@ class ContentController extends BaseController
         // 不管有没图片，只要上传成功后，都返回s_id
 
         if(IS_POST){
-            $text = I('post.text', '', 'strip_tags');
-            $isPublic = I('post.is_public', '', 'strip_tags');
-            $fileCount = I('post.file_count');
+            $text = I('post.content', '', 'strip_tags');
+            $isPublic = I('post.isPublic', '', 'strip_tags');
+            $fileCount = I('post.imgcount');
             if(intval($fileCount) !== count($_FILES)){
                 $this->ajaxReturn([
                     'errcode' => '400',
