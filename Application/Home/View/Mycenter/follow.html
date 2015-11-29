@@ -12,7 +12,7 @@
     <div class="blog_header">
         <div class="content clearfix">
             <!-- logo -->
-            <a class="logo" href="##"></a>
+            <a class="logo" href="<{U('Index/index')}>"></a>
             <!-- 搜索栏 -->
             <div class="search">
                 <input type="text" autocomplete="off" class="w_input" placeholder="大家都在搜：谁日了赵日天">
@@ -23,9 +23,9 @@
             <i class="nav_item on" href="">
                 <{$smarty.session.USERDATA.username}>
                 <ul class="limits_list">
-                    <li class="limits_item">个人主页</li>
-                    <li class="limits_item">我的消息</li>
-                    <li class="limits_item">退出登录</li>
+                    <li class="limits_item"><a href="<{U('myct/share')}>">个人主页</a></li>
+                    <li class="limits_item"><a href="#">我的消息</a></li>
+                    <li class="limits_item"><a href="<{U('myct/signout')}>">退出登录</a></li>
                 </ul>
             </i>
             <a class="nav_item" href="">首页</a>
@@ -41,7 +41,7 @@
             <div class="content-row">
                 <ul class="content-col content-col-1 card mine_nav">
                     <li class="on">
-                        <a href="">我的主页</a>
+                        <a href="<{U('myct/share')}>">我的主页</a>
                     </li>
                     <li>
                         <a href="album.html">我的相册</a>
@@ -51,15 +51,15 @@
             <div class="content-row">
                 <div class="content-col content-col-1">
                     <nav class="card info_nav">
-                        <a class="on" href="javascript:;">
+                        <a class="on" href="<{U('myct/focus')}>">
                             <span class="info_num"><{$count['focus']}></span>
                             <span>关注</span>
                         </a>
-                        <a href="javascript:;">
+                        <a href="<{U('myct/fans')}>">
                             <span class="info_num"><{$count['fans']}></span>
                             <span>粉丝</span>
                         </a>
-                        <a href="javascript:;">
+                        <a href="<{U('myct/share')}>">
                             <span class="info_num"><{$count['share']}></span>
                             <span>分享</span>
                         </a>
@@ -94,7 +94,7 @@
                                         <a href="##"><{$one['username']}></a>
                                         <span>(已关注)</span>
                                     </h3>
-                                    <a class="unfollow" href="javascript:;">取消关注</a>
+                                    <a class="unfollow" href="<{U('fav/cclusr')}>">取消关注</a>
                                 </div>
                             </li>
                         <{/foreach}>
