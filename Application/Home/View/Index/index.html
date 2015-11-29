@@ -1,198 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>首页</title>
-	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css" />
-	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/comm.css" />
-</head>
-<body class="Main_frame">
-	<!-- 主导航 -->
-	<div class="blog_header">
-		<div class="content clearfix">
-			<!-- logo -->
-			<a class="logo" href="<{U('Index/index')}>"></a>
-			<!-- 搜索栏 -->
-			<div class="search">
-				<input type="text" autocomplete="off" class="w_input" placeholder="大家都在搜：谁日了赵日天">
-				<a href="javascript:;" class="icon_search"></a>
-			</div>
-			<a class="nav_publish" title="发布" href="javasctipt:;"></a>
-			<!-- 功能项 -->
-			<i class="nav_item" href="">
-				<{$smarty.session.USERDATA.username}>
-				<ul class="limits_list">
-					<li class="limits_item"><a href="<{U('myct/share')}>">个人主页</a></li>
-					<li class="limits_item"><a href="<{U('myct/signout')}>">退出登录</a></li>
-				</ul>
-			</i>
-			<a class="nav_item on" href="<{U('Index/index')}>">首页</a>
-		</div>
-	</div>
+<{extends file='../Layout/index.html'}>
 
-	<div class="blog">
-		<div class="blog_fb">
-			<!-- 内容区 -->
-			<div class="blog_main">
-				<div class="content">
-					<div class="blog_frame_left">
-						<div class="left_nav_group">
-							<div class="lev_box on">
-								<h3 class="lev">
-									<a href="<{U('Index/index')}>" class="s_txt1">
-										<span class="lev_txt">首页</span>
-										<i class="W_new"></i>
-									</a>
-								</h3>
-							</div>
-							<div class="lev_box">
-								<h3 class="lev">
-									<a href="<{U('myct/comment_receive')}>" class="s_txt1">
-										<span class="lev_txt">评论</span>
-										<i class="W_new"></i>
-									</a>
-								</h3>
-							</div>
-							<div class="lev_box">
-								<h3 class="lev">
-									<a href="<{U('myct/collect')}>" class="s_txt1">
-										<span class="lev_txt">收藏</span>
-										<i class="W_new"></i>
-									</a>
-								</h3>
-							</div>
-							<div class="lev_box">
-								<h3 class="lev">
-									<a href="<{U('myct/thumb_receive')}>" class="s_txt1">
-										<span class="lev_txt">赞</span>
-										<i class="W_new"></i>
-									</a>
-								</h3>
-							</div>																					
-						</div>
-					</div>
+<{block name=title}>首页<{/block}>
 
-					<div class="blog_frame_center" id="moment-container"></div>
+<{block name=style}>
+	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css">
+	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/comm.css">
+<{/block}>
 
-					<!-- 个人板块 -->
-					<div class="blog_frame_right">
-						<div class="card">
-							<div class="right_userInfo">
-								<div class="skin_cover">
-									<div class="user_icon" style="background-image: url(<{$smarty.const.PATH_IMG}>/4.jpg);"></div>
-								</div>
-								<div class="user_innerWrap">
-									<div class="namebox"><{$smarty.session.USERDATA.username}></div>
-									<ul class="user_atten">
-										<li class="s_line1">
-											<a href="<{U('myct/focus')}>">
-												<strong><{$count['focus']}></strong>
-												<span class="s_txt2">关注</span>
-											</a>
-										</li>
-										<li class="s_line1">
-											<a href="<{U('myct/fans')}>">
-                                                <strong><{$count['fans']}></strong>
-												<span class="s_txt2">粉丝</span>
-											</a>
-										</li>								
-										<li class="s_line1">
-											<a href="<{U('myct/share')}>">
-												<strong><{$count['share']}></strong>
-												<span class="s_txt2">分享</span>
-											</a>
-										</li>							
-									</ul>
-								</div>
-							</div>
-						</div>
+<{block name=content}>
+	<div class="blog_frame_center" id="moment-container"></div>
+<{/block}>
 
-						<!-- 点赞榜 -->
-						<div class="card card_padding">
-							<div class="limits time_limits">
-								<a href="javascript:;" class="limits_btn">
-									<span class="limits_txt">全部</span>
-									<em class="arrow"></em>
-									<ul class="limits_list">
-										<li class="limits_item">全部</li>
-										<li class="limits_item">本周</li>
-										<li class="limits_item">今日</li>
-									</ul>
-								</a>
-							</div>
-							<h2 class="card_title">点赞榜</h2>
-                        <{foreach $thumblist as $type => $oneType}>
-							<ul class="<{$type}>-praise">
-                            <{foreach $oneType as $i => $share}>
-                                <li class="praise_item">
-									<div class="praise_rank"><{$i+1}></div>
-									<div class="praise_num">
-										<i class="iconfont">&#xe601;</i>
-										<i><{$share['tb_count']}></i>
-									</div>
-									<div class="praise_name"><{$share['user_id']}></div>
-									<div class="praise_txt"><{$share['text']}></div>
-								</li>
-                            <{/foreach}>
-                            <{*
-								<li class="praise_item">
-									<div class="praise_rank">1</div>
-									<div class="praise_num">
-										<i class="iconfont">&#xe601;</i>
-										<i>65</i>
-									</div>
-									<div class="praise_name">五行属二</div>
-									<div class="praise_txt">最近养了一只猫，叫小狐狸，一个谜样の美少年……</div>
-								</li>
-								<li class="praise_item">
-									<div class="praise_rank">2</div>
-									<div class="praise_num">
-										<i class="iconfont">&#xe601;</i>
-										<i>60</i>
-									</div>
-									<div class="praise_name">五行属二</div>
-									<div class="praise_txt">最近养了一只猫，叫小狐狸，一个谜样の美少年……</div>
-								</li>
-								<li class="praise_item">
-									<div class="praise_rank">3</div>
-									<div class="praise_num">
-										<i class="iconfont">&#xe601;</i>
-										<i>20</i>
-									</div>
-									<div class="praise_name">五行属二</div>
-									<div class="praise_txt">最近养了一只猫，叫小狐狸，一个谜样の美少年……</div>
-								</li>
-								<li class="praise_item">
-									<div class="praise_rank">4</div>
-									<div class="praise_num">
-										<i class="iconfont">&#xe601;</i>
-										<i>6</i>
-									</div>
-									<div class="praise_name">五行属二</div>
-									<div class="praise_txt">最近养了一只猫，叫小狐狸，一个谜样の美少年……</div>
-								</li>
-								<li class="praise_item">
-									<div class="praise_rank">5</div>
-									<div class="praise_num">
-										<i class="iconfont">&#xe601;</i>
-										<i>1</i>
-									</div>
-									<div class="praise_name">五行属二</div>
-									<div class="praise_txt">最近养了一只猫，叫小狐狸，一个谜样の美少年……</div>
-								</li>
-                            *}>
-							</ul>
-                        <{/foreach}>
-
-						</div>
-					</div>
-
-				</div>
-			</div>
-			</div>
-		</div>
-	</div>
-
+<{block name=scriptglobal}>
     <script>
         var json_data='<{$list}>';
         var picPath = '<{$picPath}>';
@@ -205,8 +24,10 @@
         	get_comment: "<{U('/myct/comment')}>" // 请求评论列表
         };
     </script>
+<{/block}>
+
+<{block name=script}>
     <script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
 	<script type="text/javascript" src="<{$smarty.const.PATH_JS}>/html5shiv.min.js"></script>
 	<script type="text/javascript" src="<{$smarty.const.PATH_BUILD}>/index.js"></script>
-</body>
-</html>
+<{/block}>
