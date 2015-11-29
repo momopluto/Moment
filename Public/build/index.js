@@ -1,60 +1,31 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var React = require('react');
+var getTimeString = require('../util/util').getTimeString;
 
-var CommentList = React.createClass({displayName: "CommentList",
+var Comment = React.createClass({displayName: "Comment",
 	render: function() {
+		var comment = this.props.comment;
+		console.log(comment);
 		return (
-			React.createElement("ul", {className: "comment_list"}, 
-				React.createElement("li", {className: "comment_item"}, 
-					React.createElement("div", {className: "comment_avator"}), 
-					React.createElement("div", {className: "comment_content"}, 
-						React.createElement("span", {className: "comment_name"}, 
-							React.createElement("a", {href: "##"}, "你好杨小米"), 
-							"回复", 
-							React.createElement("a", {href: "##"}, "@怜逐")
-						), 
-						":", 
-						React.createElement("span", {className: "comment_text"}, "做你闺蜜嘛"), 
-						React.createElement("div", {className: "comment_option"}, 
-							React.createElement("span", {className: "comment_time"}, "39分钟前"), 
-							React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
-						)
-					)
-				), 
-				React.createElement("li", {className: "comment_item"}, 
-					React.createElement("div", {className: "comment_avator"}), 
-					React.createElement("div", {className: "comment_content"}, 
-						React.createElement("span", {className: "comment_name"}, 
-							React.createElement("a", {href: "##"}, "你好杨小米"), 
-							"回复", 
-							React.createElement("a", {href: "##"}, "@怜逐")
-						), 
-						":", 
-						React.createElement("span", {className: "comment_text"}, "年轻时你或许并不真正需要闺蜜，年华大好，青春扑面而来，光一个恋爱就够忙活几年。过了30你再看，那些为爱情断了友情的姑娘，守在无涯等待中，哭成一朵雨天的花。爱情让你流下的泪，友情帮你擦干它。真正的姐妹，比恋人更能天长地久。最好的闺蜜，是你的另一个自己—苏岑。"), 
-						React.createElement("div", {className: "comment_option"}, 
-							React.createElement("span", {className: "comment_time"}, "39分钟前"), 
-							React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
-						), 
-						React.createElement("div", {className: "comment_reply_box clearfix"}, 
-							React.createElement("textarea", {placeholder: "回复@怜逐", rows: "2"}), 
-							React.createElement("a", {href: "javascript:;"}, "评论")
-						)
-					)
-				), 
-				React.createElement("li", {className: "comment_item"}, 
-					React.createElement("div", {className: "comment_avator"}), 
-					React.createElement("div", {className: "comment_content"}, 
-						React.createElement("span", {className: "comment_name"}, 
-							React.createElement("a", {href: "##"}, "你好杨小米"), 
-							"回复", 
-							React.createElement("a", {href: "##"}, "@怜逐")
-						), 
-						":", 
-						React.createElement("span", {className: "comment_text"}, "做你闺蜜嘛"), 
-						React.createElement("div", {className: "comment_option"}, 
-							React.createElement("span", {className: "comment_time"}, "39分钟前"), 
-							React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
-						)
+			React.createElement("li", {className: "comment_item"}, 
+				React.createElement("div", {className: "comment_avator"}), 
+				React.createElement("div", {className: "comment_content"}, 
+					React.createElement("span", {className: "comment_name"}, 
+						React.createElement("a", {href: "javascript:;"}, comment.c_id), 
+						 comment.pid > 0 ? '回复' : null, 
+						
+							comment.pid > 0 ? React.createElement("a", {href: "##"}, comment.pid) : null
+						
+					), 
+					"：", 
+					React.createElement("span", {className: "comment_text"}, comment.content), 
+					React.createElement("div", {className: "comment_option"}, 
+						React.createElement("span", {className: "comment_time"}, comment.ctime), 
+						React.createElement("a", {className: "comment_reply", href: "javascript:;"}, "回复")
+					), 
+					React.createElement("div", {className: "comment_reply_box clearfix"}, 
+						React.createElement("textarea", {placeholder: "回复@怜逐", rows: "2"}), 
+						React.createElement("a", {href: "javascript:;"}, "评论")
 					)
 				)
 			)
@@ -62,9 +33,23 @@ var CommentList = React.createClass({displayName: "CommentList",
 	}
 });
 
+var CommentList = React.createClass({displayName: "CommentList",
+	render: function() {
+		return (
+			React.createElement("ul", {className: "comment_list"}, 
+				
+					this.props.comments.map(function(item, index) {
+						return React.createElement(Comment, {comment: item, key: index});
+					})
+				
+			)
+		);
+	}
+});
+
 module.exports = CommentList;
 
-},{"react":165}],2:[function(require,module,exports){
+},{"../util/util":7,"react":165}],2:[function(require,module,exports){
 var React = require('react');
 var CommentList = require('./CommentList');
 var assign = require('object-assign');
@@ -136,7 +121,7 @@ var Moment = React.createClass({displayName: "Moment",
 							React.createElement("a", {className: "row_btn", href: "javascript:;", onClick: this.handleThumb}, React.createElement("i", {className: "iconfont"}, ""), " 赞 ", React.createElement("i", null, moment.tb_count))
 						)																
 					), 
-					this.state.isOpeningComment ? React.createElement(CommentList, null) : null
+					this.state.isOpeningComment ? React.createElement(CommentList, {comments: this.state.comments}) : null
 				)
 			)
 		);
@@ -178,13 +163,12 @@ var Moment = React.createClass({displayName: "Moment",
 				sid: this.props.moment.s_id
 			},
 			success: function(data) {
-				console.log(data)
-			}
+				this.setState(assign({}, this.state, {
+					isOpeningComment: !this.state.isOpeningComment,
+					comments: data
+				}));
+			}.bind(this)
 		});
-
-		this.setState(assign({}, this.state, {
-			isOpeningComment: !this.state.isOpeningComment
-		}));
 	},
 
 	// 收藏分享
@@ -410,9 +394,9 @@ var Publisher = React.createClass({displayName: "Publisher",
         for (var i = 0; i < this.state.picFiles.length; i++) {
             formData.append('img' + (i + 1), this.state.picFiles[i]);
         }
-        formData.append('is_public', this.state.isPublished ? 1 : 0);
+        formData.append('isPublic', this.state.isPublished ? 1 : 0);
         formData.append('content', this.state.text);
-        formData.append('file_count', this.state.pics.length);
+        formData.append('imgcount', this.state.pics.length);
         $.ajax({
             type: 'post',
             url: url.doshare,
@@ -421,7 +405,7 @@ var Publisher = React.createClass({displayName: "Publisher",
             contentType: false,
             success: function(data) {
                 console.log(data);
-                this.props.addMoment(assign({}, data.data[0], {
+                this.props.addMoment(assign({}, data[0], {
                     collected: 0
                 }));
             }.bind(this)
@@ -539,7 +523,7 @@ ReactDOM.render(
 
 },{"./containers/App":5,"react":165,"react-dom":9}],7:[function(require,module,exports){
 function getTimeString (time) {
-	var delta = new Date().getTime() - time;
+	var delta = new Date().getTime() - new Date(parseInt(time)).getTime();
 	if (delta < 1000) {
 		return '刚刚';
 	} else if (delta < 1000 * 60) {
@@ -555,6 +539,7 @@ function getTimeString (time) {
 }
 
 exports.getTimeString = getTimeString;
+
 },{}],8:[function(require,module,exports){
 /* eslint-disable no-unused-vars */
 'use strict';
