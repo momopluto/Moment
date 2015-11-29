@@ -50,9 +50,9 @@ class ContentController extends BaseController
         // 不管有没图片，只要上传成功后，都返回s_id
 
         if(IS_POST){
-            $text = I('post.text', '', 'strip_tags');
-            $isPublic = I('post.is_public', '', 'strip_tags');
-            $fileCount = I('post.file_count');
+            $text = I('post.content', '', 'strip_tags');
+            $isPublic = I('post.isPublic', '', 'strip_tags');
+            $fileCount = I('post.imgcount');
             if(intval($fileCount) !== count($_FILES)){
                 $this->ajaxReturn([
                     'errcode' => '400',
@@ -95,11 +95,18 @@ class ContentController extends BaseController
                 ]);
             }
 
-            $imgs = array_column($imgs, 'savename');
-            $imgs = implode($imgs, ',');
+            /*
+                $imgs = array_column($imgs, 'savename');
+                $imgs = implode($imgs, ',');
+            */
+            $imgs_arr = array();
+            foreach ($imgs as $key => $value) {
+                array_push($imgs_arr, $value['savename']);
+            }
             $result = true;
-            if($imgs){
-                $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs]);
+            if($imgs_arr){
+                $imgs_str = implode($imgs_arr, ',');
+                $result = $model->saveShare(['s_id' => $id], ['imgs' => $imgs_str]);
             }
             if(!$result){
                 $this->ajaxReturn($model->getError());
