@@ -110,4 +110,13 @@ class UserModel extends BaseModel {
             }
 	}
 
+    /**
+     * 获取用户账号信息(通过user_id)
+     * @param integer $userId 用户id
+     * @return array/boolean 成功返回账号信息数组; 失败返回false;
+     */
+    public function getUserInfoById($userId){
+        return $this->where('user_id = %d',$userId)->find();
+    }
+
 }
