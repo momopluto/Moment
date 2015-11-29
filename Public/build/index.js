@@ -405,7 +405,7 @@ var Publisher = React.createClass({displayName: "Publisher",
             contentType: false,
             success: function(data) {
                 console.log(data);
-                this.props.addMoment(assign({}, data.data[0], {
+                this.props.addMoment(assign({}, data[0], {
                     collected: 0
                 }));
             }.bind(this)
