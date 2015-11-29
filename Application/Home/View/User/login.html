@@ -45,7 +45,7 @@
                                 <label class="login-icon pos">
                                     <!-- <i class="iconfont icon-lock-line"></i> -->
                                     <input type="text" name="verify" class="log-input" placeholder="验证码">
-                                    <img class="vertify_code" src="/api/verify">
+                                    <img class="vertify_code" src="<{U('/api/verify')}>?<{$smarty.const.NOW_TIME}>" id="verifyImg" onClick="changeVerify()" title="点击刷新验证码"/>
                                 </label>
                                 <input class="lang-btn js-confirm" type="submit">
                             </div>
@@ -59,6 +59,11 @@
     <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
 	<script type="text/javascript" src="<{$smarty.const.PATH_JS}>/md5.js"></script>
     <script type="text/javascript">
+        var verifyUrl = "<{U('/api/verify')}>";
+        function changeVerify(){
+            var timenow = new Date().getTime();
+            document.getElementById('verifyImg').src=verifyUrl+'?'+timenow;
+        }
         function check(form) {
             form.password.value = md5(form.password.value);
             return true;
