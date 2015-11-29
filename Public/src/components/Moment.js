@@ -69,7 +69,7 @@ var Moment = React.createClass({
 							<a className="row_btn" href="javascript:;" onClick={this.handleThumb}><i className="iconfont">&#xe601;</i> 赞 <i>{moment.tb_count}</i></a>
 						</li>																
 					</ul>
-					{this.state.isOpeningComment ? <CommentList /> : null}
+					{this.state.isOpeningComment ? <CommentList comments={this.state.comments} /> : null}
 				</div>
 			</div>
 		);
@@ -111,13 +111,12 @@ var Moment = React.createClass({
 				sid: this.props.moment.s_id
 			},
 			success: function(data) {
-				console.log(data)
-			}
+				this.setState(assign({}, this.state, {
+					isOpeningComment: !this.state.isOpeningComment,
+					comments: data
+				}));
+			}.bind(this)
 		});
-
-		this.setState(assign({}, this.state, {
-			isOpeningComment: !this.state.isOpeningComment
-		}));
 	},
 
 	// 收藏分享

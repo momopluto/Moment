@@ -10,7 +10,7 @@
         <style type="text/css">
             .regForm label { cursor: default }
             .title { text-align: center }
-            .vertify_code { position: absolute; top: 0; right: 0 }
+            .vertify_code { position: absolute; top: 0; right: 0; cursor: pointer }
         </style>
 	</head>
 <body>
@@ -45,7 +45,7 @@
                                 <label class="login-icon pos">
                                     <!-- <i class="iconfont icon-lock-line"></i> -->
                                     <input type="text" name="verify" class="log-input" placeholder="验证码">
-                                    <img class="vertify_code" src="/api/verify">
+                                    <img class="vertify_code js-vertify-code" title="点击换图" src="/api/verify">
                                 </label>
                                 <input class="lang-btn js-confirm" type="submit">
                             </div>
@@ -63,6 +63,11 @@
             form.password.value = md5(form.password.value);
             return true;
         }
+        $('.js-vertify-code').on('click', function(e) {
+            var src = $(this).attr('src');
+            src = src.split('?')[0] + '?v=' + Math.random();
+            $(this).attr('src', src);
+        });
     </script>
 </body>
 </html>
