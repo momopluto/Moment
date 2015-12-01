@@ -29,6 +29,8 @@ class CommentModel extends BaseModel
         }
         // 验证shareId所属的用户账号状态为启用
         if(!$this->checkUserStatus_byShareId($shareId)){
+            $err['errcode'] = 400;
+            $err['errmsg'] = "user invalid";
             return false;
         }
 
@@ -271,5 +273,9 @@ class CommentModel extends BaseModel
     public function getCommentById($sId)
     {
         return $comments = $this->where(['s_id' => $sId])->select();
+    }
+
+    public function getCommentByCid($cId){
+        return $this->where(['c_id' => $cId])->find();
     }
 }
