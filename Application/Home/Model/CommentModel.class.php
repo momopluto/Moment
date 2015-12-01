@@ -267,7 +267,7 @@ class CommentModel extends BaseModel
 
     /**
      * 获取单条分享的评论
-     * @param $sId int 评论id
+     * @param $sId int 分享id
      * @return mixed
      */
     public function getCommentById($sId)
@@ -277,7 +277,7 @@ class CommentModel extends BaseModel
 
     /**
      * 返回单条评论的内容
-     * @param $cId
+     * @param $cId  int  评论id
      * @return mixed
      */
     public function getCommentByCid($cId){
