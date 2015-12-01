@@ -275,6 +275,11 @@ class CommentModel extends BaseModel
         return $comments = $this->where(['s_id' => $sId])->select();
     }
 
+    /**
+     * 返回单条评论的内容
+     * @param $cId
+     * @return mixed
+     */
     public function getCommentByCid($cId){
         return $this->where(['c_id' => $cId])->find();
     }
