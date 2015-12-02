@@ -37,6 +37,10 @@ var CommentList = React.createClass({displayName: "CommentList",
 	render: function() {
 		return (
 			React.createElement("ul", {className: "comment_list"}, 
+				React.createElement("div", {className: "comment_reply_box clearfix"}, 
+					React.createElement("textarea", {placeholder: '回复@' + this.props.moment.user_id, rows: "2"}), 
+					React.createElement("a", {href: "javascript:;", onClick: this.handleDoComment}, "评论")
+				), 
 				
 					this.props.comments.map(function(item, index) {
 						return React.createElement(Comment, {comment: item, key: index});
@@ -44,11 +48,17 @@ var CommentList = React.createClass({displayName: "CommentList",
 				
 			)
 		);
+	},
+
+	// 评论分享
+	handleDoComment: function(e) {
+		var content = e.target.previousSibling.value;
+		var pid = 0;
+		this.props.doComment(content, pid);
 	}
 });
 
 module.exports = CommentList;
-
 },{"../util/util":7,"react":165}],2:[function(require,module,exports){
 var React = require('react');
 var CommentList = require('./CommentList');
@@ -116,12 +126,12 @@ var Moment = React.createClass({displayName: "Moment",
 						), 
 						React.createElement("li", null, 
 							React.createElement("a", {className: "row_btn", href: "javascript:;", onClick: this.handleOpenComment}, React.createElement("i", {className: "iconfont"}, ""), " 评论 ", React.createElement("i", null, moment.cmt_count))
-						), 											
+						), 
 						React.createElement("li", {className: moment.thumbed == 0 ? '' : 'on'}, 
 							React.createElement("a", {className: "row_btn", href: "javascript:;", onClick: this.handleThumb}, React.createElement("i", {className: "iconfont"}, ""), " 赞 ", React.createElement("i", null, moment.tb_count))
-						)																
+						)
 					), 
-					this.state.isOpeningComment ? React.createElement(CommentList, {comments: this.state.comments}) : null
+					this.state.isOpeningComment ? React.createElement(CommentList, {comments: this.state.comments, doComment: this.doComment, moment: moment}) : null
 				)
 			)
 		);
@@ -163,10 +173,40 @@ var Moment = React.createClass({displayName: "Moment",
 				sid: this.props.moment.s_id
 			},
 			success: function(data) {
-				this.setState(assign({}, this.state, {
-					isOpeningComment: !this.state.isOpeningComment,
-					comments: data
-				}));
+				if (data && !data.errcode) {
+					this.setState(assign({}, this.state, {
+						isOpeningComment: !this.state.isOpeningComment,
+						comments: data
+					}));
+				} else {
+					this.setState(assign({}, this.state, {
+						isOpeningComment: !this.state.isOpeningComment,
+						comments: []
+					}));
+				}
+			}.bind(this)
+		});
+	},
+
+	// 评论分享
+	doComment: function(content, pid) {
+		if (!content) {
+			return alert('评论不能为空');
+		}
+		$.ajax({
+			type: 'post',
+			url: url.do_comment,
+			data: {
+				sid: this.props.moment.s_id,
+				pid: pid,
+				content: text
+			},
+			success: function(data) {
+				if (!data.errcode) {
+					this.setState(assign({}, state, {
+						comments: [data].concat(this.state.comments)
+					}));
+				}
 			}.bind(this)
 		});
 	},
@@ -227,7 +267,6 @@ var Moment = React.createClass({displayName: "Moment",
 });
 
 module.exports = Moment;
-
 },{"../util/util":7,"./CommentList":1,"object-assign":8,"react":165}],3:[function(require,module,exports){
 var React = require('react');
 var Moment = require('./Moment');

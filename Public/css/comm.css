@@ -628,7 +628,7 @@ a:hover { color: #56abe4 }
 }
 .user_atten {
     overflow: hidden;
-    margin: 10px 0px 0px; 
+    margin: 10px 0px 0px;
     display: flex;
 }
 .s_line1 {
@@ -646,7 +646,7 @@ a:hover { color: #56abe4 }
 /*评论*/
 .comment_list {
     position: relative;
-    padding: 0 15px;
+    padding: 15px;
     background-color: #eee;
     font-size: 13px;
 }

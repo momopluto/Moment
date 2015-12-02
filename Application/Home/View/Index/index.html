@@ -24,22 +24,23 @@
 <{/block}>
 
 <{block name=scriptglobal}>
-    <script>
-        var json_data='<{$list}>';
-        var picPath = '<{$picPath}>';
-        var url = {
-        	doshare: "<{U('/cnt/doshare')}>",
-        	collect: "<{U('/fav/cnt')}>", // 收藏
-        	uncollect: "<{U('/fav/cclcnt')}>", // 取消收藏
-        	thumb: "<{U('/fav/thumb')}>", // 点赞
-        	unthumb: "<{U('/fav/cclthumb')}>", // 取消赞
-        	get_comment: "<{U('/myct/comment')}>" // 请求评论列表
-        };
-    </script>
+  <script>
+    var json_data='<{$list}>';
+    var picPath = '<{$picPath}>';
+    var url = {
+    	doshare: "<{U('cnt/doshare')}>",
+    	collect: "<{U('fav/cnt')}>", // 收藏
+    	uncollect: "<{U('fav/cclcnt')}>", // 取消收藏
+    	thumb: "<{U('fav/thumb')}>", // 点赞
+    	unthumb: "<{U('fav/cclthumb')}>", // 取消赞
+    	get_comment: "<{U('myct/comment_receive')}>", // 请求评论列表
+			do_comment: "<{U('cnt/docomment')}>" // 评论分享
+    };
+  </script>
 <{/block}>
 
 <{block name=script}>
-    <script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
+  <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
 	<script type="text/javascript" src="<{$smarty.const.PATH_JS}>/html5shiv.min.js"></script>
 	<script type="text/javascript" src="<{$smarty.const.PATH_BUILD}>/index.js"></script>
 <{/block}>

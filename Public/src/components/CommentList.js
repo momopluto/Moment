@@ -36,6 +36,10 @@ var CommentList = React.createClass({
 	render: function() {
 		return (
 			<ul className="comment_list">
+				<div className="comment_reply_box clearfix">
+					<textarea placeholder={'回复@' + this.props.moment.user_id} rows="2"></textarea>
+					<a href="javascript:;" onClick={this.handleDoComment}>评论</a>
+				</div>
 				{
 					this.props.comments.map(function(item, index) {
 						return <Comment comment={item} key={index} />;
@@ -43,6 +47,13 @@ var CommentList = React.createClass({
 				}
 			</ul>
 		);
+	},
+
+	// 评论分享
+	handleDoComment: function(e) {
+		var content = e.target.previousSibling.value;
+		var pid = 0;
+		this.props.doComment(content, pid);
 	}
 });
 
