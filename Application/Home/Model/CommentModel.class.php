@@ -29,6 +29,8 @@ class CommentModel extends BaseModel
         }
         // 验证shareId所属的用户账号状态为启用
         if(!$this->checkUserStatus_byShareId($shareId)){
+            $err['errcode'] = 400;
+            $err['errmsg'] = "user invalid";
             return false;
         }
 
@@ -265,11 +267,20 @@ class CommentModel extends BaseModel
 
     /**
      * 获取单条分享的评论
-     * @param $sId int 评论id
+     * @param $sId int 分享id
      * @return mixed
      */
     public function getCommentById($sId)
     {
         return $comments = $this->where(['s_id' => $sId])->select();
+    }
+
+    /**
+     * 返回单条评论的内容
+     * @param $cId  int  评论id
+     * @return mixed
+     */
+    public function getCommentByCid($cId){
+        return $this->where(['c_id' => $cId])->find();
     }
 }

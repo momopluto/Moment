@@ -161,8 +161,11 @@ class ContentController extends BaseController
 
         $model = D('comment');
         $result = $model->insertComment($shareId, $userId, $content, $pid);
-
-        $this->ajaxReturn($model->getError());
+        if($result){
+            $this->ajaxReturn($model->getCommentByCid($result));
+        }else{
+            $this->ajaxReturn($model->getError());
+        }
     }
 
     /**
