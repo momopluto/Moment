@@ -1,0 +1,114 @@
+<{extends file='../Layout/index.html'}>
+
+<{block name=title}>收到的评论<{/block}>
+
+<{block name=style}>
+    <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css">
+    <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/comm.css">
+    <style>
+        @font-face {
+          font-family: 'iconfont';
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot'); /* IE9*/
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.woff') format('woff'), /* chrome、firefox */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+          url('<{$smarty.const.PATH_FONT}>/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+        }
+    </style>
+<{/block}>
+<{block name=commentActive}>on<{/block}>
+<{block name=content}>
+    <div class="blog_frame_center">
+        <!-- header -->
+        <div class="card card-header">
+            <a class="card-header-item on" href="javascript:;">收到的评论</a>
+            <a class="card-header-item" href="javascript:;">发出的评论</a>
+        </div>
+
+        <!-- 分享卡片 -->
+        <div class="cradWrap">
+            <div class="cardContent">
+                <dic class="cardIcon"></dic>
+                <article  class="cardDetail">
+                    <p class="card_title">一起来吐槽</p>
+                    <p class="card_text">评论我的微博：红包啊红包，你慢点飞嘛！</p>
+                    <div class="medaiBox">
+                        <p class="card-box">#让红包飞#当你看到这条微博时，马年的好运气已经降临到你头上啦！新年快乐，恭喜发财，抢红包这事儿，还得大家一起来。小伙伴们快来评论我的微博领红包，10亿新春好礼等你抢！ @小鳗鱼仔-J珊珊 @love文字的函 @烨子li 马上抽奖：http://t.cn/8ka4t9y</p>
+                    </div>
+                    <p class="card_time">40分钟前</p>
+                </article>
+            </div>
+            <div class="cardHandle">
+                <ul class="rowLine clearfix">
+                    <li>
+                        <a class="row_btn" href="javascript:;">回复</a>
+                    </li>
+                </ul>
+                <ul class="comment_list" style="display:none">
+                    <li class="comment_item">
+                        <div class="comment_avator"></div>
+                        <div class="comment_content">
+                            <div class="comment_reply_box clearfix">
+                                <textarea placeholder="回复@怜逐" rows="2"></textarea>
+                                <a href="javascript:;">评论</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 分享卡片 -->
+        <div class="cradWrap">
+            <div class="cardContent">
+                <dic class="cardIcon"></dic>
+                <article  class="cardDetail">
+                    <p class="card_title">一起来吐槽</p>
+                    <p class="card_text">评论我的微博：红包啊红包，你慢点飞嘛！</p>
+                    <div class="medaiBox">
+                        <p class="card-box">#让红包飞#当你看到这条微博时，马年的好运气已经降临到你头上啦！新年快乐，恭喜发财，抢红包这事儿，还得大家一起来。小伙伴们快来评论我的微博领红包，10亿新春好礼等你抢！ @小鳗鱼仔-J珊珊 @love文字的函 @烨子li 马上抽奖：http://t.cn/8ka4t9y</p>
+                    </div>
+                    <p class="card_time">40分钟前</p>
+                </article>
+            </div>
+            <div class="cardHandle">
+                <ul class="rowLine clearfix">
+                    <li>
+                        <a class="row_btn" href="javascript:;">回复</a>
+                    </li>
+                </ul>
+                <ul class="comment_list">
+                    <li class="comment_item">
+                        <div class="comment_avator"></div>
+                        <div class="comment_content">
+                            <div class="comment_reply_box clearfix">
+                                <textarea placeholder="回复@怜逐" rows="2"></textarea>
+                                <a href="javascript:;">评论</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<{/block}>
+
+<{block name=scriptglobal}>
+    <script>
+        var json_data='<{$list}>';
+        var picPath = '<{$picPath}>';
+        var url = {
+            doshare: "<{U('/cnt/doshare')}>",
+            collect: "<{U('/fav/cnt')}>", // 收藏
+            uncollect: "<{U('/fav/cclcnt')}>", // 取消收藏
+            thumb: "<{U('/fav/thumb')}>", // 点赞
+            unthumb: "<{U('/fav/cclthumb')}>", // 取消赞
+            get_comment: "<{U('/myct/comment')}>" // 请求评论列表
+        };
+    </script>
+<{/block}>
+
+<{block name=script}>
+    <script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/html5shiv.min.js"></script>
+<{/block}>

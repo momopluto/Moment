@@ -80,7 +80,7 @@ class MycenterController extends BaseController
         $model = D('Content');
         $sql = $model->getOnesShare_sql($userId, $userId == self::$user_id);
         if(!$sql){
-            $this->redirect('myct/share', '', 3, $model->getError());
+            $this->redirect('myct/share', '', 3, json_encode(($model->getError())));
 
             return;
         }
@@ -103,6 +103,11 @@ class MycenterController extends BaseController
 
         // 获取home主页公共的数据
         $this->get_home_public_data($userId);
+
+        $userinfo = D('User')->getUserInfoById($userId);
+        if ($userinfo) {
+            $this->assign('userinfo', $userinfo);
+        }
 
         $this->assign('list', json_encode($list));// 赋值数据集
         $totalPages = ceil($Page->totalRows / $Page->listRows);// 计算页数
@@ -160,7 +165,10 @@ class MycenterController extends BaseController
 
         // 获取home主页公共的数据
         $this->get_home_public_data($userId);
-
+        $userinfo = D('User')->getUserInfoById($userId);
+        if ($userinfo) {
+            $this->assign('userinfo', $userinfo);
+        }
 
         $this->assign('data', $list);// 赋值数据集Array
 
@@ -221,7 +229,10 @@ class MycenterController extends BaseController
 
         // 获取home主页公共的数据
         $this->get_home_public_data($userId);
-
+        $userinfo = D('User')->getUserInfoById($userId);
+        if ($userinfo) {
+            $this->assign('userinfo', $userinfo);
+        }
 
         $this->assign('data', $list);// 赋值数据集Array
 

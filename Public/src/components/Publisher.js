@@ -135,9 +135,9 @@ var Publisher = React.createClass({
         for (var i = 0; i < this.state.picFiles.length; i++) {
             formData.append('img' + (i + 1), this.state.picFiles[i]);
         }
-        formData.append('is_public', this.state.isPublished ? 1 : 0);
+        formData.append('isPublic', this.state.isPublished ? 1 : 0);
         formData.append('content', this.state.text);
-        formData.append('file_count', this.state.pics.length);
+        formData.append('imgcount', this.state.pics.length);
         $.ajax({
             type: 'post',
             url: url.doshare,
@@ -146,7 +146,7 @@ var Publisher = React.createClass({
             contentType: false,
             success: function(data) {
                 console.log(data);
-                this.props.addMoment(assign({}, data.data[0], {
+                this.props.addMoment(assign({}, data[0], {
                     collected: 0
                 }));
             }.bind(this)
