@@ -1,5 +1,5 @@
 function getTimeString (time) {
-	var delta = new Date().getTime() - new Date(parseInt(time)).getTime();
+	var delta = new Date() - new Date(time);
 	if (delta < 1000) {
 		return '刚刚';
 	} else if (delta < 1000 * 60) {
