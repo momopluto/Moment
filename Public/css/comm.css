@@ -665,6 +665,7 @@ a:hover { color: #56abe4 }
     border-bottom: 1px solid #ddd;
     overflow: hidden;
 }
+.comment_item:last-child { border-bottom: 0 }
 .comment_avator {
     float: left;
     width: 30px;
@@ -677,18 +678,19 @@ a:hover { color: #56abe4 }
 }
 .comment_content { overflow: hidden }
 .comment_name a { color: #56abe4 }
-.comment_option { margin-top: 5px }
+.comment_option { margin: 5px 0 }
 .comment_time { color: #888 }
 .comment_reply { float: right }
 .comment_reply_box {
     position: relative;
     padding: 10px;
     border-radius: 2px;
-    background-color: #fff;
+    background-color: #f7f7f7;
 }
 .comment_reply_box textarea {
     width: 100%;
     border: 0;
+    background-color: transparent;
 }
 .comment_reply_box a {
     float: right;

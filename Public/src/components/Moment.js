@@ -104,26 +104,32 @@ var Moment = React.createClass({
 
 	// 展开评论列表
 	handleOpenComment: function(e) {
-		$.ajax({
-			type: 'post',
-			url: url.get_comment,
-			data: {
-				sid: this.props.moment.s_id
-			},
-			success: function(data) {
-				if (data && !data.errcode) {
-					this.setState(assign({}, this.state, {
-						isOpeningComment: !this.state.isOpeningComment,
-						comments: data
-					}));
-				} else {
-					this.setState(assign({}, this.state, {
-						isOpeningComment: !this.state.isOpeningComment,
-						comments: []
-					}));
-				}
-			}.bind(this)
-		});
+		if (this.state.isOpeningComment) {
+			this.setState(assign({}, this.state, {
+				isOpeningComment: !this.state.isOpeningComment
+			}));
+		} else {
+			$.ajax({
+				type: 'post',
+				url: url.get_comment,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function(data) {
+					if (data && !data.errcode) {
+						this.setState(assign({}, this.state, {
+							isOpeningComment: !this.state.isOpeningComment,
+							comments: data.reverse()
+						}));
+					} else {
+						this.setState(assign({}, this.state, {
+							isOpeningComment: !this.state.isOpeningComment,
+							comments: []
+						}));
+					}
+				}.bind(this)
+			});
+		}
 	},
 
 	// 评论分享
@@ -137,11 +143,11 @@ var Moment = React.createClass({
 			data: {
 				sid: this.props.moment.s_id,
 				pid: pid,
-				content: text
+				content: content
 			},
 			success: function(data) {
 				if (!data.errcode) {
-					this.setState(assign({}, state, {
+					this.setState(assign({}, this.state, {
 						comments: [data].concat(this.state.comments)
 					}));
 				}
