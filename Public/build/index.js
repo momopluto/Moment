@@ -18,22 +18,22 @@ var Comment = React.createClass({displayName: "Comment",
 				React.createElement("div", {className: "comment_avator"}), 
 				React.createElement("div", {className: "comment_content"}, 
 					React.createElement("span", {className: "comment_name"}, 
-						React.createElement("a", {href: "javascript:;"}, comment.c_id), 
-						 comment.pid > 0 ? '回复' : null, 
-						
-							comment.pid > 0 ? React.createElement("a", {href: "##"}, comment.pid) : null
-						
+						React.createElement("a", {href: "javascript:;"}, comment.user_id), 
+						comment.pid > 0 ? '回复' : null, 
+						comment.pid > 0 ? React.createElement("a", {href: "##"}, comment.p_user_id) : null
 					), 
 					"：", 
 					React.createElement("span", {className: "comment_text"}, comment.content), 
 					React.createElement("div", {className: "comment_option"}, 
 						React.createElement("span", {className: "comment_time"}, getTimeString(comment.ctime * 1000)), 
-						React.createElement("a", {className: "comment_reply", href: "javascript:;", onClick: this.handleToggleReply}, "回复")
+						React.createElement("a", {className: "comment_reply", href: "javascript:;", onClick: this.handleToggleReply}, 
+							this.state.isReplying ? '收起' : '回复'
+						)
 					), 
 					
 						this.state.isReplying ?
 						React.createElement("div", {className: "comment_reply_box clearfix"}, 
-							React.createElement("textarea", {placeholder: "回复@" + this.props.moment.s_id, rows: "2"}), 
+							React.createElement("textarea", {placeholder: "回复@" + comment.user_id, rows: "2"}), 
 							React.createElement("a", {href: "javascript:;", onClick: this.handleDoComment}, "评论")
 						) : null
 					
@@ -204,7 +204,7 @@ var Moment = React.createClass({displayName: "Moment",
 					if (data && !data.errcode) {
 						this.setState(assign({}, this.state, {
 							isOpeningComment: !this.state.isOpeningComment,
-							comments: data.reverse()
+							comments: data
 						}));
 					} else {
 						this.setState(assign({}, this.state, {

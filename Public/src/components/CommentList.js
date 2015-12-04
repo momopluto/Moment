@@ -17,22 +17,22 @@ var Comment = React.createClass({
 				<div className="comment_avator"></div>
 				<div className="comment_content">
 					<span className="comment_name">
-						<a href="javascript:;">{comment.c_id}</a>
-						{ comment.pid > 0 ? '回复' : null }
-						{
-							comment.pid > 0 ? <a href="##">{comment.pid}</a> : null
-						}
+						<a href="javascript:;">{comment.user_id}</a>
+						{comment.pid > 0 ? '回复' : null}
+						{comment.pid > 0 ? <a href="##">{comment.p_user_id}</a> : null}
 					</span>
 					：
 					<span className="comment_text">{comment.content}</span>
 					<div className="comment_option">
 						<span className="comment_time">{getTimeString(comment.ctime * 1000)}</span>
-						<a className="comment_reply" href="javascript:;" onClick={this.handleToggleReply}>回复</a>
+						<a className="comment_reply" href="javascript:;" onClick={this.handleToggleReply}>
+							{this.state.isReplying ? '收起' : '回复'}
+						</a>
 					</div>
 					{
 						this.state.isReplying ?
 						<div className="comment_reply_box clearfix">
-							<textarea placeholder={"回复@" + this.props.moment.s_id} rows="2"></textarea>
+							<textarea placeholder={"回复@" + comment.user_id} rows="2"></textarea>
 							<a href="javascript:;" onClick={this.handleDoComment}>评论</a>
 						</div> : null
 					}

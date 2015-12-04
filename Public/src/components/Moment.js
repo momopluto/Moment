@@ -119,7 +119,7 @@ var Moment = React.createClass({
 					if (data && !data.errcode) {
 						this.setState(assign({}, this.state, {
 							isOpeningComment: !this.state.isOpeningComment,
-							comments: data.reverse()
+							comments: data
 						}));
 					} else {
 						this.setState(assign({}, this.state, {
