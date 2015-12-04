@@ -523,7 +523,7 @@ ReactDOM.render(
 
 },{"./containers/App":5,"react":165,"react-dom":9}],7:[function(require,module,exports){
 function getTimeString (time) {
-	var delta = new Date().getTime() - new Date(parseInt(time)).getTime();
+	var delta = new Date() - new Date(time);
 	if (delta < 1000) {
 		return '刚刚';
 	} else if (delta < 1000 * 60) {
