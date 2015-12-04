@@ -193,7 +193,7 @@ class CommentModel extends BaseModel
 
         // 对同一条分享，可以有多条评论
         $sql = $this->alias('cmt')
-            ->join('LEFT JOIN mn_comment cm ON cmt.pid=cm.id')
+            ->join('LEFT JOIN mn_comment cm ON cmt.pid=cm.c_id')
             ->join('LEFT JOIN mn_share sh ON cmt.s_id=sh.s_id')
             ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
             ->field('FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
@@ -250,7 +250,7 @@ class CommentModel extends BaseModel
         $sql = M('share')
             ->alias('sh')
             ->join('LEFT JOIN mn_comment cmt ON sh.s_id=cmt.s_id')
-            ->join('LEFT JOIN mn_comment cm ON cmt.pid=cm.id')
+            ->join('LEFT JOIN mn_comment cm ON cmt.pid=cm.c_id')
             ->join('LEFT JOIN mn_user ur ON cmt.user_id=ur.user_id')
             ->field('cmt.user_id,
                     cmt.content,
