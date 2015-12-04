@@ -272,7 +272,7 @@ class CommentModel extends BaseModel
      */
     public function getCommentById($sId)
     {
-        return $comments = $this->alias('a')->join('left join mn_comment as b on a.pid=b.c_id')->where(['s_id' => $sId])->order('cTime desc')->select();
+        return $comments = $this->alias('a')->join('left join mn_comment as b on a.pid=b.c_id')->where(['a.s_id' => $sId])->order('cTime desc')->select();
     }
 
     /**
