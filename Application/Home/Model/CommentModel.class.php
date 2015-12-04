@@ -193,10 +193,12 @@ class CommentModel extends BaseModel
 
         // 对同一条分享，可以有多条评论
         $sql = $this->alias('cmt')
+            ->join('LEFT JOIN mn_comment cm ON cmt.pid=cm.id')
             ->join('LEFT JOIN mn_share sh ON cmt.s_id=sh.s_id')
             ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
             ->field('FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
                     cmt.content,
+                    cm.user_id as p_user_id,
                     sh.s_id,
                     sh.user_id,
                     sh.text,
@@ -248,10 +250,12 @@ class CommentModel extends BaseModel
         $sql = M('share')
             ->alias('sh')
             ->join('LEFT JOIN mn_comment cmt ON sh.s_id=cmt.s_id')
+            ->join('LEFT JOIN mn_comment cm ON cmt.pid=cm.id')
             ->join('LEFT JOIN mn_user ur ON cmt.user_id=ur.user_id')
             ->field('cmt.user_id,
                     cmt.content,
                     FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
+                    cm.user_id as p_user_id,
                     sh.s_id,
                     sh.text,
                     sh.imgs,
@@ -275,6 +279,7 @@ class CommentModel extends BaseModel
     {
         return $comments = $this->alias('a')
             ->join('left join mn_comment as b on a.pid=b.c_id')
+            ->select('a.c_id, a.s_id, a.pid, b.user_id as p_user_id, a.user_id, a.content, a.cTime')
             ->where(['a.s_id' => $sId])
             ->order('a.cTime desc')
             ->select();
