@@ -31,6 +31,7 @@ class CommentModel extends BaseModel
         if(!$this->checkUserStatus_byShareId($shareId)){
             $err['errcode'] = 400;
             $err['errmsg'] = "user invalid";
+
             return false;
         }
 
@@ -272,7 +273,11 @@ class CommentModel extends BaseModel
      */
     public function getCommentById($sId)
     {
-        return $comments = $this->alias('a')->join('left join mn_comment as b on a.pid=b.c_id')->where(['a.s_id' => $sId])->order('cTime desc')->select();
+        return $comments = $this->alias('a')
+            ->join('left join mn_comment as b on a.pid=b.c_id')
+            ->where(['a.s_id' => $sId])
+            ->order('a.cTime desc')
+            ->select();
     }
 
     /**
@@ -280,7 +285,8 @@ class CommentModel extends BaseModel
      * @param $cId  int  评论id
      * @return mixed
      */
-    public function getCommentByCid($cId){
+    public function getCommentByCid($cId)
+    {
         return $this->where(['c_id' => $cId])->find();
     }
 }
