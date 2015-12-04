@@ -16,12 +16,14 @@
         }
     </style>
 <{/block}>
+
 <{block name=commentActive}>on<{/block}>
+
 <{block name=content}>
     <div class="blog_frame_center">
       <div class="card card-header">
-          <a class="card-header-item on" href="javascript:;">收到的评论</a>
-          <a class="card-header-item" href="javascript:;">发出的评论</a>
+          <a class="card-header-item on" href="<{U('cnt/comment_receive')}>">收到的评论</a>
+          <a class="card-header-item" href="<{U('cnt/comment_send')}>">发出的评论</a>
       </div>
       <div id="comment-receive-container"></div>
     </div>
