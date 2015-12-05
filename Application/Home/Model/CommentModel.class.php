@@ -281,7 +281,7 @@ class CommentModel extends BaseModel
     {
         return $comments = $this->alias('a')
             ->join('left join mn_comment as b on a.pid=b.c_id')
-            ->field('a.c_id, a.s_id, a.pid, b.user_id as p_user_id, a.user_id, a.content, a.cTime')
+            ->field('a.c_id, a.s_id, a.pid, b.user_id as p_user_id,b.pid as p_pid, b.content as p_content, a.user_id, a.content, a.cTime')
             ->where(['a.s_id' => $sId])
             ->order('a.cTime desc')
             ->select();
