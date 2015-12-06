@@ -802,8 +802,7 @@ a:hover { color: #56abe4 }
     font-size: 16px;
     font-weight: bold;
 }
-.info_nav a:hover .info_num,
-.info_nav a.on .info_num { color: #56abe4 }
+.info_nav a.on { color: #56abe4 }
 
 /*迷你相册*/
 .photo_wrap {
