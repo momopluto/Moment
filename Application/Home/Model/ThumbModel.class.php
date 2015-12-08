@@ -248,6 +248,7 @@ class ThumbModel extends BaseModel{
                     sh.s_id,
                     sh.text,
                     sh.imgs,
+                    sh.user_id,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.isPublic,
                     sh.cmt_count,
