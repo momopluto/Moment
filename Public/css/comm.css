@@ -192,6 +192,8 @@ a:hover { color: #56abe4 }
 }
 .nav_item:hover .limits_list { display: block; }
 .nav_item .limits_item { border-bottom: 1px solid #555 }
+.nav_item .limits_item a { color: #fff }
+.nav_item .limits_item a:hover { color: #56abe4 }
 .nav_publish {
     float: left;
     width: 40px;
