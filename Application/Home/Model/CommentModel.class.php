@@ -198,6 +198,7 @@ class CommentModel extends BaseModel
             ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
             ->field('FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
                     cmt.content,
+                    cmt.c_id,
                     cm.user_id as p_user_id,
                     cm.content as p_content,
                     cm.pid as p_pid,
@@ -255,6 +256,7 @@ class CommentModel extends BaseModel
             ->join('LEFT JOIN mn_comment cm ON cmt.pid=cm.c_id')
             ->join('LEFT JOIN mn_user ur ON cmt.user_id=ur.user_id')
             ->field('cmt.user_id,
+                    cmt.c_id,
                     cmt.content,
                     FROM_UNIXTIME(cmt.cTime,"%Y-%m-%d %H:%i:%s") AS commentTime,
                     cm.user_id as p_user_id,
