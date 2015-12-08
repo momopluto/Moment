@@ -620,7 +620,7 @@ class ContentModel extends BaseModel
      */
     public function getShareById($id)
     {
-        return $this->field('s_id,user_id,md5(user_id) AS imgPath,text,imgs,FROM_UNIXTIME(cTime,"%Y-%m-%d %H:%i:%s") AS cTime,isPublic,cmt_count,tb_count')
+        return $this->field('s_id,user_id,md5(user_id) AS imgPath,text,imgs,FROM_UNIXTIME(cTime,"%Y-%m-%d %H:%i:%s") AS cTime,isPublic,cmt_count,tb_count, 0 as thumbed')
             ->where(['s_id' => $id])
             ->select();
     }
