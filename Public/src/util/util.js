@@ -10,8 +10,13 @@ function getTimeString (time) {
 		return Math.round(delta / 1000 / 60 / 60) + '小时前';
 	} else {
 		var date = new Date(time);
-		return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+		return date.getFullYear() + '-' + _2(date.getMonth() + 1) + '-' + _2(date.getDate()) + ' ' + _2(date.getHours()) + ':' + _2(date.getMinutes());
 	}
+}
+
+function _2(n) {
+	if (n < 10) return '0' + n;
+	else return n;
 }
 
 exports.getTimeString = getTimeString;

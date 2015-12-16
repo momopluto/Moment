@@ -16,79 +16,11 @@
         }
     </style>
 <{/block}>
+
 <{block name=thumbActive}>on<{/block}>
+
 <{block name=content}>
-    <div class="blog_frame_center">
-        <!-- header -->
-        <div class="card card-header">
-            <a class="card-header-item on" href="javascript:;">收到的赞</a>
-            <a class="card-header-item" href="javascript:;">发出的赞</a>
-        </div>
-
-        <!-- 分享卡片 -->
-        <div class="cradWrap">
-            <div class="cardContent">
-                <dic class="cardIcon"></dic>
-                <article  class="cardDetail">
-                    <p class="card_title"><a href="">10加0又叫人渣7友</a></p>
-                    <div class="medaiBox">
-                        <p class="card-box">赞了我的分享：<a href="">【太棒了，我在#英语单词达人#中超越了我自己，会的单词越来越多，我很快就会成为单词达人了。http://t.cn/zYykJT4 】</a></p>
-                    </div>
-                    <p class="card_time">2013-10-5 10:10</p>
-                </article>
-            </div>
-            <div class="cardHandle">
-                <ul class="rowLine clearfix">
-                    <li>
-                        <a class="row_btn" href="javascript:;">回复</a>
-                    </li>
-                </ul>
-                <ul class="comment_list" style="display:none">
-                    <li class="comment_item">
-                        <div class="comment_avator"></div>
-                        <div class="comment_content">
-                            <div class="comment_reply_box clearfix">
-                                <textarea placeholder="回复@怜逐" rows="2"></textarea>
-                                <a href="javascript:;">评论</a>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 分享卡片 -->
-        <div class="cradWrap">
-            <div class="cardContent">
-                <dic class="cardIcon"></dic>
-                <article  class="cardDetail">
-                    <p class="card_title"><a href="">小新是爷纪泽欣</a></p>
-                    <div class="medaiBox">
-                        <p class="card-box">赞了我的分享：<a href="">一个字——非常帅[给力]</a></p>
-                    </div>
-                    <p class="card_time">2013-5-3 13:15</p>
-                </article>
-            </div>
-            <div class="cardHandle">
-                <ul class="rowLine clearfix">
-                    <li>
-                        <a class="row_btn" href="javascript:;">回复</a>
-                    </li>
-                </ul>
-                <ul class="comment_list">
-                    <li class="comment_item">
-                        <div class="comment_avator"></div>
-                        <div class="comment_content">
-                            <div class="comment_reply_box clearfix">
-                                <textarea placeholder="回复@怜逐" rows="2"></textarea>
-                                <a href="javascript:;">评论</a>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <div class="blog_frame_center" id="thumb-receive-container"></div>
 <{/block}>
 
 <{block name=scriptglobal}>
@@ -101,12 +33,14 @@
             uncollect: "<{U('/fav/cclcnt')}>", // 取消收藏
             thumb: "<{U('/fav/thumb')}>", // 点赞
             unthumb: "<{U('/fav/cclthumb')}>", // 取消赞
-            get_comment: "<{U('/myct/comment')}>" // 请求评论列表
+            get_comment: "<{U('/myct/comment')}>", // 请求评论列表
+            thumb_receive: "<{U('cnt/thumb_receive')}>",
+            thumb_send: "<{U('cnt/thumb_send')}>"
         };
     </script>
 <{/block}>
 
 <{block name=script}>
-    <script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
-    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/html5shiv.min.js"></script>
+    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
+    <script type="text/javascript" src="<{$smarty.const.PATH_BUILD}>/thumbReceive.js"></script>
 <{/block}>

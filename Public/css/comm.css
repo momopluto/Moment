@@ -192,6 +192,8 @@ a:hover { color: #56abe4 }
 }
 .nav_item:hover .limits_list { display: block; }
 .nav_item .limits_item { border-bottom: 1px solid #555 }
+.nav_item .limits_item a { color: #fff }
+.nav_item .limits_item a:hover { color: #56abe4 }
 .nav_publish {
     float: left;
     width: 40px;
@@ -628,7 +630,7 @@ a:hover { color: #56abe4 }
 }
 .user_atten {
     overflow: hidden;
-    margin: 10px 0px 0px; 
+    margin: 10px 0px 0px;
     display: flex;
 }
 .s_line1 {
@@ -646,7 +648,7 @@ a:hover { color: #56abe4 }
 /*评论*/
 .comment_list {
     position: relative;
-    padding: 0 15px;
+    padding: 15px;
     background-color: #eee;
     font-size: 13px;
 }
@@ -665,6 +667,7 @@ a:hover { color: #56abe4 }
     border-bottom: 1px solid #ddd;
     overflow: hidden;
 }
+.comment_item:last-child { border-bottom: 0 }
 .comment_avator {
     float: left;
     width: 30px;
@@ -677,18 +680,19 @@ a:hover { color: #56abe4 }
 }
 .comment_content { overflow: hidden }
 .comment_name a { color: #56abe4 }
-.comment_option { margin-top: 5px }
+.comment_option { margin: 5px 0 }
 .comment_time { color: #888 }
 .comment_reply { float: right }
 .comment_reply_box {
     position: relative;
     padding: 10px;
     border-radius: 2px;
-    background-color: #fff;
+    background-color: #f7f7f7;
 }
 .comment_reply_box textarea {
     width: 100%;
     border: 0;
+    background-color: transparent;
 }
 .comment_reply_box a {
     float: right;
@@ -800,8 +804,7 @@ a:hover { color: #56abe4 }
     font-size: 16px;
     font-weight: bold;
 }
-.info_nav a:hover .info_num,
-.info_nav a.on .info_num { color: #56abe4 }
+.info_nav a.on { color: #56abe4 }
 
 /*迷你相册*/
 .photo_wrap {

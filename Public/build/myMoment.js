@@ -326,6 +326,61 @@ var MomentList = React.createClass({displayName: "MomentList",
 module.exports = MomentList;
 },{"./Moment":2,"react":165}],4:[function(require,module,exports){
 var React = require('react');
+var Publisher = require('../components/Publisher');
+var MomentList = require('../components/MomentList');
+var assign = require('object-assign');
+
+var App = React.createClass({displayName: "App",
+    getInitialState: function() {
+        return {
+            moments: this.props.moments
+        };
+    },
+
+    render: function() {
+        var moments = this.state.moments;
+        return (
+            React.createElement(MomentList, {
+                moments: moments, 
+                collectMoment: this.collectMoment, 
+                thumbMoment: this.thumbMoment}
+            )
+        );
+    },
+
+    collectMoment: function(s_id) {
+        var newState = assign({}, this.state);
+        newState.moments = newState.moments.map(function(item, index) {
+                if (item.s_id == s_id) {
+                    item.collected = item.collected == 1 ? 0 : 1;
+                };
+                return item;
+        });
+        this.setState(newState);
+    },
+
+    thumbMoment: function(s_id) {
+        var newState = assign({}, this.state);
+        newState.moments = newState.moments.map(function(item, index) {
+                if (item.s_id == s_id) {
+                    if (item.thumbed == 1) {
+                        item.thumbed = 0;
+                        item.tb_count--;
+                    } else {
+                        item.thumbed = 1;
+                        item.tb_count++;
+                    }
+                };
+                return item;
+        });
+        this.setState(newState);
+    }
+});
+
+module.exports = App;
+
+},{"../components/MomentList":3,"../components/Publisher":5,"object-assign":8,"react":165}],5:[function(require,module,exports){
+var React = require('react');
 var assign = require('object-assign');
 
 var Publisher = React.createClass({displayName: "Publisher",
@@ -491,81 +546,17 @@ var Publisher = React.createClass({displayName: "Publisher",
 });
 
 module.exports = Publisher;
-},{"object-assign":8,"react":165}],5:[function(require,module,exports){
-var React = require('react');
-var Publisher = require('../components/Publisher');
-var MomentList = require('../components/MomentList');
-var assign = require('object-assign');
-
-var App = React.createClass({displayName: "App",
-    getInitialState: function() {
-        return {
-            moments: this.props.moments
-        };
-    },
-
-    render: function() {
-        var moments = this.state.moments;
-        console.log(moments);
-        return (
-            React.createElement("div", null, 
-                React.createElement(Publisher, {addMoment: this.addMoment}), 
-                React.createElement(MomentList, {
-                    moments: moments, 
-                    collectMoment: this.collectMoment, 
-                    thumbMoment: this.thumbMoment}
-                )
-            )
-        );
-    },
-
-    addMoment: function(moment) {
-        this.setState({
-            moments: [moment].concat(this.state.moments)
-        });
-    },
-
-    collectMoment: function(s_id) {
-        var newState = assign({}, this.state);
-        newState.moments = newState.moments.map(function(item, index) {
-                if (item.s_id == s_id) {
-                    item.collected = item.collected == 1 ? 0 : 1;
-                };
-                return item;
-        });
-        this.setState(newState);
-    },
-
-    thumbMoment: function(s_id) {
-        var newState = assign({}, this.state);
-        newState.moments = newState.moments.map(function(item, index) {
-                if (item.s_id == s_id) {
-                    if (item.thumbed == 1) {
-                        item.thumbed = 0;
-                        item.tb_count--;
-                    } else {
-                        item.thumbed = 1;
-                        item.tb_count++;
-                    }
-                };
-                return item;
-        });
-        this.setState(newState);
-    }
-});
-
-module.exports = App;
-
-},{"../components/MomentList":3,"../components/Publisher":4,"object-assign":8,"react":165}],6:[function(require,module,exports){
+},{"object-assign":8,"react":165}],6:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
-var App = require('./containers/App');
+var MyMoment = require('./components/MyMoment');
 
 ReactDOM.render(
-    React.createElement(App, {moments: JSON.parse(window.json_data)}),
-    document.getElementById('moment-container')
+	React.createElement(MyMoment, {moments: JSON.parse(json_data)}),
+	document.getElementById('my-moment-container')
 );
-},{"./containers/App":5,"react":165,"react-dom":9}],7:[function(require,module,exports){
+
+},{"./components/MyMoment":4,"react":165,"react-dom":9}],7:[function(require,module,exports){
 function getTimeString (time) {
 	var delta = new Date() - new Date(time);
 	if (delta < 1000) {
