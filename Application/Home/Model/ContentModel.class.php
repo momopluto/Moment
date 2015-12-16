@@ -41,60 +41,61 @@ class ContentModel extends BaseModel
     // 评论了xx条，被评论了xx条，点赞了xx个，收获了xx个点赞
     // xxxxx
 
-/*
-    public function getUserData($userId)
-    {
-        $where = ['user_id' => $userId];
-        $favuserCount = D('favuser')->countFavuser($where);
-        $shareCount = $this->countShare($where);
-        $favshareCount = D('favshare')->countFavshare($where);
+    /*
+        public function getUserData($userId)
+        {
+            $where = ['user_id' => $userId];
+            $favuserCount = D('favuser')->countFavuser($where);
+            $shareCount = $this->countShare($where);
+            $favshareCount = D('favshare')->countFavshare($where);
 
-        return [
-            'fav_user_count'  => $favuserCount,
-            'fav_share_count' => $favshareCount,
-            'share_count'     => $shareCount,
-        ];
-    }
-    
-    // ?? 内部分好页？
-    public function getShareIndex($userId)
-    {
-        $userdata = $this->getUserData($userId);
-        $p = I('param.p', 1);
-        $count = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn_user.user_id')->where([
-            'mn_share.isPublic' => 1,
-            'mn_user.status'    => 1,
-        ])->count();
-        $oPage = new \Think\Page($count, 25);
-        $show = $oPage->show();
+            return [
+                'fav_user_count'  => $favuserCount,
+                'fav_share_count' => $favshareCount,
+                'share_count'     => $shareCount,
+            ];
+        }
+
+        // ?? 内部分好页？
+        public function getShareIndex($userId)
+        {
+            $userdata = $this->getUserData($userId);
+            $p = I('param.p', 1);
+            $count = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn_user.user_id')->where([
+                'mn_share.isPublic' => 1,
+                'mn_user.status'    => 1,
+            ])->count();
+            $oPage = new \Think\Page($count, 25);
+            $show = $oPage->show();
 
 
-        $list = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn_user.user_id')->where([
-            'mn_share.isPublic' => 1,
-            'mn_user.status'    => 1,
-        ])->field([
-            'mn_user.username',
-            'mn_share.s_id',
-            'mn_share.user_id',
-            'mn_share.text',
-            'mn_share.imgs',
-            'mn_share.cTime',
-            'mn_share.isPublic',
-        ])->order('mn_share.cTime desc')->page($p, 25)->select();
+            $list = $this->join('LEFT JOIN mn_user ON mn_share.user_id = mn_user.user_id')->where([
+                'mn_share.isPublic' => 1,
+                'mn_user.status'    => 1,
+            ])->field([
+                'mn_user.username',
+                'mn_share.s_id',
+                'mn_share.user_id',
+                'mn_share.text',
+                'mn_share.imgs',
+                'mn_share.cTime',
+                'mn_share.isPublic',
+            ])->order('mn_share.cTime desc')->page($p, 25)->select();
 
-        return [
-            'userdata' => $userdata,
-            'show'     => $show,
-            'list'     => $list,
-        ];
-    }
-*/
+            return [
+                'userdata' => $userdata,
+                'show'     => $show,
+                'list'     => $list,
+            ];
+        }
+    */
     /**
      * 获取最热的分享总数
      * @param integer $userId 用户id
      * @return integer 总数
      */
-    public function getHotShare_count($userId){
+    public function getHotShare_count($userId)
+    {
         return $this->table($this->getHotShare_sql($userId) . ' tmp')->cache('count_hotShare', 1800)->count();// 缓存30分钟
     }
 
@@ -103,7 +104,8 @@ class ContentModel extends BaseModel
      * @param integer $userId 用户id
      * @return string sql语句
      */
-    public function getHotShare_sql($userId){
+    public function getHotShare_sql($userId)
+    {
         $sql = $this->alias('sh')
             ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
             ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)/*判断userId是否有点赞此分享*/
@@ -120,6 +122,7 @@ class ContentModel extends BaseModel
             ->where('sh.cmt_count + sh.tb_count >= 500')
             ->order('sh.cTime DESC')
             ->buildsql();
+
         return $sql;
     }
 
@@ -175,13 +178,7 @@ class ContentModel extends BaseModel
             //             . ' OR (sh.isPublic=0 AND sh.user_id=' . $userId . ')'/*自己发布的私密分享*/
             //         . ' )'
             //     . ' )')
-            ->where('( (ur.`status`=1'/*分享所属用户状态为启用*/
-                    . ' AND (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . '))'/*限制时间段*/
-                    . ' AND ('
-                        . ' (sh.isPublic=1 AND sh.user_id<>' . $userId . ')'/*其它用户发布的公开的分享*/
-                        . ' OR (sh.user_id=' . $userId . ')'/*自己发布的所有分享*/
-                    . ' )'
-                . ' )')
+            ->where('( (ur.`status`=1'/*分享所属用户状态为启用*/ . ' AND (sh.cTime BETWEEN ' . $monday . ' AND ' . $today_ed . '))'/*限制时间段*/ . ' AND (' . ' (sh.isPublic=1 AND sh.user_id<>' . $userId . ')'/*其它用户发布的公开的分享*/ . ' OR (sh.user_id=' . $userId . ')'/*自己发布的所有分享*/ . ' )' . ' )')
             ->order('sh.cTime DESC')
             ->buildSql();
 
@@ -235,7 +232,7 @@ class ContentModel extends BaseModel
                     sh.cmt_count,
                     sh.tb_count,
                     IF(fs.cTime,1,0) AS collected,
-                    IF(th.cTime,1,0) AS thumbed') /*collected为1代表已收藏，0为未收藏 , thumbed为1代表已点赞，0为未点赞*/
+                    IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏 , thumbed为1代表已点赞，0为未点赞*/
             ->where($where)
             ->order('sh.cTime DESC')
             ->buildSql();
@@ -380,7 +377,7 @@ class ContentModel extends BaseModel
 
     /**
      * [按条件]返回分享的数目
-     * @param mix $map 条件
+     * @param  $map array 条件
      * @return integer 分享数目
      */
     public function countShare($map)
@@ -393,7 +390,7 @@ class ContentModel extends BaseModel
     /**
      * 获取搜索结果总数
      * @param integer $userId 发起搜索的用户的id
-     * @param string $key 搜索关键字
+     * @param string  $key    搜索关键字
      * @return integer 成功返回总数;失败返回false
      */
     public function getSearchShare_count($userId, $key)
@@ -407,7 +404,7 @@ class ContentModel extends BaseModel
     /**
      * 获取搜索结果
      * @param integer $userId 发起搜索的用户的id
-     * @param string $key 搜索关键字
+     * @param string  $key    搜索关键字
      * @return string sql语句
      */
     public function getSearchShare_sql($userId, $key)
@@ -432,12 +429,7 @@ class ContentModel extends BaseModel
                     sh.tb_count,
                     IF(fs.cTime,1,0) AS collected,
                     IF(th.cTime,1,0) AS thumbed')/*collected为1代表已收藏，0为未收藏; thumbed为1代表点赞了,0为未点赞*/
-            ->where("(ur.`status`=1"/*分享所属用户状态为启用*/
-                ." AND sh.`text` like '%{$key}%')"/*查询关键字*/
-                 ." AND ("
-                    ." ( sh.user_id={$userId} )"/*用户自己发布的所有分享*/
-                    ." OR ( sh.user_id<>{$userId} AND sh.isPublic=1 )"/*其它用户发布的公开的分享*/
-                 ." )")
+            ->where("(ur.`status`=1"/*分享所属用户状态为启用*/ . " AND sh.`text` like '%{$key}%')"/*查询关键字*/ . " AND (" . " ( sh.user_id={$userId} )"/*用户自己发布的所有分享*/ . " OR ( sh.user_id<>{$userId} AND sh.isPublic=1 )"/*其它用户发布的公开的分享*/ . " )")
             ->order('sh.cTime DESC')
             ->buildSql();
 
@@ -524,18 +516,31 @@ class ContentModel extends BaseModel
                 ],
             ];
         }
+        $limit = 6;
+        $count = $this->countShare($where);
+        $eachTime = 3;
+        $maxPage = intval(($count + $eachTime - 1) / $eachTime);
+        $page = 1;
+        $picArray = [];
+        while($page <= $maxPage){
+            $result = $this->where($where)->field('imgs')->page(1, $eachTime)->order('cTime desc')->select();
 
-        $result = $this->field('imgs')->where($where)->limit(1)->order('cTime desc')->select();
-
-        if($result){
-            $picArray = explode(',', $result[0]['imgs']);
-            if(!end($picArray)){
-                array_pop($picArray);
+            $tmp = array_column($result, 'imgs');
+            foreach($tmp as $value){
+                if($value){
+                    $picArray = array_merge($picArray, explode(',', $value));
+                    if(count($picArray) >= $limit){
+                        break;
+                    }
+                }
             }
-        }else{
-            $picArray = [];
-        }
 
+            if(count($picArray) >= $limit){
+                $picArray = array_chunk($picArray, $limit)[0];
+                break;
+            }
+            ++$page;
+        }
 
         $err['errcode'] = 0;
         $err['errmsg'] = 'ok';
