@@ -18,55 +18,24 @@
 <{/block}>
 
 <{block name=focusActive}>on<{/block}>
+
 <{block name=content}>
     <div class="content-col content-col-2">
         <div class="card">
-            <h2 class="card-title">全部关注 <span><{$count['focus']}></span></h2>
+            <h2 class="card-title">全部关注 <span class="js-follow-count"><{$count['focus']}></span></h2>
             <ul class="follow_list">
             <{foreach $data as $one}>
                 <li class="follow_item">
-                    <div class="follow_avatar" style="background-image:url(<{$smarty.const.PATH_IMG}>/pw.jpg)"></div>
+                    <div class="follow_avatar"></div>
                     <div class="follow_content">
                         <h3 class="follow_name">
-                            <a href="##"><{$one['username']}></a>
-                            <span>(已关注)</span>
+                            <a href="javascript:;"><{$one['username']}></a>
+                            <span class="follow_state">(已关注)</span>
                         </h3>
-                        <a class="unfollow" href="<{U('fav/cclusr')}>">取消关注</a>
+                        <a class="unfollow js-toggle-follow" href="javascript:;" data-userid="<{$one['user_id']}>">取消关注</a>
                     </div>
                 </li>
             <{/foreach}>
-            <{*
-                <li class="follow_item">
-                    <div class="follow_avatar" style="background-image:url(<{$smarty.const.PATH_IMG}>/pw.jpg)"></div>
-                    <div class="follow_content">
-                        <h3 class="follow_name">
-                            <a href="##">PingWest品玩</a>
-                            <span>(已关注)</span>
-                        </h3>
-                        <a class="unfollow" href="javascript:;">取消关注</a>
-                    </div>
-                </li>
-                <li class="follow_item">
-                    <div class="follow_avatar" style="background-image:url(<{$smarty.const.PATH_IMG}>/pw.jpg)"></div>
-                    <div class="follow_content">
-                        <h3 class="follow_name">
-                            <a href="##">PingWest品玩</a>
-                            <span>(已关注)</span>
-                        </h3>
-                        <a class="unfollow" href="javascript:;">取消关注</a>
-                    </div>
-                </li>
-                <li class="follow_item">
-                    <div class="follow_avatar" style="background-image:url(<{$smarty.const.PATH_IMG}>/pw.jpg)"></div>
-                    <div class="follow_content">
-                        <h3 class="follow_name">
-                            <a href="##">PingWest品玩</a>
-                            <span>(已关注)</span>
-                        </h3>
-                        <a class="unfollow" href="javascript:;">取消关注</a>
-                    </div>
-                </li>
-            *}>
             </ul>
         </div>
     </div>
@@ -76,4 +45,45 @@
     <script>
         var json_data='<{$list}>';
     </script>
+<{/block}>
+
+<{block name=script}>
+  <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
+  <script>
+    $doc = $(document);
+    $doc.on('click', '.js-toggle-follow', function(e) {
+      var $this = $(this);
+      if ($this.html() == '关注') {
+        $.ajax({
+          type: 'post',
+          url: '<{U("fav/usr")}>',
+          data: {
+            uid: $this.data('userid')
+          },
+          success: function(result) {
+            if (!result.errcode) {
+              $this.html('取消关注')
+              $this.parent().find('.follow_state').html('(已关注)');
+              $('.js-follow-count').html($('.js-follow-count').html() + 1);
+            }
+          }
+        });
+      } else {
+        $.ajax({
+          type: 'post',
+          url: '<{U("fav/cclusr")}>',
+          data: {
+            uid: $this.data('userid')
+          },
+          success: function(result) {
+            if (!result.errcode) {
+              $this.html('关注')
+              $this.parent().find('.follow_state').html('(未关注)');
+              $('.js-follow-count').html($('.js-follow-count').html() - 1);
+            }
+          }
+        });
+      }
+    });
+  </script>
 <{/block}>

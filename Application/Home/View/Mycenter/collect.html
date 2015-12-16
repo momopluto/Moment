@@ -1,6 +1,6 @@
 <{extends file='../Layout/index.html'}>
 
-<{block name=title}>收藏的分享<{/block}>
+<{block name=title}>我的收藏<{/block}>
 
 <{block name=style}>
     <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css">
@@ -16,9 +16,11 @@
         }
     </style>
 <{/block}>
+
 <{block name=collectActive}>on<{/block}>
+
 <{block name=content}>
-    <div class="blog_frame_center">
+    <div class="blog_frame_center" id="collect-container">
         <div class="card">
             <h2 class="card-title">我的收藏<span> <{$collectCount}></span></h2>
         </div>
@@ -63,10 +65,10 @@
                     </li>
                     <li>
                         <a class="row_btn" href="javascript:void(0);"><i class="iconfont">&#xe602;</i> 评论 <i>1</i></a>
-                    </li>                                           
+                    </li>
                     <li>
                         <a class="row_btn" href="javascript:void(0);"><i class="iconfont">&#xe601;</i> 赞 <i>5</i></a>
-                    </li>                                                               
+                    </li>
                 </ul>
                 <ul class="comment_list">
                     <li class="comment_item">
@@ -143,6 +145,6 @@
 <{/block}>
 
 <{block name=script}>
-    <script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
-    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/html5shiv.min.js"></script>
+    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
+    <script type="text/javascript" src="<{$smarty.const.PATH_BUILD}>/collect.js"></script>
 <{/block}>

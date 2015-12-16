@@ -64,12 +64,12 @@ var Moment = React.createClass({
 						</li>
 						<li>
 							<a className="row_btn" href="javascript:;" onClick={this.handleOpenComment}><i className="iconfont">&#xe602;</i> 评论 <i>{moment.cmt_count}</i></a>
-						</li>											
+						</li>
 						<li className={moment.thumbed == 0 ? '' : 'on'}>
 							<a className="row_btn" href="javascript:;" onClick={this.handleThumb}><i className="iconfont">&#xe601;</i> 赞 <i>{moment.tb_count}</i></a>
-						</li>																
+						</li>
 					</ul>
-					{this.state.isOpeningComment ? <CommentList comments={this.state.comments} /> : null}
+					{this.state.isOpeningComment ? <CommentList comments={this.state.comments} doComment={this.doComment} moment={moment} /> : null}
 				</div>
 			</div>
 		);
@@ -104,17 +104,53 @@ var Moment = React.createClass({
 
 	// 展开评论列表
 	handleOpenComment: function(e) {
+		if (this.state.isOpeningComment) {
+			this.setState(assign({}, this.state, {
+				isOpeningComment: !this.state.isOpeningComment
+			}));
+		} else {
+			$.ajax({
+				type: 'post',
+				url: url.get_comment,
+				data: {
+					sid: this.props.moment.s_id
+				},
+				success: function(data) {
+					if (data && !data.errcode) {
+						this.setState(assign({}, this.state, {
+							isOpeningComment: !this.state.isOpeningComment,
+							comments: data
+						}));
+					} else {
+						this.setState(assign({}, this.state, {
+							isOpeningComment: !this.state.isOpeningComment,
+							comments: []
+						}));
+					}
+				}.bind(this)
+			});
+		}
+	},
+
+	// 评论分享
+	doComment: function(content, pid) {
+		if (!content) {
+			return alert('评论不能为空');
+		}
 		$.ajax({
 			type: 'post',
-			url: url.get_comment,
+			url: url.do_comment,
 			data: {
-				sid: this.props.moment.s_id
+				sid: this.props.moment.s_id,
+				pid: pid,
+				content: content
 			},
 			success: function(data) {
-				this.setState(assign({}, this.state, {
-					isOpeningComment: !this.state.isOpeningComment,
-					comments: data
-				}));
+				if (!data.errcode) {
+					this.setState(assign({}, this.state, {
+						comments: [data].concat(this.state.comments)
+					}));
+				}
 			}.bind(this)
 		});
 	},
