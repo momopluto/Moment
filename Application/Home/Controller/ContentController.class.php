@@ -50,7 +50,7 @@ class ContentController extends BaseController
         // 不管有没图片，只要上传成功后，都返回s_id
 
         if(IS_POST){
-            $text = I('post.content', '', 'strip_tags');
+            $text = I('post.content', '', 'addslashes');
             $isPublic = I('post.isPublic', '', 'strip_tags');
             $fileCount = I('post.imgcount');
             if(intval($fileCount) !== count($_FILES)){
@@ -370,15 +370,4 @@ class ContentController extends BaseController
         $this->display('thumb_send'); // 输出模板
     }
 
-    /**
-     * 获取单条分享的评论。
-     */
-    public function getComment()
-    {
-        $sId = I('post.sid', '', 'strip_tags');
-        $model = D('comment');
-        $comments = $model->getCommentById($sId);
-
-        $this->ajaxReturn($comments);
-    }
 }
