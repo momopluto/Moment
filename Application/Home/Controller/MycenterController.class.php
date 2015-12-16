@@ -105,7 +105,7 @@ class MycenterController extends BaseController
         $this->get_home_public_data($userId);
 
         $userinfo = D('User')->getUserInfoById($userId);
-        if ($userinfo) {
+        if($userinfo){
             $this->assign('userinfo', $userinfo);
         }
 
@@ -166,7 +166,7 @@ class MycenterController extends BaseController
         // 获取home主页公共的数据
         $this->get_home_public_data($userId);
         $userinfo = D('User')->getUserInfoById($userId);
-        if ($userinfo) {
+        if($userinfo){
             $this->assign('userinfo', $userinfo);
         }
 
@@ -230,7 +230,7 @@ class MycenterController extends BaseController
         // 获取home主页公共的数据
         $this->get_home_public_data($userId);
         $userinfo = D('User')->getUserInfoById($userId);
-        if ($userinfo) {
+        if($userinfo){
             $this->assign('userinfo', $userinfo);
         }
 
@@ -426,6 +426,16 @@ class MycenterController extends BaseController
             $this->assign('pics', $result);
             $this->display();
         }
+    }
+
+    public function getPic()
+    {
+        $userId = I('param.id', '');
+        $dao = D('Content');
+        $result = $dao->getPic($userId, $userId == self::$user_id);
+        $this->ajaxReturn(json_encode($result));
+
+        return;
     }
 
     public function  test()
