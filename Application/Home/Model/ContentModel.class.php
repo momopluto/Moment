@@ -224,15 +224,18 @@ class ContentModel extends BaseModel
 
         $sql = $this->alias('sh')
             ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
+            ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)
             ->field('sh.s_id,
                     sh.user_id,
+                    md5(sh.user_id) AS imgPath,
                     sh.`text`,
                     sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.isPublic,
                     sh.cmt_count,
                     sh.tb_count,
-                    IF(fs.cTime,1,0) AS collected')/*collected为1代表已收藏，0为未收藏*/
+                    IF(fs.cTime,1,0) AS collected,
+                    IF(th.cTime,1,0) AS thumbed') /*collected为1代表已收藏，0为未收藏 , thumbed为1代表已点赞，0为未点赞*/
             ->where($where)
             ->order('sh.cTime DESC')
             ->buildSql();
