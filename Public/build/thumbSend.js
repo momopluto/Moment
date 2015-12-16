@@ -30,8 +30,8 @@ var ThumbList = React.createClass({displayName: "ThumbList",
     return (
       React.createElement("div", null, 
         React.createElement("div", {className: "card card-header"}, 
-            React.createElement("a", {className: "card-header-item on", href: url.thumb_receive}, "收到的赞"), 
-            React.createElement("a", {className: "card-header-item", href: url.thumb_send}, "发出的赞")
+            React.createElement("a", {className: "card-header-item" + (type == 'receive' ? ' on' : ''), href: url.thumb_receive}, "收到的赞"), 
+            React.createElement("a", {className: "card-header-item" + (type == 'send' ? ' on' : ''), href: url.thumb_send}, "发出的赞")
         ), 
         
           thumbs.map(function(item, index) {

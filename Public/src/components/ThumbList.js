@@ -29,8 +29,8 @@ var ThumbList = React.createClass({
     return (
       <div>
         <div className="card card-header">
-            <a className="card-header-item on" href={url.thumb_receive}>收到的赞</a>
-            <a className="card-header-item" href={url.thumb_send}>发出的赞</a>
+            <a className={"card-header-item" + (type == 'receive' ? ' on' : '')} href={url.thumb_receive}>收到的赞</a>
+            <a className={"card-header-item" + (type == 'send' ? ' on' : '')} href={url.thumb_send}>发出的赞</a>
         </div>
         {
           thumbs.map(function(item, index) {
