@@ -133,4 +133,17 @@ class ComController extends BaseController
         $userId = self::$user_id;
     }
 
+
+    /**
+     * 获取单条分享的评论。
+     */
+    public function getComment()
+    {
+        $sId = I('post.sid', '', 'strip_tags');
+        $model = D('comment');
+        $comments = $model->getCommentById($sId);
+
+        $this->ajaxReturn($comments);
+    }
+
 }
