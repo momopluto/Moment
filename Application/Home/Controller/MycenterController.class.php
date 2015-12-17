@@ -423,7 +423,7 @@ class MycenterController extends BaseController
             $dao = D('Content');
             $result = $dao->getPic($userId, $userId == self::$user_id);
             $this->assign('userPath', md5($userId));
-            $this->assign('pics', $result);
+            $this->assign('pics1', $result);
             $this->display();
         }
     }
