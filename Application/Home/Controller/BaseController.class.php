@@ -84,6 +84,7 @@ class BaseController extends CommonController
 
             $pics = $result;
         }
+        $this->assign('userid', md5($userId));
         $this->assign('pics', $pics);
        // echo '$picPath = <br/>';
        // echo $picPath;
