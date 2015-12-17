@@ -80,7 +80,7 @@ class MycenterController extends BaseController
         $model = D('Content');
         $sql = $model->getOnesShare_sql($userId, $userId == self::$user_id);
         if(!$sql){
-            $this->redirect('myct/share', '', 3, json_encode(($model->getError())));
+            $this->redirect('myct/share', '', 1, json_encode(($model->getError())));
 
             return;
         }
@@ -141,7 +141,7 @@ class MycenterController extends BaseController
         $model = D('Favuser');
         $sql = $model->getFavusers_sql($userId, $userId == self::$user_id);
         if(!$sql){
-            $this->redirect('myct/focus', '', 3, $model->getError());
+            $this->redirect('myct/focus', '', 1, $model->getError());
 
             return;
         }
@@ -205,7 +205,7 @@ class MycenterController extends BaseController
         $model = D('Favuser');
         $sql = $model->getFans_sql($userId, $userId == self::$user_id);
         if(!$sql){
-            $this->redirect('myct/fans', '', 3, $model->getError());
+            $this->redirect('myct/fans', '', 1, $model->getError());
 
             return;
         }
@@ -349,7 +349,7 @@ class MycenterController extends BaseController
         session('USERDATA', null);
         session('SESSION_EXPIRE', null);
 
-        $this->redirect('usr/signin', '', 3, '安全退出！跳转至登录页面...');
+        $this->redirect('usr/signin', '', 1, '安全退出！跳转至登录页面...');
     }
 
     /**
@@ -363,32 +363,32 @@ class MycenterController extends BaseController
             $cur_ask = 'Mycenter/chpwd';
             $verify = new \Think\Verify();
             if($verify->check(I('post.verify'))){
-                $this->redirect($cur_ask, '', 3, '验证码错误！');
+                $this->redirect($cur_ask, '', 1, '验证码错误！');
 
                 return;
             }
 
             $old_pwd = I('post.oldpassword');
             if($old_pwd == ''){
-                $this->redirect($cur_ask, '', 3, '原密码不能为空！');
+                $this->redirect($cur_ask, '', 1, '原密码不能为空！');
 
                 return;
             }
             $new_pwd = I('post.password');
             $renew_pwd = I('post.repassword');
             if($new_pwd !== $renew_pwd){
-                $this->redirect($cur_ask, '', 3, '两次输入的密码不一致！');
+                $this->redirect($cur_ask, '', 1, '两次输入的密码不一致！');
 
                 return;
             }
 
             $model = D('User');
             if($model->chpwd(self::$user_id, $old_pwd, $new_pwd)){
-                $this->redirect($cur_ask, '', 3, '修改密码成功');
+                $this->redirect($cur_ask, '', 1, '修改密码成功');
 
                 return;
             }else{
-                $this->redirect($cur_ask, '', 3, $model->getError());
+                $this->redirect($cur_ask, '', 1, $model->getError());
 
                 return;
             }
@@ -423,7 +423,7 @@ class MycenterController extends BaseController
             $dao = D('Content');
             $result = $dao->getPic($userId, $userId == self::$user_id);
             $this->assign('userPath', md5($userId));
-            $this->assign('pics1', $result);
+            $this->assign('pics', $result);
             $this->display();
         }
     }
