@@ -42,6 +42,7 @@ class FavshareModel extends BaseModel{
                 ->field('FROM_UNIXTIME(fs.cTime,"%Y-%m-%d %H:%i:%s") AS collectTime,
                     fs.s_id,
                     sh.user_id,
+                    md5(sh.user_id) as picPath,
                     sh.text,
                     sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
