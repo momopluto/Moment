@@ -194,8 +194,9 @@ class ThumbModel extends BaseModel{
                 ->join('LEFT JOIN mn_share sh ON tb.s_id=sh.s_id')
                 ->join('LEFT JOIN mn_user ur ON sh.user_id=ur.user_id')
                 ->field('FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS thumbTime,
+                    tb.user_id as b_user_id,
                     sh.s_id,
-                    sh.user_id,
+                    sh.user_id as sh_user_id,
                     sh.text,
                     sh.imgs,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
