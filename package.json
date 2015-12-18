@@ -14,7 +14,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "watchify Public/src/thumbSend.js -o Public/build/thumbSend.js"
+    "watch": "watchify Public/src/commentSend.js -o Public/build/commentSend.js"
   },
   "browserify": {
     "transform": [
