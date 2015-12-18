@@ -401,6 +401,9 @@ class MycenterController extends BaseController
     {
         if(IS_GET){
             $userId = I('param.id', '');
+            if(!$userId){
+                $userId = self::$user_id;
+            }
             $dao = D('Content');
             $result = $dao->getAlbum($userId, $userId == self::$user_id);
             // 分割数组
