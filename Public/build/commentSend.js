@@ -12,47 +12,47 @@ var React = require('react');
 var getTimeString = require('../util/util').getTimeString;
 
 var CommentSendItem = React.createClass({displayName: "CommentSendItem",
-  render: function() {
-    var comment = this.props.comment;
+	render: function() {
+		var comment = this.props.comment;
 
-    return (
-      React.createElement("div", {className: "cradWrap card"}, 
-        React.createElement("div", {className: "cardContent"}, 
-          React.createElement("dic", {className: "cardIcon"}), 
-          React.createElement("article", {className: "cardDetail"}, 
-            React.createElement("p", {className: "card_title"}, comment.user_id), 
-            React.createElement("p", {className: "card_text"}, comment.content), 
-            React.createElement("div", {className: "medaiBox"}, 
-              
-                comment.p_content ?
-                React.createElement("p", {className: "card-box"}, "回复", comment.p_user_id, "的评论：", comment.p_content) :
-                React.createElement("p", {className: "card-box"}, "评论", comment.p_user_id, "的分享：", comment.text)
-              
-            ), 
-            React.createElement("p", {className: "card_time"}, getTimeString(comment.ctime))
-          )
-        ), 
-        React.createElement("div", {className: "card-self"}, 
-          React.createElement("a", {href: "javascript:;"}, "删除")
-        )
-      )
-    );
-  }
+		return (
+			React.createElement("div", {className: "cradWrap card"}, 
+				React.createElement("div", {className: "cardContent"}, 
+					React.createElement("dic", {className: "cardIcon"}), 
+					React.createElement("article", {className: "cardDetail"}, 
+						React.createElement("p", {className: "card_title"}, comment.a_user_id), 
+						React.createElement("p", {className: "card_text"}, comment.content), 
+						React.createElement("div", {className: "medaiBox"}, 
+							
+								comment.p_content ?
+								React.createElement("p", {className: "card-box"}, "回复", comment.p_user_id, "的评论：", comment.p_content) :
+								React.createElement("p", {className: "card-box"}, "评论", comment.user_id, "的分享：", comment.text)
+							
+						), 
+						React.createElement("p", {className: "card_time"}, getTimeString(comment.ctime))
+					)
+				), 
+				React.createElement("div", {className: "card-self"}, 
+					React.createElement("a", {href: "javascript:;"}, "删除")
+				)
+			)
+		);
+	}
 });
 
 var CommentSend = React.createClass({displayName: "CommentSend",
-  render: function() {
-    var comments = this.props.comments;
-    return (
-      React.createElement("div", null, 
-        
-          comments.map(function(item, index) {
-            return React.createElement(CommentSendItem, {comment: item, key: index});
-          })
-        
-      )
-    );
-  }
+	render: function() {
+		var comments = this.props.comments;
+		return (
+			React.createElement("div", null, 
+				
+					comments.map(function(item, index) {
+						return React.createElement(CommentSendItem, {comment: item, key: index});
+					})
+				
+			)
+		);
+	}
 });
 
 module.exports = CommentSend;
