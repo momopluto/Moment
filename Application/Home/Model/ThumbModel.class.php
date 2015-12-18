@@ -243,12 +243,12 @@ class ThumbModel extends BaseModel{
         $sql = M('share')->alias('sh')
                 ->join('LEFT JOIN mn_thumb tb ON sh.s_id=tb.s_id')
                 ->join('LEFT JOIN mn_user ur ON tb.user_id=ur.user_id')
-                ->field('tb.user_id,
+                ->field('tb.user_id as tb_user_id,
                     FROM_UNIXTIME(tb.cTime,"%Y-%m-%d %H:%i:%s") AS thumbTime,
                     sh.s_id,
                     sh.text,
                     sh.imgs,
-                    sh.user_id,
+                    sh.user_id as sh_user_id,
                     FROM_UNIXTIME(sh.cTime,"%Y-%m-%d %H:%i:%s") AS cTime,
                     sh.isPublic,
                     sh.cmt_count,
