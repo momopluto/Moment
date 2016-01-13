@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>binbin的主页</title>
+    <link rel="stylesheet" type="text/css" href="<{$smarty.const.PATH_CSS}>/base.css">
+    <link rel="stylesheet" type="text/css" href="<{$smarty.const.PATH_CSS}>/comm.css">
+    <link href='http://www.youziku.com/webfont/NameCSS/46768' rel='stylesheet' type='text/css'/>
+</head>
+<body>
+    <!-- 主导航 -->
+    <div class="blog_header">
+        <div class="content clearfix">
+            <!-- logo -->
+            <a class="logo" href="##"></a>
+            <!-- 搜索栏 -->
+            <div class="search">
+                <input type="text" autocomplete="off" class="w_input" placeholder="大家都在搜：谁日了赵日天">
+                <a href="javascript:;" class="icon_search"></a>
+            </div>
+            <a class="nav_publish" title="发布" href="javasctipt:;"></a>
+            <!-- 功能项 -->
+            <i class="nav_item on" href="">
+                binbin
+                <ul class="limits_list">
+                    <li class="limits_item">个人主页</li>
+                    <li class="limits_item">我的消息</li>
+                    <li class="limits_item">退出登录</li>
+                </ul>
+            </i>
+            <a class="nav_item" href="<{U('myct/signout')}>">首页</a>
+        </div>
+    </div>
+
+    <div class="blog">
+        <div class="content">
+            <div class="mine">
+                <div class="mine_avatar" style="background-image:url(<{$smarty.const.PATH_IMG}>/name0019.jpg)"></div>
+                <div class="mine_name">ICM_bins</div>
+            </div>
+            <div class="content-row">
+                <ul class="content-col content-col-1 card mine_nav">
+                    <li>
+                        <a href="<{U('myct/focus')}>">我的主页</a>
+                    </li>
+                    <li class="on">
+                        <a href="<{U('myct/album')}>">我的相册</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="content-row">
+                <div class="content-col content-col-1 photo-container">
+                    <{foreach from=$pics item=pic}>
+                        <a href="javascript:;">
+                            <img src="<{$smarty.const.PATH_IMG}>/<{$userPath}>/<{$pic}>">
+                        </a>
+                    <{/foreach}>
+                    <!--
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnqm2bscj20bs0brdhj.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnqnhyc8j20e90ek0wa.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnqr891ij20g70fogql.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnqs9xu5j20by0by0ue.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnqw35v5j20j90jcn32.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnqxxwxlj20fl0foaes.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnr4roy7j20fq0gd78p.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnr16hyoj20gb0gnwjl.jpg">
+                    </a>
+                    <a href="javascript:;">
+                        <img src="img/ad283b20gw1exdnrakhb2j20hd0icq8p.jpg">
+                    </a>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript"> var jsonPics = '<{$jsonPics}>';</script>
+</body>
+</html>

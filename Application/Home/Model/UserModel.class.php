@@ -57,6 +57,10 @@ class UserModel extends BaseModel {
             if (($rst = $this->where($map)->find()) != false){
                 if ($rst['user_pwd'] === md5($password)){
                     // 通过验证
+                    if ($rst['status'] == 0){
+                        $this->error = '账号被封停！请联系管理员！';
+                        return false;
+                    }
                     unset($rst['user_pwd']);// 删除密码
                     return $rst;// 返回用户账号数据
                 }  else {
@@ -105,5 +109,14 @@ class UserModel extends BaseModel {
                 return false;
             }
 	}
+
+    /**
+     * 获取用户账号信息(通过user_id)
+     * @param integer $userId 用户id
+     * @return array/boolean 成功返回账号信息数组; 失败返回false;
+     */
+    public function getUserInfoById($userId){
+        return $this->where('user_id = %d',$userId)->find();
+    }
 
 }

@@ -1,5 +1,160 @@
-所有注册用户列表
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+</head>
+<style>
+    table, td, th {
+        text-align: center;
+    }
 
-考虑：
-1、展示信息设计
-2、操作的设计
+    th {
+        color: #000;
+    }
+
+    .content {
+        width: 960px;
+        margin: 0 auto;
+    }
+
+    .content h2 {
+        text-align: center;
+    }
+
+    .content form {
+        padding: 10px;
+    }
+
+    .content .lightHight {
+        line-height: 40px;
+    }
+
+    .content .lightHight td {
+        border: 1px solid #f0f0f0;
+    }
+
+    .content .lightHight:nth-child(odd) {
+        background-color: #dfdfdf
+    }
+
+    .content .btn {
+        color: #fff;
+        background-color: #37a5f1;
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .content .btn:hover {
+        text-decoration: underline;
+    }
+</style>
+<body>
+
+<div class="content">
+    <h2>用户管理</h2>
+
+    <form action="">
+        <table border="0" cellspacing="0" cellpadding="0" width="100%"
+               style="font-size: 12px;background: rgb(250,250,250);line-height: 30px;">
+            <tbody>
+            <tr>
+                <th width="30%">ID</th>
+                <th width="30%">UserName</th>
+                <th width="40%">操作</th>
+            </tr>
+            </tbody>
+            <section class="users">
+                <table class="order_data" cellspacing="0" cellpadding="0" width="100%">
+                    <tbody class="rows">
+                    <{foreach from=$list item=user}>
+                    <tr class="lightHight">
+                        <td width="30%" class="fl"><{$user['user_id']}></td>
+                        <td width="30%"><{$user['username']}></td>
+                        <{if $user['status'] eq 1}>
+                        <td width="40%">
+                            <a class="btn" data-id="<{$user['user_id']}>"> 屏蔽</a>
+                        </td>
+                        <{else $user['status']}>
+                        <td width="40%">
+                            <a class="btn" data-id="<{$user['user_id']}>">解除屏蔽</a>
+                        </td>
+                        <{/if}>
+                    </tr>
+                    <{/foreach}>
+
+                    <!--
+                    <tr class="lightHight">
+                        <td width="30%" class="fl">0175</td>
+                        <td width="30%">binbin</td>
+                        <td width="20%">
+                            <a class="btn">屏蔽</a>
+                        </td>
+                        <td width="20%">
+                            <a class="btn">解除屏蔽</a>
+                        </td>
+                    </tr> 
+                    <tr class="lightHight">
+                        <td width="30%" class="fl">0175</td>
+                        <td width="30%">binbin</td>
+                        <td width="20%">
+                            <a class="btn">屏蔽</a>
+                        </td>
+                        <td width="20%">
+                            <a class="btn">解除屏蔽</a>
+                        </td>
+                    </tr>
+                    <tr class="lightHight">
+                        <td width="30%" class="fl">0175</td>
+                        <td width="30%">binbin</td>
+                        <td width="20%">
+                            <a class="btn">屏蔽</a>
+                        </td>
+                        <td width="20%">
+                            <a class="btn">解除屏蔽</a>
+                        </td>
+                    </tr> 
+                    <tr class="lightHight">
+                        <td width="30%" class="fl">0175</td>
+                        <td width="30%">binbin</td>
+                        <td width="20%">
+                            <a class="btn">屏蔽</a>
+                        </td>
+                        <td width="20%">
+                            <a class="btn">解除屏蔽</a>
+                        </td>
+                    </tr>
+                    -->
+                    </tbody>
+                </table>
+            </section>
+            <{$page}>
+        </table>
+    </form>
+</div>
+<script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
+<script type="text/javascript">
+    $(".btn").on('click', function () {
+        var id = $(this).data("id");
+        $.ajax({
+            type: "post",
+            url: "<{U('/Admin/usr/chg')}>",
+            data: {
+                id: id
+            },
+            success: function (ret) {
+                var str = ret.status == 1 ? '屏蔽' : '解除屏蔽';
+                $(this).html(str);
+            }.bind(this),
+            error: function (ret) {
+
+            }
+        });
+    })
+    ;
+</script>
+</body>
+</html>

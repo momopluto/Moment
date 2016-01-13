@@ -1,0 +1,50 @@
+<{extends file='../Layout/index.html'}>
+
+<{block name=title}>发出的评论<{/block}>
+
+<{block name=style}>
+    <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css">
+    <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/comm.css">
+    <style>
+        @font-face {
+          font-family: 'iconfont';
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot'); /* IE9*/
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.woff') format('woff'), /* chrome、firefox */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+          url('<{$smarty.const.PATH_FONT}>/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+        }
+    </style>
+<{/block}>
+
+<{block name=commentActive}>on<{/block}>
+
+<{block name=content}>
+  <div class="blog_frame_center">
+    <div class="card card-header">
+      <a class="card-header-item" href="<{U('cnt/comment_receive')}>">收到的评论</a>
+      <a class="card-header-item on" href="<{U('cnt/comment_send')}>">发出的评论</a>
+    </div>
+    <div id="comment-receive-container"></div>
+  </div>
+<{/block}>
+
+<{block name=scriptglobal}>
+    <script>
+        var json_data='<{$list}>';
+        var picPath = '<{$picPath}>';
+        var url = {
+            doshare: "<{U('/cnt/doshare')}>",
+            collect: "<{U('/fav/cnt')}>", // 收藏
+            uncollect: "<{U('/fav/cclcnt')}>", // 取消收藏
+            thumb: "<{U('/fav/thumb')}>", // 点赞
+            unthumb: "<{U('/fav/cclthumb')}>", // 取消赞
+            get_comment: "<{U('/myct/comment')}>" // 请求评论列表
+        };
+    </script>
+<{/block}>
+
+<{block name=script}>
+    <script src="http://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <script type="text/javascript" src="<{$smarty.const.PATH_BUILD}>/commentSend.js"></script>
+<{/block}>

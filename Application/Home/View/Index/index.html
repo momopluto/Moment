@@ -1,13 +1,46 @@
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>Home主页</title>
-</head>
-<body>
-	
-Home/Index/index.html
-<h1>测试smarty</h1>
-<{$smarty.const.TITLE}>
-</body>
-</html>
+<{extends file='../Layout/index.html'}>
 
+<{block name=title}>首页<{/block}>
+
+<{block name=style}>
+	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css">
+	<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/comm.css">
+    <style>
+        @font-face {
+          font-family: 'iconfont';
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot'); /* IE9*/
+          src: url('<{$smarty.const.PATH_FONT}>/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.woff') format('woff'), /* chrome、firefox */
+          url('<{$smarty.const.PATH_FONT}>/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+          url('<{$smarty.const.PATH_FONT}>/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+        }
+    </style>
+<{/block}>
+
+<{block name=indexActive}>on<{/block}>
+
+<{block name=content}>
+	<div class="blog_frame_center" id="moment-container"></div>
+<{/block}>
+
+<{block name=scriptglobal}>
+  <script>
+    var json_data='<{$list}>';
+    var picPath = '<{$picPath}>';
+    var url = {
+    	doshare: "<{U('cnt/doshare')}>",
+    	collect: "<{U('fav/cnt')}>", // 收藏
+    	uncollect: "<{U('fav/cclcnt')}>", // 取消收藏
+    	thumb: "<{U('cnt/dothumb')}>", // 点赞
+    	unthumb: "<{U('cnt/cclthumb')}>", // 取消赞
+    	get_comment: "<{U('common/getcomment')}>", // 请求评论列表
+			do_comment: "<{U('cnt/docomment')}>" // 评论分享
+    };
+  </script>
+<{/block}>
+
+<{block name=script}>
+  <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
+	<script type="text/javascript" src="<{$smarty.const.PATH_JS}>/html5shiv.min.js"></script>
+	<script type="text/javascript" src="<{$smarty.const.PATH_BUILD}>/index.js"></script>
+<{/block}>

@@ -8,10 +8,10 @@ use Think\Controller;
 class UserController extends Controller {
 
     /**
-     * 登录
-     * @access public
-     * @return void
-     */
+         * 登录
+         * @access public
+         * @return void
+         */
     public function login() {
         // 判断是否存在session
         if (session('?LOGIN_FLAG') && session('LOGIN_FLAG')) {
@@ -21,14 +21,15 @@ class UserController extends Controller {
         }
         
         if (IS_POST){
-            $login_ask = 'User/login';
-            
+            $login_ask = 'usr/signin';
+
             $verify = new \Think\Verify();
-            if ($verify->check(I('post.verify'))){
+            if (!$verify->check(I('post.verify'))){
                 $this->redirect($login_ask, '', 3, '验证码错误！');
                 return;
             }
-            
+            // $username = 'testuser_1';
+            // $password = md5('testuser_1');
             $username = I('post.username');
             $password = I('post.password');
             if ($username == '' || $password == ''){
@@ -59,18 +60,20 @@ class UserController extends Controller {
                 return;
             }
         }else{
+//             p(get_defined_constants(true));
+//             die;
             $this->display();
         }
     }
 
     /**
-     * 注册
-     * @return [type] [description]
-     */
+         * 注册
+         * @return [type] [description]
+         */
     public function signup() {
         if (IS_POST){
-            $login_ask = 'User/login';
-            $signup_ask = 'User/signup';
+            $login_ask = 'usr/signin';
+            $signup_ask = 'usr/signup';
             
             $verify = new \Think\Verify();
             if ($verify->check(I('post.verify'))) {
@@ -106,9 +109,9 @@ class UserController extends Controller {
     }
     
     /**
-     * 获取验证码
-     * @access public
-     */
+         * 获取验证码
+         * @access public
+         */
     public function verify() {
 
         $config = array(

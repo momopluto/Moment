@@ -1,1 +1,69 @@
-注册页面
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>新用户注册</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/base.css">
+        <link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/iconfont.css">
+		<link rel="stylesheet" href="<{$smarty.const.PATH_CSS}>/login-fluid.css">
+        <style type="text/css">
+            .regForm label { cursor: default }
+            .title { text-align: center }
+        </style>
+	</head>
+	<body>
+		<div class="wp cl">
+        <div class="log-wrap cl">
+            <div class="log-hd">
+                 <div class="log-logo">
+                     <img src="<{$smarty.const.PATH_IMG}>/logo-fill.png"/> 
+                 </div>
+            </div>
+            <h4 class="title">
+                <span>
+                    <a href="<{U('usr/signin')}>" class="">登录</a>
+                    <b>·</b>
+                    <a href="<{U('usr/signup')}>" class="active">注册</a>
+                </span>
+            </h4>
+            <div class="log-content cl">
+                <div class="wpl pos cl">
+                    <div class="log-row-cx cl">
+                    	<div class="reg_left pos">
+                            <form action='' method="post" onsubmit="return check(this)" class='regForm'>
+                                <div class="reg_cont_input">
+                                	<label class="login-icon pos">
+                                        <input type="text" name="username" autocomplete="off" class="log-input" dataType='username' errormsg="用户名应由3~20个字符组成!" nullmsg="用户名不能为空!"  placeholder='用户名(3~20个字符,包含字母/中文/数字/下划线)'> 
+            						</label>
+                                    <label class="login-icon pos">
+                                        <input type="password" name="password" datatype='*6-20' errormsg="密码范围在6~20位之间!" autocomplete="off" class="log-input" nullmsg="请输入您的账号密码!" placeholder='设置密码'>
+                                    </label>
+                                    <label class="login-icon pos">
+                                        <input type="password" name="repassword" datatype="*" recheck='password' errormsg="您两次输入的账号密码不一致!" value class="log-input" nullmsg="请输入确认密码!" placeholder='确认密码'>
+                                    </label>
+                                    <button class="lang-btn" id="regInputSubmit">
+                                    	<span>注 册</span>
+                                    </button>
+                                </div>
+                           </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--     </div>
+        <div class="log-cloud-1"><i class="iconfont">&#xe633;</i></div>
+        <div class="log-cloud-2"><i class="iconfont">&#xe633;</i></div>
+        <div class="log-cloud-3"><i class="iconfont">&#xe633;</i></div>
+        <div class="log-cloud-4"><i class="iconfont">&#xe633;</i></div>
+    </div> -->
+    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/jquery.js"></script>
+    <script type="text/javascript" src="<{$smarty.const.PATH_JS}>/md5.js"></script>
+    <script type="text/javascript">
+        function check(form) {
+            form.password.value = md5(form.password.value);
+            form.repassword.value = md5(form.repassword.value);
+            return true;
+        }
+    </script>
+</body>
+</html>
