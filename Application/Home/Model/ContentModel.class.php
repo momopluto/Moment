@@ -222,8 +222,10 @@ class ContentModel extends BaseModel
         $sql = $this->alias('sh')
             ->join('LEFT JOIN mn_favshare fs ON sh.s_id=fs.s_id AND fs.owner_id=' . $userId)/*判断userId是否有收藏此分享*/
             ->join('LEFT JOIN mn_thumb th ON sh.s_id=th.s_id AND th.user_id=' . $userId)
+            ->join('LEFT JOIN mn_user ur ON ur.user_id=' . $userId)
             ->field('sh.s_id,
                     sh.user_id,
+                    ur.username,
                     md5(sh.user_id) AS imgPath,
                     sh.`text`,
                     sh.imgs,
