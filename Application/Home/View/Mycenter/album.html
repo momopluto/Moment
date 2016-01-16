@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>binbin的主页</title>
+    <title><{$smarty.session.USERDATA.username}>的主页</title>
     <link rel="stylesheet" type="text/css" href="<{$smarty.const.PATH_CSS}>/base.css">
     <link rel="stylesheet" type="text/css" href="<{$smarty.const.PATH_CSS}>/comm.css">
     <link href='http://www.youziku.com/webfont/NameCSS/46768' rel='stylesheet' type='text/css'/>
@@ -21,7 +21,7 @@
             <a class="nav_publish" title="发布" href="javasctipt:;"></a>
             <!-- 功能项 -->
             <i class="nav_item on" href="">
-                binbin
+                <{$smarty.session.USERDATA.username}>
                 <ul class="limits_list">
                     <li class="limits_item">个人主页</li>
                     <li class="limits_item">我的消息</li>
@@ -36,7 +36,7 @@
         <div class="content">
             <div class="mine">
                 <div class="mine_avatar" style="background-image:url(<{$smarty.const.PATH_IMG}>/name0019.jpg)"></div>
-                <div class="mine_name">ICM_bins</div>
+                <div class="mine_name"><{$smarty.session.USERDATA.username}></div>
             </div>
             <div class="content-row">
                 <ul class="content-col content-col-1 card mine_nav">
